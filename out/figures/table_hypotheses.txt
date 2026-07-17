@@ -1,0 +1,10 @@
+Hypothesis  n_pairs Median_delta  Wilcoxon_W           p      Support
+        H1        6          2.0         0.0      0.0625 NO (p>=0.05)
+        H2       32          2.0         8.5 4.89229e-05          YES
+        H3        6          4.0         0.0      0.0625 NO (p>=0.05)
+
+| Hypothesis | n_pairs | Median_delta | Wilcoxon_W | p | Support |
+| --- | --- | --- | --- | --- | --- |
+| H1 | 6 | 2.0 | 0.0 | 0.0625 | NO (p>=0.05) |
+| H2 | 32 | 2.0 | 8.5 | 4.89229e-05 | YES |
+| H3 | 6 | 4.0 | 0.0 | 0.0625 | NO (p>=0.05) |

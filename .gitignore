@@ -20,13 +20,16 @@ __pycache__/
 .DS_Store
 .claude/
 
-# Data and outputs
-out/
-*.json
-
 # Jupyter
 .ipynb_checkpoints/
 
-# Temporary files
+# Temporary / backup files
 *.tmp
 *.log
+*.bak
+out/*.tmp.*
+out/fit_ckpt.pt.tmp.*
+
+# Allow experiment logs + keep backups for provenance
+!out/*.log
+!stimuli.json.bak

@@ -1,0 +1,58 @@
+{
+  "stimuli": [
+    {
+      "pair_id": "capital_fr",
+      "condition": "straightforward",
+      "family": "factual",
+      "prompt": "Fact: The capital of France is",
+      "target": " Paris",
+      "distractor": " Amsterdam",
+      "query_position": -1
+    },
+    {
+      "pair_id": "capital_fr",
+      "condition": "false_lead",
+      "family": "factual",
+      "prompt": "Fact: The capital of the country famous for tulips and canals \u2014 wait, no, I mean the one famous for the Eiffel Tower \u2014 is",
+      "target": " Paris",
+      "distractor": " Amsterdam",
+      "query_position": -1
+    },
+    {
+      "pair_id": "capital_jp",
+      "condition": "straightforward",
+      "family": "factual",
+      "prompt": "Fact: The capital of Japan is",
+      "target": " Tokyo",
+      "distractor": " Beijing",
+      "query_position": -1
+    },
+    {
+      "pair_id": "capital_jp",
+      "condition": "false_lead",
+      "family": "factual",
+      "prompt": "Fact: The capital of the country that built the Great Wall \u2014 sorry, I meant the island nation famous for sushi and Mount Fuji \u2014 is",
+      "target": " Tokyo",
+      "distractor": " Beijing",
+      "query_position": -1
+    },
+    {
+      "pair_id": "gp_horse",
+      "condition": "straightforward",
+      "family": "garden_path",
+      "prompt": "The horse that was raced past the barn fell. The thing that fell was the",
+      "target": " horse",
+      "distractor": " barn",
+      "query_position": -1
+    },
+    {
+      "pair_id": "gp_horse",
+      "condition": "false_lead",
+      "family": "garden_path",
+      "prompt": "The horse raced past the barn fell. The thing that fell was the",
+      "target": " horse",
+      "distractor": " barn",
+      "query_position": -1
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+| Family | Pair | SF distractor_lead | FL distractor_lead |
+|---|---|---|---|
+| arithmetic | arith_c | 16 | 0 |
+| arithmetic | arith_d | 7 | 12 |
+| arithmetic | arith_f | 15 | 4 |
+| arithmetic | arith_g | 2 | 4 |
+| arithmetic | arith_i | 1 | 5 |
+| arithmetic | arith_m | 11 | 1 |
+| arithmetic | arith_n | 3 | 13 |
+| arithmetic | arith_s | 3 | 14 |
+| arithmetic | arith_t | 3 | 13 |
+| arithmetic | arith_v | 0 | 10 |
+| arithmetic | arith_x | 5 | 15 |
+| arithmetic | arith_x27 | 0 | 14 |
+| arithmetic | arith_z | 2 | 16 |
+| factual | capital_cl | 13 | 9 |
+| factual | capital_eg | 7 | 12 |
+| factual | capital_gr | 0 | 0 |
+| factual | capital_mx | 0 | 0 |
+| factual | capital_nl | 0 | 0 |
+| factual | capital_pl | 13 | 12 |
+| factual | capital_se | 9 | 13 |
+| factual | element_lightest | 2 | 12 |
+| garden_path | gp_bread | 0 | 0 |
+| garden_path | gp_cat | 8 | 15 |
+| garden_path | gp_door | 0 | 15 |
+| garden_path | gp_flower | 0 | 1 |
+| garden_path | gp_horse | 8 | 11 |
+| garden_path | gp_letter | 0 | 0 |
+| garden_path | gp_package | 10 | 14 |
+| garden_path | gp_sheep | 2 | 1 |
+| garden_path | gp_song | 0 | 15 |
+| factual | legs_spider | 4 | 11 |
+| factual | ocean_largest | 16 | 15 |
