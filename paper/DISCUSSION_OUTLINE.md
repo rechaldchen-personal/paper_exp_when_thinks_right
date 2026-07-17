@@ -1,6 +1,6 @@
 # Discussion Section Outline (Section 6)
 
-**Status**: Skeleton ready; to be filled with GPU results  
+**Status**: Partially filled from Qwen3-1.7B GPU results (2026-07-17). Expand remaining subsections into prose for submission.  
 **Target length**: 1500–2000 words
 
 ---
@@ -9,17 +9,15 @@
 
 ### 6.1 Summary of Findings (200 words)
 
-**What to write**: Recap the three hypotheses and whether they were supported.
+**Filled from GPU run**:
+- **H1 (later commitment)**: Directional, **not significant** (p = 0.0625, n_pairs = 6; median Δ = +2.0 layers)
+- **H2 (oscillation)**: **Supported** (p = 4.89×10⁻⁵, n_pairs = 32; median Δ = +2.0 changes; medians 3.0 vs 1.0)
+- **H3 (dissociation gap)**: Directional, **not significant** (p = 0.0625, n_pairs = 6; median Δ = +4.0 layers)
+- Hard controls: not evaluable in this holdout split (n=0 defined metrics)
+- Overall: The strongest real-model signature is internal top-1 oscillation under false lead; delayed commitment and dissociation gap remain suggestive but underpowered
 
-**Skeleton**:
-- H1 (later commitment): Supported / Rejected (p = ?)
-- H2 (oscillation): Supported / Rejected (p = ?)
-- H3 (dissociation gap): Supported / Rejected (p = ?)
-- Hard controls validate design (effects specific to false lead, not difficulty)
-- Overall: Commitment curves reveal internal backtracking signatures visible in lens readouts
-
-**Key sentence**:
-> "These findings demonstrate that false-lead prompts induce measurable internal revision signatures in the J-space, detectable as later commitment, top-1 oscillation, and dissociation between confidence and correctness."
+**Key sentence (updated)**:
+> "False-lead prompts induce a robust internal revision signature in the J-space—increased top-1 oscillation—while delayed commitment and confidence–correctness gaps trend in the predicted direction but do not yet clear α=0.05 with the available complete pairs."
 
 ---
 
@@ -249,11 +247,9 @@
 
 ## Integration with GPU Results
 
-Once GPU data arrives:
-1. Replace "?" with actual numbers (p-values, effect sizes)
-2. Replace "[GPU phase]" with actual r and p values for Natural Stories
-3. Adjust Qwen model name if 4B used instead
-4. Update figure references with real file paths
-5. Fill in concrete findings from real model
-
-Ready to adapt once results available.
+Qwen3-1.7B primary run integrated (2026-07-17):
+1. ✅ H1–H3 numbers filled in §6.1 and `RESULTS_TEMPLATE.md`
+2. ⏸ Natural Stories correlation still pending
+3. ⏸ Qwen 4B deferred
+4. ✅ Figure paths: `out/figures/H1_*.png`, `H2_*.png`, `H3_*.png`, `entropy_curves.png`, `heatmaps/`
+5. Remaining discussion subsections (6.2–6.7) still use writing templates—expand into final prose before submission

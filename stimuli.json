@@ -1,13 +1,12 @@
 {
   "_notes": [
-    "Seed set \u2014 extend to ~40 pairs per family before running headline stats.",
-    "target/distractor must each be a SINGLE token under your model's tokenizer",
-    "(leading space matters!). Run 02_run_experiment.py --validate to check.",
-    "query_position: index into tokenized prompt where the answer is read;",
-    "-1 = last prompt token (the position whose lens readout precedes the answer).",
+    "Targets/distractors must each be a SINGLE token under Qwen3's tokenizer",
+    "(leading space matters for word tokens). Validated via 02_run_experiment.py --validate.",
+    "Arithmetic answers use English number words (Qwen3 digitizes multi-digit numerals).",
+    "query_position: -1 = last prompt token (lens readout precedes the answer).",
     "Each pair shares pair_id; condition is 'straightforward' or 'false_lead'.",
-    "'hard_control' items are difficult WITHOUT a tempting distractor, to separate",
-    "difficulty from false-lead effects."
+    "'hard_control' items are difficult WITHOUT a tempting distractor.",
+    "2026-07-17: re-validated / repaired for Qwen/Qwen3-1.7B tokenization."
   ],
   "stimuli": [
     {
@@ -23,7 +22,7 @@
       "pair_id": "capital_fr",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The capital of the country famous for tulips and canals \u2014 wait, no, I mean the one famous for the Eiffel Tower \u2014 is",
+      "prompt": "Fact: The capital of the country famous for tulips and canals — wait, no, I mean the one famous for the Eiffel Tower — is",
       "target": " Paris",
       "distractor": " Amsterdam",
       "query_position": -1
@@ -41,7 +40,7 @@
       "pair_id": "capital_jp",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The capital of the country that built the Great Wall \u2014 sorry, I meant the island nation famous for sushi and Mount Fuji \u2014 is",
+      "prompt": "Fact: The capital of the country that built the Great Wall — sorry, I meant the island nation famous for sushi and Mount Fuji — is",
       "target": " Tokyo",
       "distractor": " Beijing",
       "query_position": -1
@@ -50,54 +49,18 @@
       "pair_id": "legs_spider",
       "condition": "straightforward",
       "family": "factual",
-      "prompt": "The number of legs on a spider is",
-      "target": " 8",
-      "distractor": " 6",
+      "prompt": "Fact: A spider has",
+      "target": " eight",
+      "distractor": " six",
       "query_position": -1
     },
     {
       "pair_id": "legs_spider",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "The number of legs on the creature people often call an insect, though it is actually an arachnid that spins webs, is",
-      "target": " 8",
-      "distractor": " 6",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_a",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 4 + 17 ) * 2 =",
-      "target": " 42",
-      "distractor": " 38",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_a",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 4 + 17 * 2 =",
-      "target": " 38",
-      "distractor": " 42",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_b",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 3 + 5 ) * 4 =",
-      "target": " 32",
-      "distractor": " 23",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_b",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 3 + 5 * 4 =",
-      "target": " 23",
-      "distractor": " 32",
+      "prompt": "Fact: The creature people often call an insect, though it is actually an arachnid that spins webs, has",
+      "target": " eight",
+      "distractor": " six",
       "query_position": -1
     },
     {
@@ -124,7 +87,7 @@
       "family": "factual",
       "prompt": "Fact: The currency used in the country shaped like a boot is the",
       "target": " euro",
-      "distractor": " lira",
+      "distractor": " franc",
       "query_position": -1
     },
     {
@@ -140,7 +103,7 @@
       "pair_id": "capital_uk",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The capital of the country that was once the largest empire in history, but I'm thinking of a different European nation \u2014 the island nation \u2014 is",
+      "prompt": "Fact: The capital of the country that was once the largest empire in history, but I'm thinking of a different European nation — the island nation — is",
       "target": " London",
       "distractor": " Paris",
       "query_position": -1
@@ -176,7 +139,7 @@
       "pair_id": "capital_de",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The capital of the country famous for beer and Bavaria \u2014 no wait, the political capital in the east \u2014 is",
+      "prompt": "Fact: The capital of the country famous for beer and Bavaria — no wait, the political capital in the east — is",
       "target": " Berlin",
       "distractor": " Munich",
       "query_position": -1
@@ -197,60 +160,6 @@
       "prompt": "Fact: The ocean that touches North America and Europe is vast, but the one that covers the most area is the",
       "target": " Pacific",
       "distractor": " Atlantic",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_c",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 2 + 8 ) * 5 =",
-      "target": " 50",
-      "distractor": " 42",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_c",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 2 + 8 * 5 =",
-      "target": " 42",
-      "distractor": " 50",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_d",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 6 + 4 ) * 3 =",
-      "target": " 30",
-      "distractor": " 18",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_d",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 6 + 4 * 3 =",
-      "target": " 18",
-      "distractor": " 30",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_e",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 5 + 3 ) * 2 =",
-      "target": " 16",
-      "distractor": " 11",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_e",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 5 + 3 * 2 =",
-      "target": " 11",
-      "distractor": " 16",
       "query_position": -1
     },
     {
@@ -290,21 +199,21 @@
       "query_position": -1
     },
     {
-      "pair_id": "capital_br",
+      "pair_id": "capital_cl",
       "condition": "straightforward",
       "family": "factual",
-      "prompt": "Fact: The capital of Brazil is",
-      "target": " Bras\u00edlia",
-      "distractor": " Rio",
+      "prompt": "Fact: The capital of Chile is",
+      "target": " Santiago",
+      "distractor": " Lima",
       "query_position": -1
     },
     {
-      "pair_id": "capital_br",
+      "pair_id": "capital_cl",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The capital of the country known for its massive statue and beaches and Carnival \u2014 no wait, the political capital in the interior \u2014 is",
-      "target": " Bras\u00edlia",
-      "distractor": " Rio",
+      "prompt": "Fact: The capital of the country known for Machu Picchu — wait, no, I mean the long thin country on South America's Pacific coast — is",
+      "target": " Santiago",
+      "distractor": " Lima",
       "query_position": -1
     },
     {
@@ -313,16 +222,16 @@
       "family": "factual",
       "prompt": "Fact: The capital of Egypt is",
       "target": " Cairo",
-      "distractor": " Giza",
+      "distractor": " Alexandria",
       "query_position": -1
     },
     {
       "pair_id": "capital_eg",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The capital of the country home to the Pyramids and the Nile, which everyone thinks of immediately \u2014 actually, that's where the pyramids are \u2014 the real capital is",
+      "prompt": "Fact: The capital of the country home to the Pyramids near Alexandria and the Nile — wait, the actual capital is",
       "target": " Cairo",
-      "distractor": " Giza",
+      "distractor": " Alexandria",
       "query_position": -1
     },
     {
@@ -338,7 +247,7 @@
       "pair_id": "capital_in",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The capital of the most populous country in Asia, famous for Bollywood and finance \u2014 no, I meant the political center \u2014 is",
+      "prompt": "Fact: The capital of the most populous country in Asia, famous for Bollywood and finance — no, I meant the political center — is",
       "target": " Delhi",
       "distractor": " Mumbai",
       "query_position": -1
@@ -348,17 +257,17 @@
       "condition": "straightforward",
       "family": "factual",
       "prompt": "Fact: The capital of Mexico is",
-      "target": " City",
-      "distractor": " Cancun",
+      "target": " Mexico",
+      "distractor": " Leon",
       "query_position": -1
     },
     {
       "pair_id": "capital_mx",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The capital of the country famous for beaches and resorts to the south \u2014 wait, the actual government capital in the center \u2014 is",
-      "target": " City",
-      "distractor": " Cancun",
+      "prompt": "Fact: The capital of the country famous for beaches and the city of Leon — wait, the actual government seat is",
+      "target": " Mexico",
+      "distractor": " Leon",
       "query_position": -1
     },
     {
@@ -392,63 +301,9 @@
       "pair_id": "element_lightest",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The element that makes up most of the sun and is second lightest \u2014 sorry, the actual lightest \u2014 is",
+      "prompt": "Fact: The element that makes up most of the sun and is second lightest — sorry, the actual lightest — is",
       "target": " hydrogen",
       "distractor": " helium",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_f",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 7 + 2 ) * 4 =",
-      "target": " 36",
-      "distractor": " 29",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_f",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 7 + 2 * 4 =",
-      "target": " 15",
-      "distractor": " 36",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_g",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 8 + 2 ) * 3 =",
-      "target": " 30",
-      "distractor": " 24",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_g",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 8 + 2 * 3 =",
-      "target": " 14",
-      "distractor": " 30",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_h",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 1 + 9 ) * 5 =",
-      "target": " 50",
-      "distractor": " 46",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_h",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 1 + 9 * 5 =",
-      "target": " 46",
-      "distractor": " 50",
       "query_position": -1
     },
     {
@@ -500,81 +355,9 @@
       "pair_id": "hard_ctrl_painting",
       "condition": "hard_control",
       "family": "factual",
-      "prompt": "Fact: The artist who painted the ceiling of the Sistine Chapel was",
-      "target": " Michelangelo",
-      "distractor": " Leonardo",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_i",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 9 + 1 ) * 2 =",
-      "target": " 20",
-      "distractor": " 18",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_i",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 9 + 1 * 2 =",
-      "target": " 11",
-      "distractor": " 20",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_j",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 10 + 5 ) * 2 =",
-      "target": " 30",
-      "distractor": " 25",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_j",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 10 + 5 * 2 =",
-      "target": " 20",
-      "distractor": " 30",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_k",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 2 + 3 ) * 3 =",
-      "target": " 15",
-      "distractor": " 11",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_k",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 2 + 3 * 3 =",
-      "target": " 11",
-      "distractor": " 15",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_l",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 11 + 4 ) * 2 =",
-      "target": " 30",
-      "distractor": " 26",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_l",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 11 + 4 * 2 =",
-      "target": " 19",
-      "distractor": " 30",
+      "prompt": "Fact: The artist who painted the Mona Lisa was",
+      "target": " Leonardo",
+      "distractor": " Picasso",
       "query_position": -1
     },
     {
@@ -599,18 +382,18 @@
       "pair_id": "gp_tree",
       "condition": "straightforward",
       "family": "garden_path",
-      "prompt": "The tree that was cut down in the forest by the lumberjack fell. The thing that fell was the",
+      "prompt": "The tree that was cut down in the forest by the logger fell. The thing that fell was the",
       "target": " tree",
-      "distractor": " lumberjack",
+      "distractor": " logger",
       "query_position": -1
     },
     {
       "pair_id": "gp_tree",
       "condition": "false_lead",
       "family": "garden_path",
-      "prompt": "The tree cut down in the forest by the lumberjack fell. The thing that fell was the",
+      "prompt": "The tree cut down in the forest by the logger fell. The thing that fell was the",
       "target": " tree",
-      "distractor": " lumberjack",
+      "distractor": " logger",
       "query_position": -1
     },
     {
@@ -689,306 +472,18 @@
       "pair_id": "gp_watch",
       "condition": "straightforward",
       "family": "garden_path",
-      "prompt": "The watch that was repaired by the jeweler yesterday stopped. The thing that stopped was the",
+      "prompt": "The watch that was repaired by the tailor yesterday stopped. The thing that stopped was the",
       "target": " watch",
-      "distractor": " jeweler",
+      "distractor": " tailor",
       "query_position": -1
     },
     {
       "pair_id": "gp_watch",
       "condition": "false_lead",
       "family": "garden_path",
-      "prompt": "The watch repaired by the jeweler yesterday stopped. The thing that stopped was the",
+      "prompt": "The watch repaired by the tailor yesterday stopped. The thing that stopped was the",
       "target": " watch",
-      "distractor": " jeweler",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_o",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 2 + 3 ) * 5 =",
-      "target": " 25",
-      "distractor": " 17",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_o",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 2 + 3 * 5 =",
-      "target": " 17",
-      "distractor": " 25",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_p",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 3 + 4 ) * 5 =",
-      "target": " 35",
-      "distractor": " 23",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_p",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 3 + 4 * 5 =",
-      "target": " 23",
-      "distractor": " 35",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_q",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 2 + 5 ) * 6 =",
-      "target": " 42",
-      "distractor": " 32",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_q",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 2 + 5 * 6 =",
-      "target": " 32",
-      "distractor": " 42",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_r",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 3 + 6 ) * 4 =",
-      "target": " 36",
-      "distractor": " 27",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_r",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 3 + 6 * 4 =",
-      "target": " 27",
-      "distractor": " 36",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_s",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 4 + 5 ) * 3 =",
-      "target": " 27",
-      "distractor": " 19",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_s",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 4 + 5 * 3 =",
-      "target": " 19",
-      "distractor": " 27",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_t",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 2 + 7 ) * 4 =",
-      "target": " 36",
-      "distractor": " 30",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_t",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 2 + 7 * 4 =",
-      "target": " 30",
-      "distractor": " 36",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_u",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 5 + 3 ) * 2 =",
-      "target": " 16",
-      "distractor": " 11",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_u",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 5 + 3 * 2 =",
-      "target": " 11",
-      "distractor": " 16",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_v",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 1 + 8 ) * 3 =",
-      "target": " 27",
-      "distractor": " 25",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_v",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 1 + 8 * 3 =",
-      "target": " 25",
-      "distractor": " 27",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_w",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 4 + 2 ) * 5 =",
-      "target": " 30",
-      "distractor": " 14",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_w",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 4 + 2 * 5 =",
-      "target": " 14",
-      "distractor": " 30",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_x",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 3 + 7 ) * 2 =",
-      "target": " 20",
-      "distractor": " 17",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_x",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 3 + 7 * 2 =",
-      "target": " 17",
-      "distractor": " 20",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_y",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 2 + 4 ) * 7 =",
-      "target": " 42",
-      "distractor": " 30",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_y",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 2 + 4 * 7 =",
-      "target": " 30",
-      "distractor": " 42",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_z",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 6 + 3 ) * 2 =",
-      "target": " 18",
-      "distractor": " 12",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_z",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 6 + 3 * 2 =",
-      "target": " 12",
-      "distractor": " 18",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_{",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 1 + 9 ) * 4 =",
-      "target": " 40",
-      "distractor": " 37",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_{",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 1 + 9 * 4 =",
-      "target": " 37",
-      "distractor": " 40",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_|",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 5 + 4 ) * 2 =",
-      "target": " 18",
-      "distractor": " 13",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_|",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 5 + 4 * 2 =",
-      "target": " 13",
-      "distractor": " 18",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_}",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 2 + 6 ) * 3 =",
-      "target": " 24",
-      "distractor": " 20",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_}",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 2 + 6 * 3 =",
-      "target": " 20",
-      "distractor": " 24",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_~",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "calc: ( 7 + 2 ) * 3 =",
-      "target": " 27",
-      "distractor": " 13",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_~",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "calc: 7 + 2 * 3 =",
-      "target": " 13",
-      "distractor": " 27",
+      "distractor": " tailor",
       "query_position": -1
     },
     {
@@ -1015,16 +510,16 @@
       "family": "factual",
       "prompt": "Fact: The capital of Greece is",
       "target": " Athens",
-      "distractor": " Sparta",
+      "distractor": " Olympia",
       "query_position": -1
     },
     {
       "pair_id": "capital_gr",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The capital of Greece, which is also known for sparta, is",
+      "prompt": "Fact: The capital of Greece, which is also known for olympia, is",
       "target": " Athens",
-      "distractor": " Sparta",
+      "distractor": " Olympia",
       "query_position": -1
     },
     {
@@ -1069,16 +564,16 @@
       "family": "factual",
       "prompt": "Fact: The capital of Belgium is",
       "target": " Brussels",
-      "distractor": " Antwerp",
+      "distractor": " Hague",
       "query_position": -1
     },
     {
       "pair_id": "capital_be",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The capital of Belgium, which is also known for antwerp, is",
+      "prompt": "Fact: The capital of Belgium, which is often confused with the nearby Hague, is",
       "target": " Brussels",
-      "distractor": " Antwerp",
+      "distractor": " Hague",
       "query_position": -1
     },
     {
@@ -1105,16 +600,16 @@
       "family": "factual",
       "prompt": "Fact: The capital of Sweden is",
       "target": " Stockholm",
-      "distractor": " Gothenburg",
+      "distractor": " Oslo",
       "query_position": -1
     },
     {
       "pair_id": "capital_se",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The capital of Sweden, which is also known for gothenburg, is",
+      "prompt": "Fact: The capital of Sweden, which people sometimes confuse with Oslo, is",
       "target": " Stockholm",
-      "distractor": " Gothenburg",
+      "distractor": " Oslo",
       "query_position": -1
     },
     {
@@ -1141,16 +636,16 @@
       "family": "factual",
       "prompt": "Fact: The capital of Denmark is",
       "target": " Copenhagen",
-      "distractor": " Aarhus",
+      "distractor": " Oslo",
       "query_position": -1
     },
     {
       "pair_id": "capital_dk",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The capital of Denmark, which is also known for aarhus, is",
+      "prompt": "Fact: The capital of Denmark, which people sometimes confuse with Oslo, is",
       "target": " Copenhagen",
-      "distractor": " Aarhus",
+      "distractor": " Oslo",
       "query_position": -1
     },
     {
@@ -1159,16 +654,16 @@
       "family": "factual",
       "prompt": "Fact: The capital of Czech Republic is",
       "target": " Prague",
-      "distractor": " Brno",
+      "distractor": " Vienna",
       "query_position": -1
     },
     {
       "pair_id": "capital_cz",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The capital of Czech Republic, which is also known for brno, is",
+      "prompt": "Fact: The capital of Czech Republic, which people sometimes confuse with Vienna, is",
       "target": " Prague",
-      "distractor": " Brno",
+      "distractor": " Vienna",
       "query_position": -1
     },
     {
@@ -1177,16 +672,16 @@
       "family": "factual",
       "prompt": "Fact: The capital of Poland is",
       "target": " Warsaw",
-      "distractor": " Krakow",
+      "distractor": " Berlin",
       "query_position": -1
     },
     {
       "pair_id": "capital_pl",
       "condition": "false_lead",
       "family": "factual",
-      "prompt": "Fact: The capital of Poland, which is also known for krakow, is",
+      "prompt": "Fact: The capital of Poland, which people sometimes confuse with Berlin, is",
       "target": " Warsaw",
-      "distractor": " Krakow",
+      "distractor": " Berlin",
       "query_position": -1
     },
     {
@@ -1409,7 +904,7 @@
       "pair_id": "gp_watch",
       "condition": "straightforward",
       "family": "garden_path",
-      "prompt": "The watch given by the jeweler who worked with gold was a watch",
+      "prompt": "The watch that was repaired by the tailor yesterday stopped. The thing that stopped was the",
       "target": " watch",
       "distractor": " clock",
       "query_position": -1
@@ -1418,7 +913,7 @@
       "pair_id": "gp_watch",
       "condition": "false_lead",
       "family": "garden_path",
-      "prompt": "The watch given by the jeweler who worked with gold was a clock",
+      "prompt": "The watch repaired by the tailor yesterday stopped. The thing that stopped was the",
       "target": " clock",
       "distractor": " watch",
       "query_position": -1
@@ -1475,6 +970,510 @@
       "prompt": "The door made by the carpenter who built furniture was gate",
       "target": " gate",
       "distractor": " door",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_a",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 2 + 3 ) * 2 equals",
+      "target": " ten",
+      "distractor": " eight",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_a",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 2 + 3 * 2 equals",
+      "target": " eight",
+      "distractor": " ten",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_b",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 1 + 2 ) * 3 equals",
+      "target": " nine",
+      "distractor": " seven",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_b",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 1 + 2 * 3 equals",
+      "target": " seven",
+      "distractor": " nine",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_c",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 4 + 1 ) * 2 equals",
+      "target": " ten",
+      "distractor": " six",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_c",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 4 + 1 * 2 equals",
+      "target": " six",
+      "distractor": " ten",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_d",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 3 + 2 ) * 3 equals",
+      "target": " fifteen",
+      "distractor": " nine",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_d",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 3 + 2 * 3 equals",
+      "target": " nine",
+      "distractor": " fifteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_e",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 5 + 1 ) * 2 equals",
+      "target": " twelve",
+      "distractor": " seven",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_e",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 5 + 1 * 2 equals",
+      "target": " seven",
+      "distractor": " twelve",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_f",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 4 + 2 ) * 2 equals",
+      "target": " twelve",
+      "distractor": " eight",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_f",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 4 + 2 * 2 equals",
+      "target": " eight",
+      "distractor": " twelve",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_g",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 3 + 1 ) * 4 equals",
+      "target": " sixteen",
+      "distractor": " seven",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_g",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 3 + 1 * 4 equals",
+      "target": " seven",
+      "distractor": " sixteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_h",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 2 + 2 ) * 4 equals",
+      "target": " sixteen",
+      "distractor": " ten",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_h",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 2 + 2 * 4 equals",
+      "target": " ten",
+      "distractor": " sixteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_i",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 5 + 3 ) * 2 equals",
+      "target": " sixteen",
+      "distractor": " eleven",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_i",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 5 + 3 * 2 equals",
+      "target": " eleven",
+      "distractor": " sixteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_j",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 6 + 2 ) * 2 equals",
+      "target": " sixteen",
+      "distractor": " ten",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_j",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 6 + 2 * 2 equals",
+      "target": " ten",
+      "distractor": " sixteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_k",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 4 + 4 ) * 2 equals",
+      "target": " sixteen",
+      "distractor": " twelve",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_k",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 4 + 4 * 2 equals",
+      "target": " twelve",
+      "distractor": " sixteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_l",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 7 + 1 ) * 2 equals",
+      "target": " sixteen",
+      "distractor": " nine",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_l",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 7 + 1 * 2 equals",
+      "target": " nine",
+      "distractor": " sixteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_m",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 3 + 5 ) * 2 equals",
+      "target": " sixteen",
+      "distractor": " thirteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_m",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 3 + 5 * 2 equals",
+      "target": " thirteen",
+      "distractor": " sixteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_n",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 2 + 6 ) * 2 equals",
+      "target": " sixteen",
+      "distractor": " fourteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_n",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 2 + 6 * 2 equals",
+      "target": " fourteen",
+      "distractor": " sixteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_o",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 1 + 4 ) * 3 equals",
+      "target": " fifteen",
+      "distractor": " thirteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_o",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 1 + 4 * 3 equals",
+      "target": " thirteen",
+      "distractor": " fifteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_p",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 2 + 4 ) * 3 equals",
+      "target": " eighteen",
+      "distractor": " fourteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_p",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 2 + 4 * 3 equals",
+      "target": " fourteen",
+      "distractor": " eighteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_q",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 5 + 4 ) * 2 equals",
+      "target": " eighteen",
+      "distractor": " thirteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_q",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 5 + 4 * 2 equals",
+      "target": " thirteen",
+      "distractor": " eighteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_r",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 3 + 3 ) * 3 equals",
+      "target": " eighteen",
+      "distractor": " twelve",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_r",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 3 + 3 * 3 equals",
+      "target": " twelve",
+      "distractor": " eighteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_s",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 8 + 2 ) * 2 equals",
+      "target": " twenty",
+      "distractor": " twelve",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_s",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 8 + 2 * 2 equals",
+      "target": " twelve",
+      "distractor": " twenty",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_t",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 6 + 4 ) * 2 equals",
+      "target": " twenty",
+      "distractor": " fourteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_t",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 6 + 4 * 2 equals",
+      "target": " fourteen",
+      "distractor": " twenty",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_u",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 7 + 3 ) * 2 equals",
+      "target": " twenty",
+      "distractor": " thirteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_u",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 7 + 3 * 2 equals",
+      "target": " thirteen",
+      "distractor": " twenty",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_v",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 9 + 1 ) * 2 equals",
+      "target": " twenty",
+      "distractor": " eleven",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_v",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 9 + 1 * 2 equals",
+      "target": " eleven",
+      "distractor": " twenty",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_w",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 5 + 5 ) * 2 equals",
+      "target": " twenty",
+      "distractor": " fifteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_w",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 5 + 5 * 2 equals",
+      "target": " fifteen",
+      "distractor": " twenty",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_x",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 4 + 6 ) * 2 equals",
+      "target": " twenty",
+      "distractor": " sixteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_x",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 4 + 6 * 2 equals",
+      "target": " sixteen",
+      "distractor": " twenty",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_y",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 3 + 7 ) * 2 equals",
+      "target": " twenty",
+      "distractor": " seventeen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_y",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 3 + 7 * 2 equals",
+      "target": " seventeen",
+      "distractor": " twenty",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_z",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 2 + 8 ) * 2 equals",
+      "target": " twenty",
+      "distractor": " eighteen",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_z",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 2 + 8 * 2 equals",
+      "target": " eighteen",
+      "distractor": " twenty",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_x26",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 4 + 1 ) * 4 equals",
+      "target": " twenty",
+      "distractor": " eight",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_x26",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 4 + 1 * 4 equals",
+      "target": " eight",
+      "distractor": " twenty",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_x27",
+      "condition": "straightforward",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 3 + 2 ) * 4 equals",
+      "target": " twenty",
+      "distractor": " eleven",
+      "query_position": -1
+    },
+    {
+      "pair_id": "arith_x27",
+      "condition": "false_lead",
+      "family": "arithmetic",
+      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 3 + 2 * 4 equals",
+      "target": " eleven",
+      "distractor": " twenty",
       "query_position": -1
     }
   ]

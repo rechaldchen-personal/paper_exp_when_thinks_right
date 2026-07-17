@@ -181,8 +181,8 @@ def main():
     # version (jlens/*.py) and pick whichever is available; only this closure
     # needs to change.
     def unembed_fn(layer, h):
-        h_final = lens.transport(layer, h.unsqueeze(0))              # [API]
-        h_final = hf.model.norm(h_final)
+        h_final = lens.transport(h.unsqueeze(0).float(), layer)      # [API]
+        h_final = hf.model.norm(h_final.to(dtype))
         return hf.lm_head(h_final)[0].float()
 
     records = []

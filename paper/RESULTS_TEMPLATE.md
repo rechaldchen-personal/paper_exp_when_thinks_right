@@ -1,51 +1,59 @@
 # Section 5: Results
 
-⚠️ **IMPORTANT**: This is a TEMPLATE awaiting GPU data. Do not interpret empty fields as results. All numbers marked `?` will be filled from real Qwen3-1.7B traces after GPU phase.
+**Status**: Filled from Qwen3-1.7B GPU run (2026-07-17).
 
-**Validation Status**: 
+**Validation Status**:
 - ✅ Methodology validated on synthetic data
 - ✅ Pipeline tested and working
-- ⏳ Real data validation pending GPU phase
-- ❌ Do NOT cite these sections as confirmed results until GPU data is obtained
+- ✅ Real data collected: `out/traces.json` (163 stimuli), `out/analysis_real/report.json`
+- ✅ Figures in `out/figures/`
+- ⏸ Qwen 4B replication deferred
+- ⏸ Natural Stories external-validity analysis not run
+
+**Analysis settings (pre-registered)**:
+- Model: Qwen/Qwen3-1.7B
+- Lens: Jacobian lens fitted on 1000 × 128 FineWeb prompts (`out/lens_qwen3_1p7b.pt`)
+- Dev/holdout split: 60/40 by pair (`--dev-split 0.6`) → 46 dev pairs, 32 holdout pairs
+- Theta (ΔH threshold): 3.517 nats (80th percentile of straightforward condition, computed on **dev only**)
+- Workspace band: [0.25, 0.90]
 
 ---
 
 ## 5.1 Sanity Check: Excess-Entropy Profile
 
-**Validation**: Replicate Gurnee et al. (2026) excess-entropy curve.
+**Validation**: Excess-entropy ΔH curves on holdout items (see `out/figures/entropy_curves.png`).
 
-**Figure**: Layer-wise excess entropy ΔH (median over all prompts) for Qwen 1.7B.
-- X-axis: layer index (0–100 reindexing)
+**Figure**: Layer-wise median excess entropy ΔH for Qwen3-1.7B by condition.
+- X-axis: layer index (0–26; 27 source layers in fitted lens)
 - Y-axis: excess entropy ΔH (nats)
-- Expected shape: low in early layers, peak in workspace [0.25–0.90], decline in late layers
-- Comparison: overlay kurtosis curve (Gurnee et al. Fig 28) to validate band identification
+- Workspace band shaded at fractional depth [0.25, 0.90]
+- Theta threshold overlaid at 3.517 nats
 
-**Table**: Workspace band boundaries (per-model, per-criterion)
-| Model | Excess-kurtosis band | Autocorr band | Accuracy band | Final band |
-|-------|----------------------|---|---|---|
-| Qwen 1.7B | [?, ?] | [?, ?] | [?, ?] | [?, ?] |
-| Qwen 4B | [?, ?] | [?, ?] | [?, ?] | [?, ?] |
+**Table**: Workspace band used for primary analyses
+
+| Model | Final band used | Theta (nats) | Notes |
+|-------|-----------------|--------------|-------|
+| Qwen3-1.7B | [0.25, 0.90] | 3.517 | Pre-registered fractional band; θ from SF 80th pct on dev |
+| Qwen 4B | — | — | Deferred |
 
 ---
 
 ## 5.2 Main Findings: Commitment Dynamics
 
+All paired tests compare **false_lead − straightforward** on holdout pairs (Wilcoxon signed-rank). Complete pairs require both conditions to yield the metric; H1/H3 have fewer complete pairs than H2 because ℓ*/gap are undefined when the target never reaches commitment criteria within band.
+
 ### H1: Later Commitment Under False Lead
 
 **Prediction**: ℓ* (commitment layer) larger for false_lead than straightforward.
 
-**Figure 5A**: Box plot of ℓ* by condition.
-- X-axis: condition (straightforward, false_lead, hard_control)
-- Y-axis: commitment layer ℓ*
-- Points: individual pairs (n=15 pairs, each with 2 conditions)
-- Error bars: quartiles; overlay individual pairs as lines to show pairing
+**Figure 5A**: `out/figures/H1_commitment_layer.png`
 
-**Statistics**:
-- Median ℓ* (straightforward): ? layers
-- Median ℓ* (false_lead): ? layers
-- Difference: ? layers
-- Wilcoxon signed-rank: W=?, p=?
-- **Result**: H1 **SUPPORTED / REJECTED**
+**Condition medians (holdout)**:
+- Median ℓ* (straightforward): **20.0** layers (n=13 with defined ℓ*)
+- Median ℓ* (false_lead): **22.0** layers (n=16)
+- Median paired difference (FL − SF): **+2.0** layers
+- Wilcoxon signed-rank: W=**0.0**, p=**0.0625**, n_pairs=**6**
+- **Result**: H1 **NOT SIGNIFICANT at α=0.05** (directional trend matches prediction; limited complete pairs)
 
 ---
 
@@ -53,18 +61,15 @@
 
 **Prediction**: Oscillation depth (top-1 identity changes after ℓ_H) higher for false_lead.
 
-**Figure 5B**: Oscillation counts by condition.
-- X-axis: condition
-- Y-axis: oscillation depth (count of top-1 changes)
-- Similar layout to 5A
-- Many straightforward pairs will have oscillation=0
+**Figure 5B**: `out/figures/H2_oscillation.png`  
+**Figure 6A (detail)**: `out/figures/H2_oscillation_hist.png`
 
-**Statistics**:
-- Median oscillation (straightforward): ? changes
-- Median oscillation (false_lead): ? changes
-- Difference: ? changes
-- Wilcoxon signed-rank: W=?, p=?
-- **Result**: H2 **SUPPORTED / REJECTED**
+**Condition medians (holdout)**:
+- Median oscillation (straightforward): **1.0** changes (n=34)
+- Median oscillation (false_lead): **3.0** changes (n=34)
+- Median paired difference (FL − SF): **+2.0** changes
+- Wilcoxon signed-rank: W=**8.5**, p=**4.89×10⁻⁵**, n_pairs=**32**
+- **Result**: H2 **SUPPORTED**
 
 ---
 
@@ -72,139 +77,118 @@
 
 **Prediction**: Gap ℓ* − ℓ_H larger for false_lead (confidently-wrong window).
 
-**Figure 5C**: Dissociation gap by condition.
-- Similar box-plot layout
-- Note: hard_control usually has gap=None (target never achieves low entropy); report as 0 or exclude from stats
+**Figure 5C**: `out/figures/H3_dissociation_gap.png`
 
-**Statistics**:
-- Median gap (straightforward): ? layers
-- Median gap (false_lead): ? layers
-- Difference: ? layers
-- Wilcoxon signed-rank: W=?, p=?
-- **Result**: H3 **SUPPORTED / REJECTED**
+**Condition medians (holdout)**:
+- Median gap (straightforward): **0.0** layers (n=11)
+- Median gap (false_lead): **4.5** layers (n=16)
+- Median paired difference (FL − SF): **+4.0** layers
+- Wilcoxon signed-rank: W=**0.0**, p=**0.0625**, n_pairs=**6**
+- **Result**: H3 **NOT SIGNIFICANT at α=0.05** (directional trend matches prediction; same n_pairs constraint as H1)
+
+**Hard controls**: No holdout hard_control items yielded defined ℓ*/ℓ_H/gap in this split (n=0 in report). Do not interpret hard-control nulls as evidence against specificity in this run.
 
 ---
 
 ## 5.3 Case Studies: Heatmaps
 
-**Figure 5D–F**: Per-pair (layer × position) heatmaps for one representative false_lead pair (e.g., "capital_fr").
+Representative holdout heatmaps copied to `out/figures/heatmaps/`:
 
-3-panel heatmap per condition:
-- **Panel 1**: Excess entropy ΔH (layer × position)
-  - Color: viridis (yellow=high, purple=low)
-  - Expect: early dip on distractor position, late dip on query position (false_lead)
-  
-- **Panel 2**: log₁₀(target_rank + 1)
-  - Color: magma_r (yellow=top-ranked, purple=low-ranked)
-  - Expect: target climbs to top-1 late (false_lead vs straightforward)
-  
-- **Panel 3**: log₁₀(distractor_rank + 1)
-  - Similar layout
-  - Expect: distractor peaks early (false_lead)
+| Pair | Conditions | Path |
+|------|------------|------|
+| capital_cl | SF / FL | `capital_cl_*.png` |
+| capital_eg | SF / FL | `capital_eg_*.png` |
+| legs_spider | SF / FL | `legs_spider_*.png` |
+| gp_horse | SF / FL | `gp_horse_*.png` |
+| arith_c | SF / FL | `arith_c_*.png` |
 
-**Caption**: "Layer × position heatmaps for factual pair capital_fr (Paris vs. Amsterdam). Left: straightforward condition shows early entropy collapse at query position; Right: false_lead condition shows two-phase entropy profile with distractor dip, then recovery, then target dip."
+**Caption (example)**: Layer × position heatmaps for factual pair capital_cl / capital_eg and garden-path pair gp_horse. False-lead panels typically show longer distractor-lead stretches and delayed target commitment relative to straightforward prompts.
+
+Full set: `out/analysis_real/heatmaps/` (64 PNGs).
 
 ---
 
 ## 5.4 Distractor Temptation
 
-**Table 5.1**: Quantifying how much the distractor tempted the model.
+**Table 5.1** (holdout pairs; full table in `out/figures/table_distractor_temptation.md`):
 
 | Family | Pair | Straightforward (distractor_lead_layers) | False_lead (distractor_lead_layers) |
-|--------|------|---|---|
-| Factual | capital_fr | ? | ? |
-| Factual | capital_jp | ? | ? |
-| ... | ... | ... | ... |
-| Arithmetic | arith_a | ? | ? |
-| ... | ... | ... | ... |
+|--------|------|------------------------------------------|-------------------------------------|
+| Factual | capital_eg | 7 | 12 |
+| Factual | capital_se | 9 | 13 |
+| Factual | legs_spider | 4 | 11 |
+| Factual | element_lightest | 2 | 12 |
+| Garden-path | gp_cat | 8 | 15 |
+| Garden-path | gp_door | 0 | 15 |
+| Garden-path | gp_horse | 8 | 11 |
+| Garden-path | gp_song | 0 | 15 |
+| Arithmetic | arith_d | 7 | 12 |
+| Arithmetic | arith_s | 3 | 14 |
+| Arithmetic | arith_t | 3 | 13 |
+| Arithmetic | arith_z | 2 | 16 |
 
-Interpretation:
-- Straightforward: low distractor_lead (target always favored)
-- False_lead: moderate-to-high (distractor briefly leads)
-- Validates stimulus design: distractors truly tempting
+**Condition medians**:
+- Straightforward distractor_lead_layers: **2.5** (n=34)
+- False_lead distractor_lead_layers: **11.0** (n=34)
+
+Interpretation: On average, false-lead items show substantially longer stretches where the distractor outranks the target, validating that many stimuli are behaviorally tempting under the lens readout. Some pairs (e.g., capital_gr, capital_mx) show zero lead in both conditions and should be treated as weak temptations in this model.
 
 ---
 
 ## 5.5 Oscillation Depth: Detailed Analysis
 
-**Figure 6A**: Oscillation depth (histogram or KDE) by condition.
-- Overlay: straightforward (blue) vs. false_lead (orange)
-- False_lead should shift right (more oscillations)
-- Many straightforward items at 0; false_lead spread across 0–5+
+**Figure 6A**: `out/figures/H2_oscillation_hist.png` — false_lead distribution shifts right vs straightforward.
 
-**Figure 6B**: Relationship between oscillation depth and ℓ*.
-- X-axis: ℓ* (commitment layer)
-- Y-axis: oscillation_depth
-- Color: condition (straightforward=blue, false_lead=orange)
-- Expectation: false_lead at later layers (right) with more oscillation (higher)
-- Trend line per condition
+**Figure 6B**: `out/figures/oscillation_vs_commitment.png` — oscillation vs ℓ* by condition (items with defined ℓ*).
 
-**Interpretation**: Does internal revision (oscillation) appear *after* the model first got confident? If so, supports the revision narrative.
+**Interpretation**: H2 is the clearest signal in this run: false-lead prompts induce reliably more top-1 identity changes after entropy collapse. Combined with the directional H1/H3 trends, this is consistent with an internal revision narrative, but commitment-layer and gap tests are underpowered given only 6 complete holdout pairs with defined ℓ*/gap.
 
 ---
 
 ## 5.6 External Validity: Natural Stories
 
-(Only if GPU data available)
-
-**Figure 7A**: Scatter plot of internal metrics vs. human reading times.
-- X-axis: oscillation_depth or dissociation_gap (internal)
-- Y-axis: human RT slowdown (ms) at disambiguation region
-- Points: individual Natural Stories sentences (n~8)
-- Trend line + R² + p-value
-
-**Expected correlation**: r > 0.4, p < 0.05 (supporting hypothesis 7.4)
-
-**Table 7.1**: Correlation matrix (oscillation, gap, ℓ*, ℓ_H) × human RT.
+**Not run in this GPU session.** Deferred pending Natural Stories RT linkage.
 
 ---
 
 ## 5.7 Summary Table
 
-**Table 5.2**: Hypothesis support summary.
+**Table 5.2**: Hypothesis support summary (Qwen3-1.7B, holdout).
 
 | Hypothesis | Test | Statistic | p-value | Result |
 |---|---|---|---|---|
-| H1: Later commitment (false_lead) | Wilcoxon signed-rank | W=? | p=? | **✓ SUPPORTED / ✗ REJECTED** |
-| H2: More oscillation (false_lead) | Wilcoxon signed-rank | W=? | p=? | **✓ SUPPORTED / ✗ REJECTED** |
-| H3: Larger gap (false_lead) | Wilcoxon signed-rank | W=? | p=? | **✓ SUPPORTED / ✗ REJECTED** |
+| H1: Later commitment (false_lead) | Wilcoxon signed-rank | W=0.0 (n=6) | p=0.0625 | ✗ NOT SIG. (directional) |
+| H2: More oscillation (false_lead) | Wilcoxon signed-rank | W=8.5 (n=32) | p=4.89×10⁻⁵ | ✓ SUPPORTED |
+| H3: Larger gap (false_lead) | Wilcoxon signed-rank | W=0.0 (n=6) | p=0.0625 | ✗ NOT SIG. (directional) |
 
 ---
 
 ## 5.8 Robustness Checks (Appendix D)
 
 ### D.1 Logit-Lens Replication
-Repeat all main figures with logit-lens (identity transport) instead of J-lens.
-- Figure D1–D3: Same structure as Figures 5A–C
-- Report: Do H1–H3 hold under logit-lens? (Expected: yes, if J-lens findings are robust)
+Not run in this session.
 
 ### D.2 Band Sensitivity
-Rerun 03_analyze.py with alternative band definitions: [0.15, 0.95], [0.30, 0.85].
-- Table D1: Paired test results (median diff, p-value) for each band choice
-- Expected: qualitative findings hold across reasonable band choices
+Not run in this session (primary band fixed at [0.25, 0.90]).
 
 ### D.3 Theta Sensitivity
-Rerun with --theta-pct 70, 80, 90.
-- Table D2: Do H1–H3 results depend heavily on θ choice?
-- Expected: robust to reasonable θ choices
+Not run in this session (primary θ = 80th percentile).
 
 ---
 
 ## Interpretation & Scope
 
-(To be written after data available; sketch below)
-
-**Key findings**: The three hypotheses **[SUMMARY: which supported, which not]** suggest that...
-
-[Space for narrative on what commitment curves reveal about internal processing, alignment with human-like revision, implications for uncertainty quantification, etc.]
+**Key findings**: On Qwen3-1.7B with a fitted Jacobian lens, false-lead prompts produce a **robust increase in internal oscillation (H2)**. Delayed commitment (H1) and larger dissociation gaps (H3) move in the predicted direction (+2 and +4 layers median paired differences) but do **not** reach α=0.05 with the current complete-pair counts (n=6). Distractor-lead medians (2.5 → 11.0 layers) support that false-lead stimuli are, on average, more tempting under the lens.
 
 **Limitations**:
-- Small model size (1.7B); frontier models may differ
-- Single-token targets only; multi-token extensions unclear
-- Mostly English stimuli; cross-lingual generalization open
-- Correlational analysis; causal ablations on subset only
+- Small model size (1.7B); Qwen 4B deferred
+- H1/H3 underpowered due to undefined ℓ*/gap on many items
+- Arithmetic answers rewritten to single-token English number words for Qwen3 tokenization; behavioral top-1 rates for arithmetic remain weaker than factual/garden-path
+- Stimuli repaired for Qwen3 single-token constraints (see repo notes / `stimuli.json`)
+- No Natural Stories external validation in this run
+- Hard-control specificity not evaluable in this holdout split
 
 **Implications**:
-- Hallucination detection: low ΔH at emission → model never committed
-- Uncertainty flagging: pre-answer oscillation → model unsure
-- Connects to broader agentic-auditing agenda (pre-output signal readable outside answer channel)
+- Oscillation is a usable pre-output signature of conflict/revision under false leads
+- Dissociation-gap and delayed-commitment claims need more complete pairs (or alternate operationalizations) before strong claims
+- Connects to agentic-auditing agenda: readable internal uncertainty outside the final answer token
