@@ -30,6 +30,5 @@ __pycache__/
 out/*.tmp.*
 out/fit_ckpt.pt.tmp.*
 
-# Allow experiment logs + keep backups for provenance
+# Allow experiment logs
 !out/*.log
-!stimuli.json.bak

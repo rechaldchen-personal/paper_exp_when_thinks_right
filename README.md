@@ -1,114 +1,91 @@
 # Commitment Dynamics in the J-Space
 
-**Status**: 94% complete. Paper drafted. GPU experiments pending.
+When do language models commit to answers, and what happens under false-lead
+temptation? We probe Qwen3 with a Jacobian lens on matched stimulus pairs
+(straightforward vs. false-lead) and test three pre-registered hypotheses about
+commitment layer (H1), internal oscillation (H2), and the confidence–correctness
+dissociation gap (H3).
 
-**Current Session**: Waiting for API resolution to proceed with GPU phase.
-
----
-
-## 🎯 What's Next?
-
-### ✅ ALL CPU-ONLY WORK COMPLETE
-
-Stimuli expanded (77 → 163), validated, documented. Scripts enhanced. Full pipeline tested.
-
-### 📖 Read This First
-
-**`CPU_WORK_COMPLETE.md`** — Comprehensive status of all completed CPU work
-
-Then: **`experiments/GPU_EXECUTION_PLAN.md`** — Step-by-step GPU commands (ready to run)
-
-Or quick version: **`GPU_COMMANDS.sh`** — Copy-paste commands
+**Status**: First GPU run on Qwen3-1.7B complete (2026-07-17). Results are in
+the paper draft. H2 strongly supported; H1/H3 directional but underpowered —
+see "Known issues" below for what needs fixing before the next run.
 
 ---
 
-## 📁 Structure
+## Results so far (Qwen3-1.7B, holdout set)
 
-### `/paper/` — Paper Content
-Ready-to-use sections for final paper compilation:
-- `INTRODUCTION_AND_RELATED_WORK.md` — Sections 1–2
-- `METHODS_DRAFT.md` — Section 4
-- `DISCUSSION_OUTLINE.md` — Section 6 (skeleton)
-- `RESULTS_TEMPLATE.md` — Section 5 (awaiting GPU data)
-- `FIGURE_GENERATION_GUIDE.md` — All 7 figures (templates + code)
+| Hypothesis | Median Δ (FL − SF) | Wilcoxon | n pairs | Verdict |
+|---|---|---|---|---|
+| H1: later commitment (ℓ*) | +2.0 layers | p = 0.0625 | 6 | Directional, not significant |
+| H2: more oscillation | +2.0 changes | p = 4.89×10⁻⁵ | 32 | **Supported** |
+| H3: larger gap (ℓ* − ℓ_H) | +4.0 layers | p = 0.0625 | 6 | Directional, not significant |
 
-### `/experiments/` — GPU Phase & Analysis
-Everything needed to run GPU experiments:
-- `README_GPU_PHASE.md` — Step-by-step GPU execution (7 phases)
-- `PRE_REGISTRATION.md` — **CRITICAL** — Locked analysis plan (prevents p-hacking)
-- `workspace_band_guide.md` — Workspace band identification procedure
-- `natural_stories_plan.md` — External validity via human reading times (future)
+Full numbers: `out/analysis_real/report.json`; figures: `out/figures/`;
+narrative: `paper/RESULTS_TEMPLATE.md` (filled with real data).
 
-### Root Directory
-- `API_RESOLUTION_GUIDE.md` — API research checklist (your next task)
-- `CLAUDE.md` — Progress tracker & session log
-- `stimuli.json` — 77 validated stimuli (29 factual, 24 arithmetic, 24 garden-path)
+## Known issues blocking stronger claims
 
-### Code
-- `00_generate_mock_traces.py` — Mock trace generator (validation)
-- `01_fit_lens.py` — Lens fitting (GPU)
-- `02_run_experiment.py` — Trace collection (GPU)
-- `03_analyze.py` — Analysis pipeline (CPU)
-- `lens_utils.py` — Dual-lens utilities
-- `02_run_experiment_cot.py` — CoT variant (optional)
+1. **Arithmetic stimuli behaviorally fail** (1/56 correct): the model's top-1
+   after `"... equals"` is a bare space token, so ℓ* is undefined for nearly all
+   arithmetic items. Fix the prompt format (or query position) and re-run.
+2. **H1/H3 are power-limited, not effect-limited**: only 6 complete pairs have
+   ℓ* defined in both conditions; p = 0.0625 is the theoretical floor at n = 6.
+   All 6 pairs moved in the predicted direction. Fixing (1) should fix this.
+3. **Hard controls contribute no data**: only 3 items exist and all landed in
+   the dev split (holdout n = 0). Expand to ~10+ or drop the specificity claim.
+4. **Promised robustness checks not yet run**: logit-lens secondary readout
+   (`lens_utils.py`, not integrated) and per-model workspace-band
+   identification (band is the pre-registered default [0.25, 0.90]).
 
----
+## Repository layout
 
-## ✅ Project Status
+```
+stimuli.json               163 stimuli (51 factual, 56 arithmetic, 56 garden-path)
+00_generate_mock_traces.py Synthetic traces for CPU-only pipeline validation
+01_fit_lens.py             Fit Jacobian lens (GPU, ~2 h)
+02_run_experiment.py       Collect lens traces on stimuli (GPU, ~20 min)
+02_run_experiment_cot.py   CoT variant scaffold (H4, not yet run)
+03_analyze.py              Metrics + Wilcoxon tests (CPU)
+generate_figures.py        Publication figures from out/analysis_real/ (CPU)
+lens_utils.py              Logit-lens utilities (pending integration)
+paper/                     Paper sections (see paper/INDEX.md)
+experiments/               PRE_REGISTRATION.md (locked), GPU re-run guide,
+                           workspace band guide, Natural Stories plan
+out/                       Lens (git-lfs), traces, analysis, figures, logs
+```
 
-| Component | Status | Location |
-|-----------|--------|----------|
-| Hypotheses | ✅ Pre-registered | `experiments/PRE_REGISTRATION.md` |
-| Stimuli | ✅ 77 items validated | `stimuli.json` |
-| Methods | ✅ Complete (2500 words) | `paper/METHODS_DRAFT.md` |
-| Intro/Related Work | ✅ Complete (1400 words) | `paper/INTRODUCTION_AND_RELATED_WORK.md` |
-| Discussion | ✅ Skeleton ready | `paper/DISCUSSION_OUTLINE.md` |
-| Results | ⏳ Template ready | `paper/RESULTS_TEMPLATE.md` |
-| Figures | ✅ 7 templates + code | `paper/FIGURE_GENERATION_GUIDE.md` |
-| Mock Validation | ✅ All H1–H3 supported | `00_generate_mock_traces.py` |
-| APIs | ⏳ Needs resolution | `API_RESOLUTION_GUIDE.md` |
+## Environment
 
----
+```bash
+./setup_env.sh                     # or: python3 -m venv venv && pip install -r requirements.txt
+source venv/bin/activate
+python verify_env.py               # checks CPU deps; GPU deps only needed for 01/02
+pip install torch transformers datasets   # GPU phases only
+```
 
-## 📋 Critical Path to Submission
+## Reproducing the pipeline
 
-1. **Resolve APIs** (2-3 hours) ← **START HERE**
-   - Follow `API_RESOLUTION_GUIDE.md`
-   
-2. **GPU Experiments** (3.5 hours)
-   - Follow `experiments/README_GPU_PHASE.md`
-   
-3. **Fill Results** (2-3 hours)
-   - Use real numbers in `paper/RESULTS_TEMPLATE.md`
-   
-4. **Final Review & Submit** (1 hour)
+```bash
+# CPU-only sanity check of the analysis pipeline
+python 00_generate_mock_traces.py
+python 03_analyze.py --traces out/traces_mock.json --outdir out/analysis_mock
 
-**Total: ~11 hours (mostly GPU waiting)**
+# Full pipeline (GPU) — see experiments/README_GPU_PHASE.md
+python 02_run_experiment.py --model Qwen/Qwen3-1.7B --validate   # tokenization check, CPU
+python 01_fit_lens.py --model Qwen/Qwen3-1.7B --n-prompts 1000 --out out/lens_qwen3_1p7b.pt
+python 02_run_experiment.py --model Qwen/Qwen3-1.7B --lens out/lens_qwen3_1p7b.pt --out out/traces.json
+python 03_analyze.py --traces out/traces.json --outdir out/analysis_real --dev-split 0.6
+python generate_figures.py
+```
 
----
+The analysis plan (band, θ procedure, dev/holdout split, tests) is locked in
+`experiments/PRE_REGISTRATION.md` — do not tune it post hoc.
 
-## 💡 Key Insights
+## Next steps
 
-- **Paper is 94% written** — Just need GPU data to fill Results
-- **All hypotheses pre-registered** — Prevents p-hacking
-- **Analysis is locked in** — See `experiments/PRE_REGISTRATION.md`
-- **Mock validation works** — All H1–H3 show p < 0.01
-- **GPU is only 3.5 hours** — Trace collection is fast
-
----
-
-## 📖 Where to Find Things
-
-**"What do I do next?"** → Read `API_RESOLUTION_GUIDE.md`
-
-**"How do I run GPU experiments?"** → Read `experiments/README_GPU_PHASE.md`
-
-**"How do I prevent p-hacking?"** → Read `experiments/PRE_REGISTRATION.md`
-
-**"Where are my paper sections?"** → See `/paper/` folder
-
-**"What's my progress?"** → See `CLAUDE.md`
-
----
-
-**Report back when APIs are resolved. Everything else is ready to go.** 🚀
+1. Fix arithmetic prompt format; re-validate behavioral accuracy per family.
+2. Expand hard controls (~10+ items).
+3. Re-run traces + analysis on Qwen3-1.7B (lens already fitted, ~30 min GPU).
+4. Integrate logit-lens robustness readout; band identification (Appendix C).
+5. Optional: Qwen3-4B replication; Natural Stories external validity.
+6. Update `paper/DISCUSSION_OUTLINE.md` placeholders with final numbers.

@@ -39,19 +39,20 @@ USAGE:
     python 03_analyze.py \
         --traces out/traces.json \
         --dev-split 0.6 \
-        --out out/analysis_real/
+        --outdir out/analysis_real
 
-    # Quick validation (for testing): no split
+    # Quick validation (for testing): no split (theta on full data)
     python 03_analyze.py \
         --traces out/traces.json \
-        --out out/analysis_test/
+        --outdir out/analysis_test
 
 PARAMETERS:
     --traces FILE              : input traces.json from 02_run_experiment.py
-    --dev-split FRAC           : fraction for dev set (default 0.6)
+    --dev-split FRAC           : fraction for dev set (default: None = no split)
+    --split-seed N             : random seed for the split (default 42)
     --band LO HI               : workspace band as fractions (default 0.25 0.90)
-    --out DIR                  : output directory (default out/analysis/)
-    --theta-percentile PCT     : confidence threshold (default 80)
+    --outdir DIR               : output directory (default out/analysis)
+    --theta-pct PCT            : dH percentile for theta (default 80)
 """
 
 import argparse
