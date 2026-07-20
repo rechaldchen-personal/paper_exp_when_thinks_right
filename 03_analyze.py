@@ -112,11 +112,80 @@ def metrics_for(rec, theta, lo=0.25, hi=0.90):
     }
 
 
-def paired_tests(by_pair, key):
-    """Wilcoxon signed-rank on (false_lead - straightforward) per pair."""
-    from scipy import stats
+def _signed_ranks(diffs):
+    """Signed ranks of non-zero differences, mid-ranks for ties (standard Wilcoxon)."""
+    nz = [d for d in diffs if d != 0]
+    order = sorted(range(len(nz)), key=lambda i: abs(nz[i]))
+    ranks = [0.0] * len(nz)
+    i = 0
+    while i < len(order):
+        j = i
+        while j + 1 < len(order) and abs(nz[order[j + 1]]) == abs(nz[order[i]]):
+            j += 1
+        mid = (i + j) / 2.0 + 1.0          # mid-rank over the tied block
+        for k in range(i, j + 1):
+            ranks[order[k]] = mid
+        i = j + 1
+    return nz, ranks
+
+
+def exact_signed_rank_test(diffs, alternative="greater"):
+    """Wilcoxon signed-rank test, computed exactly by enumerating sign flips.
+
+    Implemented here rather than via scipy.stats.wilcoxon because scipy's
+    `method="auto"` heuristic changed across versions: with zeros/ties at small
+    n it silently falls back to a normal approximation it simultaneously warns
+    is invalid, so the same data produced p=0.0625 on the GPU box (scipy from
+    the run-1 image) and p=0.0339 locally (scipy 1.13.1). This routine is
+    deterministic and version-independent.
+
+    Convention: zeros are dropped (standard `zero_method="wilcox"`), ties get
+    mid-ranks, and the statistic is W+ (sum of positive signed ranks). The
+    exact null enumerates all 2^n sign assignments, which is the correct
+    reference distribution for a paired design under the sharp null.
+
+    `alternative="greater"` tests the PRE-REGISTERED directional prediction
+    (false_lead > straightforward); see experiments/PRE_REGISTRATION.md, which
+    specifies "p < 0.05 (one-tailed)" for H1-H3.
+    """
+    nz, ranks = _signed_ranks(diffs)
+    n = len(nz)
+    if n == 0:
+        return {"n_nonzero": 0, "W_plus": 0.0, "p": 1.0,
+                "method": "degenerate (all differences zero)"}
+
+    w_plus = sum(r for d, r in zip(nz, ranks) if d > 0)
+    total = sum(ranks)
+
+    # Exact null via subset-sum DP over the signed ranks. Mid-ranks are
+    # half-integers, so work in doubled units to stay on exact integer counts;
+    # this is exact for any n we will realistically see (cost is O(n * sum)),
+    # unlike 2^n enumeration.
+    scaled = [int(round(2 * r)) for r in ranks]
+    counts = [0] * (sum(scaled) + 1)
+    counts[0] = 1
+    for s in scaled:
+        for v in range(len(counts) - 1, s - 1, -1):
+            if counts[v - s]:
+                counts[v] += counts[v - s]
+    denom = 2 ** n
+    w2 = int(round(2 * w_plus))
+    p_greater = sum(counts[w2:]) / denom
+    p_less = sum(counts[:w2 + 1]) / denom
+    p_two = min(1.0, 2 * min(p_greater, p_less))
+    method = f"exact (subset-sum DP, n={n})"
+
+    p = {"greater": p_greater, "less": p_less, "two-sided": p_two}[alternative]
+    return {"n_nonzero": n, "W_plus": float(w_plus),
+            "W_min": float(min(w_plus, total - w_plus)),
+            "p": float(p), "p_one_sided_greater": float(p_greater),
+            "p_two_sided": float(p_two), "method": method}
+
+
+def paired_tests(by_pair, key, alternative="greater"):
+    """Paired signed-rank test on (false_lead - straightforward) per pair."""
     diffs = []
-    for pid, conds in by_pair.items():
+    for pid, conds in sorted(by_pair.items()):
         if "straightforward" in conds and "false_lead" in conds:
             a, b = conds["straightforward"].get(key), conds["false_lead"].get(key)
             if a is not None and b is not None:
@@ -124,19 +193,9 @@ def paired_tests(by_pair, key):
     if len(diffs) < 5:
         return {"n_pairs": len(diffs), "note": "need >=5 complete pairs",
                 "diffs": diffs}
-    # Handle edge case: all diffs are zero or all have same sign
-    nonzero_diffs = [d for d in diffs if d != 0]
-    if not nonzero_diffs:
-        return {"n_pairs": len(diffs), "median_diff": 0.0, "note": "no non-zero differences",
-                "wilcoxon_stat": 0.0, "p": 1.0}
-    try:
-        stat, p = stats.wilcoxon(diffs)
-    except ValueError:
-        # Fallback for edge cases in older scipy versions
-        return {"n_pairs": len(diffs), "median_diff": float(np.median(diffs)),
-                "note": "Wilcoxon test skipped (edge case)", "wilcoxon_stat": None, "p": None}
+    res = exact_signed_rank_test(diffs, alternative=alternative)
     return {"n_pairs": len(diffs), "median_diff": float(np.median(diffs)),
-            "wilcoxon_stat": float(stat), "p": float(p)}
+            "alternative": alternative, **res}
 
 
 def heatmap(rec, outpath):
@@ -192,7 +251,11 @@ def main():
     import random
     if args.dev_split is not None:
         random.seed(args.split_seed)
-        pair_ids = list(set(r["pair_id"] for r in records))
+        # sorted(), not list(set(...)): Python randomizes str hashing per
+        # process (PYTHONHASHSEED), so set iteration order — and therefore the
+        # shuffled split — varied between runs despite the fixed seed. Run 1's
+        # reported split was not reproducible; sorting makes it so.
+        pair_ids = sorted(set(r["pair_id"] for r in records))
         random.shuffle(pair_ids)
         dev_cutoff = int(len(pair_ids) * args.dev_split)
         dev_ids = set(pair_ids[:dev_cutoff])

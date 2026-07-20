@@ -49,9 +49,10 @@ def boxplot(field, ylabel, title, color, test_key, outname, unit_label):
     test = report["tests"][test_key]
     support = "SUPPORTED" if test["p"] < 0.05 else "NOT SIG. (p>=0.05)"
     stats_text = (
-        f"Wilcoxon p={test['p']:.4g}\n"
+        f"exact signed-rank, one-tailed\n"
+        f"p={test['p']:.4g}\n"
         f"Median Δ={test['median_diff']:.1f} {unit_label}\n"
-        f"n_pairs={test['n_pairs']}\n{support}"
+        f"n_pairs={test['n_pairs']} (nonzero {test['n_nonzero']})\n{support}"
     )
     ax.text(
         0.98,
@@ -182,9 +183,11 @@ def main():
             {
                 "Hypothesis": test["hypothesis"].split(":")[0].strip(),
                 "n_pairs": test["n_pairs"],
+                "n_nonzero": test["n_nonzero"],
                 "Median_delta": f"{test['median_diff']:.1f}",
-                "Wilcoxon_W": test["wilcoxon_stat"],
-                "p": f"{test['p']:.6g}",
+                "W_plus": test["W_plus"],
+                "p_one_tailed": f"{test['p']:.6g}",
+                "p_two_tailed": f"{test['p_two_sided']:.6g}",
                 "Support": "YES" if test["p"] < 0.05 else "NO (p>=0.05)",
             }
         )
