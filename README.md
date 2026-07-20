@@ -39,10 +39,13 @@ but they still rest on the old broken stimuli, so they are diagnostic only.
 1. **Re-run the GPU traces** on the new stimuli (lens already fitted, ~30 min).
 2. **Amend the pre-registration** before that run — see "Next steps".
 3. **H2's mechanism is unverified**: a target-vs-distractor (2AFC) oscillation
-   metric shows nothing (p≈0.67), so the measured top-1 churn is among
-   arbitrary tokens, not wavering between the candidate answers. The
+   metric does not reach significance where the primary metric does, so the
+   measured top-1 churn may be among arbitrary tokens rather than wavering
+   between the candidate answers. Confirmatory metrics are now implemented and
+   pre-registered, with the permitted claim for each outcome fixed in advance
+   (`experiments/PRE_REGISTRATION_AMENDMENT.md` §5). Until run 2 settles it, the
    "revision between candidates" reading in `paper/ABSTRACT.md` and
-   `paper/DISCUSSION_OUTLINE.md` is not currently supported.
+   `paper/DISCUSSION_OUTLINE.md` is not supported.
 4. **Promised robustness checks not yet run**: logit-lens secondary readout
    (`lens_utils.py`, not integrated) and per-model workspace-band
    identification (band is the pre-registered default [0.25, 0.90]).
@@ -101,13 +104,12 @@ The analysis plan (band, θ procedure, dev/holdout split, tests) is locked in
 
 ## Next steps
 
-1. **Amend the pre-registration** (before any re-run, so it is not post hoc):
-   record the matched-pair requirement, the corrected one-tailed exact test,
-   a restricted-vocabulary ℓ* as a pre-specified secondary metric, and the 2AFC
-   oscillation metric as the confirmatory test of the revision hypothesis.
+1. ✅ **Pre-registration amended and locked** before the re-run —
+   `experiments/PRE_REGISTRATION_AMENDMENT.md`.
 2. **Re-run traces on the new stimuli** (Qwen3-1.7B; lens already fitted).
-   Check per-family behavioural accuracy before analyzing — arithmetic is the
-   family most likely to still misbehave.
+   Run the per-family behavioural pre-screen first: amendment §8 makes a family
+   whose straightforward condition mostly misses the target a stop condition,
+   not something to analyze around.
 3. Re-analyze, regenerate figures, and only then rewrite Results/Abstract.
 4. Integrate logit-lens robustness readout; band identification (Appendix C).
 5. Reconcile `paper/DISCUSSION_OUTLINE.md` with whatever the re-run shows.

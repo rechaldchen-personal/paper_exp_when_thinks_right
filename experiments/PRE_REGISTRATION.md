@@ -3,6 +3,13 @@
 **Date**: 2026-07-14  
 **Commitment Dynamics Paper — Commitment Layer Identification Study**
 
+> ⚠️ **AMENDED 2026-07-19 — read `PRE_REGISTRATION_AMENDMENT.md` alongside this
+> document.** Run 1 is withdrawn (invalid stimuli and a defective analysis
+> pipeline). The amendment replaces the stimulus set (§7 sample size here is
+> superseded), corrects the test implementation to the one-tailed exact test
+> this document already specified, and adds confirmatory 2AFC metrics. The
+> hypotheses, band, θ procedure, and split in this document are unchanged.
+
 This document pre-specifies hypotheses, analysis procedures, and robustness criteria **before viewing real GPU traces**.
 
 ---

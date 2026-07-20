@@ -80,6 +80,8 @@ def metrics_for(rec, theta, lo=0.25, hi=0.90):
     t_rank = np.array([rec["target_rank"][i][q] for i in range(len(layers))])
     d_rank = np.array([rec["distractor_rank"][i][q] for i in range(len(layers))])
     top1 = [rec["top1_id"][i][q] for i in range(len(layers))]
+    t_logp = np.array([rec["target_logp"][i][q] for i in range(len(layers))])
+    d_logp = np.array([rec["distractor_logp"][i][q] for i in range(len(layers))])
 
     # confidence-collapse layer
     l_H = next((layers[i] for i in band if dH[i] > theta), None)
@@ -99,11 +101,37 @@ def metrics_for(rec, theta, lo=0.25, hi=0.90):
             if top1[a] != top1[b]:
                 osc += 1
 
+    # ---- confirmatory 2AFC readout (secondary; see PRE_REGISTRATION_AMENDMENT)
+    # Restricting the readout to {target, distractor} asks directly whether the
+    # model prefers the correct answer over the tempting one, which the
+    # registered global-argmax metrics cannot distinguish from churn among
+    # unrelated vocabulary. Definitions mirror the primary ones exactly so the
+    # two are comparable: same band, same "stable through end of band" rule for
+    # commitment, same "after l_H" window for oscillation.
+    prefers_target = t_logp > d_logp
+
+    l_star_2afc = None
+    for j, i in enumerate(band):
+        if all(prefers_target[k] for k in band[j:]):
+            l_star_2afc = layers[i]
+            break
+
+    osc_2afc = 0
+    if l_H is not None:
+        after = [i for i in band if layers[i] >= l_H]
+        for a, b in zip(after, after[1:]):
+            if prefers_target[a] != prefers_target[b]:
+                osc_2afc += 1
+
     return {
         "l_H": l_H,
         "l_star": l_star,
         "gap": (l_star - l_H) if (l_star is not None and l_H is not None) else None,
         "oscillation": osc,
+        "l_star_2afc": l_star_2afc,
+        "gap_2afc": (l_star_2afc - l_H)
+                    if (l_star_2afc is not None and l_H is not None) else None,
+        "oscillation_2afc": osc_2afc,
         "distractor_lead_layers": int(sum(d_rank[i] < t_rank[i] for i in band)),
         "dH_query": dH.tolist(),
         "t_rank_query": t_rank.tolist(),
@@ -298,17 +326,28 @@ def main():
                 if m["condition"] == cond and m.get(key) is not None]
         return (float(np.median(vals)), len(vals)) if vals else (None, 0)
 
-    report = {"theta": theta, "band": [lo, hi], "conditions": {}, "tests": {}}
+    report = {"theta": theta, "band": [lo, hi], "conditions": {},
+              "tests": {}, "confirmatory_2afc": {}}
     for cond in ("straightforward", "false_lead", "hard_control"):
         report["conditions"][cond] = {
             k: summarize(cond, k)
             for k in ("l_star", "l_H", "gap", "oscillation",
-                      "distractor_lead_layers")
+                      "distractor_lead_layers",
+                      "l_star_2afc", "gap_2afc", "oscillation_2afc")
         }
+    # Primary: the pre-registered global-argmax metrics.
     for key, hyp in [("l_star", "H1: later commitment under false lead"),
                      ("gap", "H3: larger dissociation gap under false lead"),
                      ("oscillation", "H2: more oscillation under false lead")]:
         report["tests"][key] = {"hypothesis": hyp, **paired_tests(by_pair, key)}
+    # Confirmatory: same hypotheses read out over {target, distractor} only.
+    # Reported unconditionally, whichever way they come out.
+    for key, hyp in [
+            ("l_star_2afc", "H1-C: later target-over-distractor commitment"),
+            ("gap_2afc", "H3-C: larger dissociation gap (2AFC commitment)"),
+            ("oscillation_2afc", "H2-C: more target/distractor preference flips")]:
+        report["confirmatory_2afc"][key] = {"hypothesis": hyp,
+                                            **paired_tests(by_pair, key)}
 
     (outdir / "report.json").write_text(json.dumps(report, indent=2))
     (outdir / "per_stimulus_metrics.json").write_text(
@@ -317,9 +356,12 @@ def main():
     print("\n=== condition medians (value, n) ===")
     for cond, d in report["conditions"].items():
         print(f"  {cond:16s} " + "  ".join(f"{k}={v}" for k, v in d.items()))
-    print("\n=== paired tests (false_lead − straightforward) ===")
+    print("\n=== PRIMARY (pre-registered) tests (false_lead − straightforward) ===")
     for k, t in report["tests"].items():
         print(f"  {k:12s} {t}")
+    print("\n=== CONFIRMATORY 2AFC tests (target vs distractor only) ===")
+    for k, t in report["confirmatory_2afc"].items():
+        print(f"  {k:18s} {t}")
     print(f"\nHeatmaps + report -> {outdir}/")
 
 

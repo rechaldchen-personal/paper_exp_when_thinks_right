@@ -27,14 +27,14 @@ session-by-session log (the old CLAUDE.md tracker was condensed on 2026-07-19).
 
 ## Priority queue (in order)
 
-1. **Amend the pre-registration BEFORE re-running** — amending after seeing new
-   data is p-hacking. Record: the matched-pair requirement; the corrected
-   one-tailed exact test; a restricted-vocabulary ℓ* as a pre-specified
-   secondary metric (coverage 46/64 vs 29/68, fixes the H1/H3 power problem);
-   and the 2AFC oscillation metric as the confirmatory test of the revision
-   hypothesis.
+1. ✅ **Pre-registration amended and locked** —
+   `experiments/PRE_REGISTRATION_AMENDMENT.md` (2026-07-19). Primary metrics
+   unchanged; confirmatory 2AFC metrics added and implemented in
+   `03_analyze.py`; interpretation rules for every primary×confirmatory outcome
+   fixed in advance; run 1 formally withdrawn.
 2. **Re-run GPU traces** on the new stimuli, then re-analyze and regenerate
-   figures. Check per-family behavioural accuracy *before* analyzing.
+   figures. Run the **per-family behavioural pre-screen first** — amendment §8
+   makes it a stop condition, not a formality.
 3. **Rewrite Results/Abstract** from the new numbers — not before.
 4. **Robustness checks promised in Methods 4.7** — logit-lens secondary readout
    (`lens_utils.py` not yet integrated into `02_run_experiment.py`) and
