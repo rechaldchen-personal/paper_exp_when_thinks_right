@@ -78,7 +78,19 @@ def main():
                         f"{tag}: query {expr!r} already demonstrated above")
                     break
 
-        n_pos = len(tok.encode(s["prompt"], add_special_tokens=False))
+        # R7: the answer must attach cleanly. If tokenizing prompt+target
+        # differs from tokenizing them separately, the id we score is not the
+        # id the model would emit, and every rank/logp for that item is wrong.
+        p_ids = tok.encode(s["prompt"], add_special_tokens=False)
+        for field in ("target", "distractor"):
+            f_ids = tok.encode(s[field], add_special_tokens=False)
+            joint = tok.encode(s["prompt"] + s[field], add_special_tokens=False)
+            if joint != p_ids + f_ids:
+                failures["R7 clean concatenation"].append(
+                    f"{tag}: prompt+{field} retokenizes "
+                    f"({joint[len(p_ids):]} != {f_ids})")
+
+        n_pos = len(p_ids)
         if n_pos == 0 or not (-n_pos <= s["query_position"] < n_pos):
             failures["R5 query position"].append(
                 f"{tag}: query_position={s['query_position']} vs {n_pos} tokens")

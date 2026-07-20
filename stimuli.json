@@ -976,7 +976,7 @@
   {
    "pair_id": "gp_sheep",
    "condition": "straightforward",
-   "prompt": "The sheep that were herded into the pen escaped. The animals that escaped were",
+   "prompt": "The sheep that were herded into the pen escaped. The animals that escaped were the",
    "family": "garden_path",
    "query_position": -1,
    "target": " sheep",
@@ -985,7 +985,7 @@
   {
    "pair_id": "gp_sheep",
    "condition": "false_lead",
-   "prompt": "The sheep herded into the pen escaped. The animals that escaped were",
+   "prompt": "The sheep herded into the pen escaped. The animals that escaped were the",
    "family": "garden_path",
    "query_position": -1,
    "target": " sheep",

@@ -152,7 +152,10 @@ def garden_path_pairs():
     out = []
     for noun, comp, phrase, pred, category, plural in GP_ITEMS:
         rel = "that were" if plural else "that was"
-        probe = f"The {category} " + ("were" if plural else "was the")
+        # Both forms must end on "the": a probe ending at the verb ("...that
+        # escaped were") invites ' the' as the top-1 continuation rather than
+        # the target noun. Run-1's one plural item failed exactly this way.
+        probe = f"The {category} " + ("were the" if plural else "was the")
         pid = f"gp_{noun}"
         common = dict(family="garden_path", query_position=-1,
                       target=" " + noun, distractor=" " + comp)

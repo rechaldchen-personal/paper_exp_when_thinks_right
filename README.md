@@ -55,7 +55,8 @@ but they still rest on the old broken stimuli, so they are diagnostic only.
 ```
 stimuli.json               156 stimuli: 72 matched pairs (24/family) + 12 hard controls
 build_stimuli.py           Regenerates stimuli.json; documents the run-1 defects
-validate_stimuli.py        Enforces the 6 design rules (CPU, tokenizer only)
+validate_stimuli.py        Enforces the 7 design rules (CPU, tokenizer only)
+prescreen.py               Behavioural gate on collected traces (amendment §8)
 00_generate_mock_traces.py Synthetic traces for CPU-only pipeline validation
 01_fit_lens.py             Fit Jacobian lens (GPU, ~2 h)
 02_run_experiment.py       Collect lens traces on stimuli (GPU, ~20 min)
@@ -106,10 +107,10 @@ The analysis plan (band, θ procedure, dev/holdout split, tests) is locked in
 
 1. ✅ **Pre-registration amended and locked** before the re-run —
    `experiments/PRE_REGISTRATION_AMENDMENT.md`.
-2. **Re-run traces on the new stimuli** (Qwen3-1.7B; lens already fitted).
-   Run the per-family behavioural pre-screen first: amendment §8 makes a family
-   whose straightforward condition mostly misses the target a stop condition,
-   not something to analyze around.
+2. **Re-run traces on the new stimuli** — follow
+   `experiments/README_GPU_PHASE.md` (run-2 procedure, ~35 min GPU since the
+   lens is already fitted). It has a hard gate at Step 4: `prescreen.py` must
+   pass per family before any analysis, per amendment §8.
 3. Re-analyze, regenerate figures, and only then rewrite Results/Abstract.
 4. Integrate logit-lens robustness readout; band identification (Appendix C).
 5. Reconcile `paper/DISCUSSION_OUTLINE.md` with whatever the re-run shows.
