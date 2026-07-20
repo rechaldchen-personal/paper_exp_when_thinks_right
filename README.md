@@ -6,33 +6,43 @@ temptation? We probe Qwen3 with a Jacobian lens on matched stimulus pairs
 commitment layer (H1), internal oscillation (H2), and the confidence–correctness
 dissociation gap (H3).
 
-**Status**: First GPU run on Qwen3-1.7B complete (2026-07-17). Results are in
-the paper draft. H2 strongly supported; H1/H3 directional but underpowered —
-see "Known issues" below for what needs fixing before the next run.
+**Status**: Run 1 (Qwen3-1.7B, 2026-07-17) is **superseded**. Diagnostics on
+2026-07-19 found defects in both the analysis pipeline and the stimulus set
+that invalidate its numbers. Both are now fixed; the run needs repeating.
+**Do not quote run-1 results.**
 
 ---
 
-## Results so far (Qwen3-1.7B, holdout set)
+## Where things stand
 
-| Hypothesis | Median Δ (FL − SF) | Wilcoxon | n pairs | Verdict |
-|---|---|---|---|---|
-| H1: later commitment (ℓ*) | +2.0 layers | p = 0.0625 | 6 | Directional, not significant |
-| H2: more oscillation | +2.0 changes | p = 4.89×10⁻⁵ | 32 | **Supported** |
-| H3: larger gap (ℓ* − ℓ_H) | +4.0 layers | p = 0.0625 | 6 | Directional, not significant |
+Run 1's traces were analyzed with a non-reproducible dev/holdout split, a
+two-tailed test where the pre-registration specifies one-tailed, and a
+scipy-version-dependent p-value. Separately, only 31 of 78 stimulus pairs were
+valid matched pairs. Details: `out/ANALYSIS_NOTE.md` (analysis) and
+`build_stimuli.py`'s docstring (stimuli).
 
-Full numbers: `out/analysis_real/report.json`; figures: `out/figures/`;
-narrative: `paper/RESULTS_TEMPLATE.md` (filled with real data).
+Re-analyzing the same traces with the corrected pipeline moved every result —
+H1's effect vanished, H3 became significant, H2 weakened by two orders of
+magnitude — which shows the outcome was dominated by an arbitrary split at
+n≈6–11 pairs. The corrected numbers live in `out/analysis_real/report.json`,
+but they still rest on the old broken stimuli, so they are diagnostic only.
 
-## Known issues blocking stronger claims
+**Fixed so far**
 
-1. **Arithmetic stimuli behaviorally fail** (1/56 correct): the model's top-1
-   after `"... equals"` is a bare space token, so ℓ* is undefined for nearly all
-   arithmetic items. Fix the prompt format (or query position) and re-run.
-2. **H1/H3 are power-limited, not effect-limited**: only 6 complete pairs have
-   ℓ* defined in both conditions; p = 0.0625 is the theoretical floor at n = 6.
-   All 6 pairs moved in the predicted direction. Fixing (1) should fix this.
-3. **Hard controls contribute no data**: only 3 items exist and all landed in
-   the dev split (holdout n = 0). Expand to ~10+ or drop the specificity claim.
+- Analysis is reproducible, exact, and one-tailed as pre-registered
+  (`03_analyze.py`); environment pinned and self-checking (`verify_env.py`).
+- Stimuli rebuilt as **72/72 strictly matched pairs**, balanced 24 per family,
+  plus 12 hard controls (`build_stimuli.py`), all passing `validate_stimuli.py`.
+
+**Still open**
+
+1. **Re-run the GPU traces** on the new stimuli (lens already fitted, ~30 min).
+2. **Amend the pre-registration** before that run — see "Next steps".
+3. **H2's mechanism is unverified**: a target-vs-distractor (2AFC) oscillation
+   metric shows nothing (p≈0.67), so the measured top-1 churn is among
+   arbitrary tokens, not wavering between the candidate answers. The
+   "revision between candidates" reading in `paper/ABSTRACT.md` and
+   `paper/DISCUSSION_OUTLINE.md` is not currently supported.
 4. **Promised robustness checks not yet run**: logit-lens secondary readout
    (`lens_utils.py`, not integrated) and per-model workspace-band
    identification (band is the pre-registered default [0.25, 0.90]).
@@ -40,12 +50,14 @@ narrative: `paper/RESULTS_TEMPLATE.md` (filled with real data).
 ## Repository layout
 
 ```
-stimuli.json               163 stimuli (51 factual, 56 arithmetic, 56 garden-path)
+stimuli.json               156 stimuli: 72 matched pairs (24/family) + 12 hard controls
+build_stimuli.py           Regenerates stimuli.json; documents the run-1 defects
+validate_stimuli.py        Enforces the 6 design rules (CPU, tokenizer only)
 00_generate_mock_traces.py Synthetic traces for CPU-only pipeline validation
 01_fit_lens.py             Fit Jacobian lens (GPU, ~2 h)
 02_run_experiment.py       Collect lens traces on stimuli (GPU, ~20 min)
 02_run_experiment_cot.py   CoT variant scaffold (H4, not yet run)
-03_analyze.py              Metrics + Wilcoxon tests (CPU)
+03_analyze.py              Metrics + exact signed-rank tests (CPU)
 generate_figures.py        Publication figures from out/analysis_real/ (CPU)
 lens_utils.py              Logit-lens utilities (pending integration)
 paper/                     Paper sections (see paper/INDEX.md)
@@ -57,25 +69,31 @@ out/                       Lens (git-lfs), traces, analysis, figures, logs
 ## Environment
 
 ```bash
-./setup_env.sh                     # or: python3 -m venv venv && pip install -r requirements.txt
-source venv/bin/activate
-python verify_env.py               # checks CPU deps; GPU deps only needed for 01/02
-pip install torch transformers datasets   # GPU phases only
+./setup_env.sh                        # builds venv/ with pinned versions
+venv/bin/python verify_env.py         # must print "analysis environment OK"
 ```
+
+Always invoke scripts as `venv/bin/python …`. Versions are pinned because an
+unpinned scipy silently changed p-values between machines; `verify_env.py`
+checks the interpreter, the pins, and the statistics themselves, and fails if
+run outside the repo venv.
 
 ## Reproducing the pipeline
 
 ```bash
-# CPU-only sanity check of the analysis pipeline
-python 00_generate_mock_traces.py
-python 03_analyze.py --traces out/traces_mock.json --outdir out/analysis_mock
+# Stimuli: rebuild and validate (CPU; needs the tokenizer, not torch)
+venv/bin/python build_stimuli.py --out stimuli.json
+venv/bin/python validate_stimuli.py --stimuli stimuli.json
+
+# Analysis pipeline smoke test (CPU)
+venv/bin/python 00_generate_mock_traces.py --out out/traces_mock.json
+venv/bin/python 03_analyze.py --traces out/traces_mock.json --outdir out/analysis_mock
 
 # Full pipeline (GPU) — see experiments/README_GPU_PHASE.md
-python 02_run_experiment.py --model Qwen/Qwen3-1.7B --validate   # tokenization check, CPU
 python 01_fit_lens.py --model Qwen/Qwen3-1.7B --n-prompts 1000 --out out/lens_qwen3_1p7b.pt
 python 02_run_experiment.py --model Qwen/Qwen3-1.7B --lens out/lens_qwen3_1p7b.pt --out out/traces.json
-python 03_analyze.py --traces out/traces.json --outdir out/analysis_real --dev-split 0.6
-python generate_figures.py
+venv/bin/python 03_analyze.py --traces out/traces.json --outdir out/analysis_real --dev-split 0.6
+venv/bin/python generate_figures.py
 ```
 
 The analysis plan (band, θ procedure, dev/holdout split, tests) is locked in
@@ -83,9 +101,14 @@ The analysis plan (band, θ procedure, dev/holdout split, tests) is locked in
 
 ## Next steps
 
-1. Fix arithmetic prompt format; re-validate behavioral accuracy per family.
-2. Expand hard controls (~10+ items).
-3. Re-run traces + analysis on Qwen3-1.7B (lens already fitted, ~30 min GPU).
+1. **Amend the pre-registration** (before any re-run, so it is not post hoc):
+   record the matched-pair requirement, the corrected one-tailed exact test,
+   a restricted-vocabulary ℓ* as a pre-specified secondary metric, and the 2AFC
+   oscillation metric as the confirmatory test of the revision hypothesis.
+2. **Re-run traces on the new stimuli** (Qwen3-1.7B; lens already fitted).
+   Check per-family behavioural accuracy before analyzing — arithmetic is the
+   family most likely to still misbehave.
+3. Re-analyze, regenerate figures, and only then rewrite Results/Abstract.
 4. Integrate logit-lens robustness readout; band identification (Appendix C).
-5. Optional: Qwen3-4B replication; Natural Stories external validity.
-6. Update `paper/DISCUSSION_OUTLINE.md` placeholders with final numbers.
+5. Reconcile `paper/DISCUSSION_OUTLINE.md` with whatever the re-run shows.
+6. Only after 1.7B is clean: Qwen3-4B replication; Natural Stories.

@@ -1,1480 +1,1409 @@
 {
-  "_notes": [
-    "Targets/distractors must each be a SINGLE token under Qwen3's tokenizer",
-    "(leading space matters for word tokens). Validated via 02_run_experiment.py --validate.",
-    "Arithmetic answers use English number words (Qwen3 digitizes multi-digit numerals).",
-    "query_position: -1 = last prompt token (lens readout precedes the answer).",
-    "Each pair shares pair_id; condition is 'straightforward' or 'false_lead'.",
-    "'hard_control' items are difficult WITHOUT a tempting distractor.",
-    "2026-07-17: re-validated / repaired for Qwen/Qwen3-1.7B tokenization."
-  ],
-  "stimuli": [
-    {
-      "pair_id": "capital_fr",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of France is",
-      "target": " Paris",
-      "distractor": " Amsterdam",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_fr",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of the country famous for tulips and canals — wait, no, I mean the one famous for the Eiffel Tower — is",
-      "target": " Paris",
-      "distractor": " Amsterdam",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_jp",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Japan is",
-      "target": " Tokyo",
-      "distractor": " Beijing",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_jp",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of the country that built the Great Wall — sorry, I meant the island nation famous for sushi and Mount Fuji — is",
-      "target": " Tokyo",
-      "distractor": " Beijing",
-      "query_position": -1
-    },
-    {
-      "pair_id": "legs_spider",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: A spider has",
-      "target": " eight",
-      "distractor": " six",
-      "query_position": -1
-    },
-    {
-      "pair_id": "legs_spider",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The creature people often call an insect, though it is actually an arachnid that spins webs, has",
-      "target": " eight",
-      "distractor": " six",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_horse",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The horse that was raced past the barn fell. The thing that fell was the",
-      "target": " horse",
-      "distractor": " barn",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_horse",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The horse raced past the barn fell. The thing that fell was the",
-      "target": " horse",
-      "distractor": " barn",
-      "query_position": -1
-    },
-    {
-      "pair_id": "hard_ctrl_currency",
-      "condition": "hard_control",
-      "family": "factual",
-      "prompt": "Fact: The currency used in the country shaped like a boot is the",
-      "target": " euro",
-      "distractor": " franc",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_uk",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of the United Kingdom is",
-      "target": " London",
-      "distractor": " Paris",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_uk",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of the country that was once the largest empire in history, but I'm thinking of a different European nation — the island nation — is",
-      "target": " London",
-      "distractor": " Paris",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_au",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Australia is",
-      "target": " Canberra",
-      "distractor": " Sydney",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_au",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of the largest country in the Southern Hemisphere, which is famous for Sydney Opera House and the Great Barrier Reef, is",
-      "target": " Canberra",
-      "distractor": " Sydney",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_de",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Germany is",
-      "target": " Berlin",
-      "distractor": " Munich",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_de",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of the country famous for beer and Bavaria — no wait, the political capital in the east — is",
-      "target": " Berlin",
-      "distractor": " Munich",
-      "query_position": -1
-    },
-    {
-      "pair_id": "ocean_largest",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The largest ocean on Earth is the",
-      "target": " Pacific",
-      "distractor": " Atlantic",
-      "query_position": -1
-    },
-    {
-      "pair_id": "ocean_largest",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The ocean that touches North America and Europe is vast, but the one that covers the most area is the",
-      "target": " Pacific",
-      "distractor": " Atlantic",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_sheep",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The sheep that were herded into the pen escaped. The animals that escaped were",
-      "target": " sheep",
-      "distractor": " pen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_sheep",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The sheep herded into the pen escaped. The animals that escaped were",
-      "target": " sheep",
-      "distractor": " pen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_boy",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The boy that was chased by the dog ran fast. The person who ran was the",
-      "target": " boy",
-      "distractor": " dog",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_boy",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The boy chased by the dog ran fast. The person who ran was the",
-      "target": " boy",
-      "distractor": " dog",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_cl",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Chile is",
-      "target": " Santiago",
-      "distractor": " Lima",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_cl",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of the country known for Machu Picchu — wait, no, I mean the long thin country on South America's Pacific coast — is",
-      "target": " Santiago",
-      "distractor": " Lima",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_eg",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Egypt is",
-      "target": " Cairo",
-      "distractor": " Alexandria",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_eg",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of the country home to the Pyramids near Alexandria and the Nile — wait, the actual capital is",
-      "target": " Cairo",
-      "distractor": " Alexandria",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_in",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of India is",
-      "target": " Delhi",
-      "distractor": " Mumbai",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_in",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of the most populous country in Asia, famous for Bollywood and finance — no, I meant the political center — is",
-      "target": " Delhi",
-      "distractor": " Mumbai",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_mx",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Mexico is",
-      "target": " Mexico",
-      "distractor": " Leon",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_mx",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of the country famous for beaches and the city of Leon — wait, the actual government seat is",
-      "target": " Mexico",
-      "distractor": " Leon",
-      "query_position": -1
-    },
-    {
-      "pair_id": "planet_largest",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The largest planet in our solar system is",
-      "target": " Jupiter",
-      "distractor": " Saturn",
-      "query_position": -1
-    },
-    {
-      "pair_id": "planet_largest",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The planet with the beautiful rings is quite large, but the one that dwarfs all others is",
-      "target": " Jupiter",
-      "distractor": " Saturn",
-      "query_position": -1
-    },
-    {
-      "pair_id": "element_lightest",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The lightest element is",
-      "target": " hydrogen",
-      "distractor": " helium",
-      "query_position": -1
-    },
-    {
-      "pair_id": "element_lightest",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The element that makes up most of the sun and is second lightest — sorry, the actual lightest — is",
-      "target": " hydrogen",
-      "distractor": " helium",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_cat",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The cat that was chased by the dog into the yard hid. The animal that hid was the",
-      "target": " cat",
-      "distractor": " dog",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_cat",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The cat chased by the dog into the yard hid. The animal that hid was the",
-      "target": " cat",
-      "distractor": " dog",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_flower",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The flower that was arranged by the gardener in the vase bloomed. The thing that bloomed was the",
-      "target": " flower",
-      "distractor": " vase",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_flower",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The flower arranged by the gardener in the vase bloomed. The thing that bloomed was the",
-      "target": " flower",
-      "distractor": " vase",
-      "query_position": -1
-    },
-    {
-      "pair_id": "hard_ctrl_president",
-      "condition": "hard_control",
-      "family": "factual",
-      "prompt": "Fact: The first president of a nation that declared independence in 1776 was",
-      "target": " Washington",
-      "distractor": " Jefferson",
-      "query_position": -1
-    },
-    {
-      "pair_id": "hard_ctrl_painting",
-      "condition": "hard_control",
-      "family": "factual",
-      "prompt": "Fact: The artist who painted the Mona Lisa was",
-      "target": " Leonardo",
-      "distractor": " Picasso",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_dog",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The dog that was hit by the car near the park limped. The animal that limped was the",
-      "target": " dog",
-      "distractor": " car",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_dog",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The dog hit by the car near the park limped. The animal that limped was the",
-      "target": " dog",
-      "distractor": " car",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_tree",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The tree that was cut down in the forest by the logger fell. The thing that fell was the",
-      "target": " tree",
-      "distractor": " logger",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_tree",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The tree cut down in the forest by the logger fell. The thing that fell was the",
-      "target": " tree",
-      "distractor": " logger",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_book",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The book that was read by the student during the exam was found. The thing that was found was the",
-      "target": " book",
-      "distractor": " exam",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_book",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The book read by the student during the exam was found. The thing that was found was the",
-      "target": " book",
-      "distractor": " exam",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_letter",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The letter that was mailed by the secretary before noon arrived. The thing that arrived was the",
-      "target": " letter",
-      "distractor": " secretary",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_letter",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The letter mailed by the secretary before noon arrived. The thing that arrived was the",
-      "target": " letter",
-      "distractor": " secretary",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_package",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The package that was delivered to the house on Monday was missing. The thing that was missing was the",
-      "target": " package",
-      "distractor": " house",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_package",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The package delivered to the house on Monday was missing. The thing that was missing was the",
-      "target": " package",
-      "distractor": " house",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_painting",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The painting that was hung on the wall in the museum attracted. The thing that attracted was the",
-      "target": " painting",
-      "distractor": " wall",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_painting",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The painting hung on the wall in the museum attracted. The thing that attracted was the",
-      "target": " painting",
-      "distractor": " wall",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_watch",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The watch that was repaired by the tailor yesterday stopped. The thing that stopped was the",
-      "target": " watch",
-      "distractor": " tailor",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_watch",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The watch repaired by the tailor yesterday stopped. The thing that stopped was the",
-      "target": " watch",
-      "distractor": " tailor",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_sp",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Spain is",
-      "target": " Madrid",
-      "distractor": " Barcelona",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_sp",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of Spain, which is also known for barcelona, is",
-      "target": " Madrid",
-      "distractor": " Barcelona",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_gr",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Greece is",
-      "target": " Athens",
-      "distractor": " Olympia",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_gr",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of Greece, which is also known for olympia, is",
-      "target": " Athens",
-      "distractor": " Olympia",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_pt",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Portugal is",
-      "target": " Lisbon",
-      "distractor": " Porto",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_pt",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of Portugal, which is also known for porto, is",
-      "target": " Lisbon",
-      "distractor": " Porto",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_ch",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Switzerland is",
-      "target": " Bern",
-      "distractor": " Zurich",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_ch",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of Switzerland, which is also known for zurich, is",
-      "target": " Bern",
-      "distractor": " Zurich",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_be",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Belgium is",
-      "target": " Brussels",
-      "distractor": " Hague",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_be",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of Belgium, which is often confused with the nearby Hague, is",
-      "target": " Brussels",
-      "distractor": " Hague",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_nl",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Netherlands is",
-      "target": " Amsterdam",
-      "distractor": " Rotterdam",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_nl",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of Netherlands, which is also known for rotterdam, is",
-      "target": " Amsterdam",
-      "distractor": " Rotterdam",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_se",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Sweden is",
-      "target": " Stockholm",
-      "distractor": " Oslo",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_se",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of Sweden, which people sometimes confuse with Oslo, is",
-      "target": " Stockholm",
-      "distractor": " Oslo",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_no",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Norway is",
-      "target": " Oslo",
-      "distractor": " Bergen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_no",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of Norway, which is also known for bergen, is",
-      "target": " Oslo",
-      "distractor": " Bergen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_dk",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Denmark is",
-      "target": " Copenhagen",
-      "distractor": " Oslo",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_dk",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of Denmark, which people sometimes confuse with Oslo, is",
-      "target": " Copenhagen",
-      "distractor": " Oslo",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_cz",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Czech Republic is",
-      "target": " Prague",
-      "distractor": " Vienna",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_cz",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of Czech Republic, which people sometimes confuse with Vienna, is",
-      "target": " Prague",
-      "distractor": " Vienna",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_pl",
-      "condition": "straightforward",
-      "family": "factual",
-      "prompt": "Fact: The capital of Poland is",
-      "target": " Warsaw",
-      "distractor": " Berlin",
-      "query_position": -1
-    },
-    {
-      "pair_id": "capital_pl",
-      "condition": "false_lead",
-      "family": "factual",
-      "prompt": "Fact: The capital of Poland, which people sometimes confuse with Berlin, is",
-      "target": " Warsaw",
-      "distractor": " Berlin",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_book",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The book was sold at the library that burned yesterday, killing all the book",
-      "target": " book",
-      "distractor": " shelf",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_book",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The book was sold at the library that burned yesterday, killing all the shelf",
-      "target": " shelf",
-      "distractor": " book",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_prize",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The prize won by the athlete who trained hard for years was the prize",
-      "target": " prize",
-      "distractor": " money",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_prize",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The prize won by the athlete who trained hard for years was the money",
-      "target": " money",
-      "distractor": " prize",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_bread",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The bread made by the baker who studied in France was the bread",
-      "target": " bread",
-      "distractor": " dough",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_bread",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The bread made by the baker who studied in France was the dough",
-      "target": " dough",
-      "distractor": " bread",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_student",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The student taught by the professor who won an award was a student",
-      "target": " student",
-      "distractor": " teacher",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_student",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The student taught by the professor who won an award was a teacher",
-      "target": " teacher",
-      "distractor": " student",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_painting",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The painting admired by critics who wrote negative reviews was the painting",
-      "target": " painting",
-      "distractor": " canvas",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_painting",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The painting admired by critics who wrote negative reviews was the canvas",
-      "target": " canvas",
-      "distractor": " painting",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_letter",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The letter sent by the diplomat who traveled overseas was letter",
-      "target": " letter",
-      "distractor": " message",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_letter",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The letter sent by the diplomat who traveled overseas was message",
-      "target": " message",
-      "distractor": " letter",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_poem",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The poem written by the poet who won the contest was poem",
-      "target": " poem",
-      "distractor": " verse",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_poem",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The poem written by the poet who won the contest was verse",
-      "target": " verse",
-      "distractor": " poem",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_song",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The song performed by the musician who played in Carnegie Hall was song",
-      "target": " song",
-      "distractor": " tune",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_song",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The song performed by the musician who played in Carnegie Hall was tune",
-      "target": " tune",
-      "distractor": " song",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_car",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The car driven by the mechanic who fixed engines was a car",
-      "target": " car",
-      "distractor": " truck",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_car",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The car driven by the mechanic who fixed engines was a truck",
-      "target": " truck",
-      "distractor": " car",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_house",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The house built by the contractor who worked on renovations was house",
-      "target": " house",
-      "distractor": " building",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_house",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The house built by the contractor who worked on renovations was building",
-      "target": " building",
-      "distractor": " house",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_flower",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The flower given by the gardener who tended roses was a flower",
-      "target": " flower",
-      "distractor": " plant",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_flower",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The flower given by the gardener who tended roses was a plant",
-      "target": " plant",
-      "distractor": " flower",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_dress",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The dress worn by the seamstress who sewed all day was a dress",
-      "target": " dress",
-      "distractor": " gown",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_dress",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The dress worn by the seamstress who sewed all day was a gown",
-      "target": " gown",
-      "distractor": " dress",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_watch",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The watch that was repaired by the tailor yesterday stopped. The thing that stopped was the",
-      "target": " watch",
-      "distractor": " clock",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_watch",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The watch repaired by the tailor yesterday stopped. The thing that stopped was the",
-      "target": " clock",
-      "distractor": " watch",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_picture",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The picture taken by the photographer who won awards was picture",
-      "target": " picture",
-      "distractor": " photo",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_picture",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The picture taken by the photographer who won awards was photo",
-      "target": " photo",
-      "distractor": " picture",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_story",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The story told by the author who published books was a story",
-      "target": " story",
-      "distractor": " tale",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_story",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The story told by the author who published books was a tale",
-      "target": " tale",
-      "distractor": " story",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_door",
-      "condition": "straightforward",
-      "family": "garden_path",
-      "prompt": "The door made by the carpenter who built furniture was door",
-      "target": " door",
-      "distractor": " gate",
-      "query_position": -1
-    },
-    {
-      "pair_id": "gp_door",
-      "condition": "false_lead",
-      "family": "garden_path",
-      "prompt": "The door made by the carpenter who built furniture was gate",
-      "target": " gate",
-      "distractor": " door",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_a",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 2 + 3 ) * 2 equals",
-      "target": " ten",
-      "distractor": " eight",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_a",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 2 + 3 * 2 equals",
-      "target": " eight",
-      "distractor": " ten",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_b",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 1 + 2 ) * 3 equals",
-      "target": " nine",
-      "distractor": " seven",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_b",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 1 + 2 * 3 equals",
-      "target": " seven",
-      "distractor": " nine",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_c",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 4 + 1 ) * 2 equals",
-      "target": " ten",
-      "distractor": " six",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_c",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 4 + 1 * 2 equals",
-      "target": " six",
-      "distractor": " ten",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_d",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 3 + 2 ) * 3 equals",
-      "target": " fifteen",
-      "distractor": " nine",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_d",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 3 + 2 * 3 equals",
-      "target": " nine",
-      "distractor": " fifteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_e",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 5 + 1 ) * 2 equals",
-      "target": " twelve",
-      "distractor": " seven",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_e",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 5 + 1 * 2 equals",
-      "target": " seven",
-      "distractor": " twelve",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_f",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 4 + 2 ) * 2 equals",
-      "target": " twelve",
-      "distractor": " eight",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_f",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 4 + 2 * 2 equals",
-      "target": " eight",
-      "distractor": " twelve",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_g",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 3 + 1 ) * 4 equals",
-      "target": " sixteen",
-      "distractor": " seven",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_g",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 3 + 1 * 4 equals",
-      "target": " seven",
-      "distractor": " sixteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_h",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 2 + 2 ) * 4 equals",
-      "target": " sixteen",
-      "distractor": " ten",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_h",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 2 + 2 * 4 equals",
-      "target": " ten",
-      "distractor": " sixteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_i",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 5 + 3 ) * 2 equals",
-      "target": " sixteen",
-      "distractor": " eleven",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_i",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 5 + 3 * 2 equals",
-      "target": " eleven",
-      "distractor": " sixteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_j",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 6 + 2 ) * 2 equals",
-      "target": " sixteen",
-      "distractor": " ten",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_j",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 6 + 2 * 2 equals",
-      "target": " ten",
-      "distractor": " sixteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_k",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 4 + 4 ) * 2 equals",
-      "target": " sixteen",
-      "distractor": " twelve",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_k",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 4 + 4 * 2 equals",
-      "target": " twelve",
-      "distractor": " sixteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_l",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 7 + 1 ) * 2 equals",
-      "target": " sixteen",
-      "distractor": " nine",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_l",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 7 + 1 * 2 equals",
-      "target": " nine",
-      "distractor": " sixteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_m",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 3 + 5 ) * 2 equals",
-      "target": " sixteen",
-      "distractor": " thirteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_m",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 3 + 5 * 2 equals",
-      "target": " thirteen",
-      "distractor": " sixteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_n",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 2 + 6 ) * 2 equals",
-      "target": " sixteen",
-      "distractor": " fourteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_n",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 2 + 6 * 2 equals",
-      "target": " fourteen",
-      "distractor": " sixteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_o",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 1 + 4 ) * 3 equals",
-      "target": " fifteen",
-      "distractor": " thirteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_o",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 1 + 4 * 3 equals",
-      "target": " thirteen",
-      "distractor": " fifteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_p",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 2 + 4 ) * 3 equals",
-      "target": " eighteen",
-      "distractor": " fourteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_p",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 2 + 4 * 3 equals",
-      "target": " fourteen",
-      "distractor": " eighteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_q",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 5 + 4 ) * 2 equals",
-      "target": " eighteen",
-      "distractor": " thirteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_q",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 5 + 4 * 2 equals",
-      "target": " thirteen",
-      "distractor": " eighteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_r",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 3 + 3 ) * 3 equals",
-      "target": " eighteen",
-      "distractor": " twelve",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_r",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 3 + 3 * 3 equals",
-      "target": " twelve",
-      "distractor": " eighteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_s",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 8 + 2 ) * 2 equals",
-      "target": " twenty",
-      "distractor": " twelve",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_s",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 8 + 2 * 2 equals",
-      "target": " twelve",
-      "distractor": " twenty",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_t",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 6 + 4 ) * 2 equals",
-      "target": " twenty",
-      "distractor": " fourteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_t",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 6 + 4 * 2 equals",
-      "target": " fourteen",
-      "distractor": " twenty",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_u",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 7 + 3 ) * 2 equals",
-      "target": " twenty",
-      "distractor": " thirteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_u",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 7 + 3 * 2 equals",
-      "target": " thirteen",
-      "distractor": " twenty",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_v",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 9 + 1 ) * 2 equals",
-      "target": " twenty",
-      "distractor": " eleven",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_v",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 9 + 1 * 2 equals",
-      "target": " eleven",
-      "distractor": " twenty",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_w",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 5 + 5 ) * 2 equals",
-      "target": " twenty",
-      "distractor": " fifteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_w",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 5 + 5 * 2 equals",
-      "target": " fifteen",
-      "distractor": " twenty",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_x",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 4 + 6 ) * 2 equals",
-      "target": " twenty",
-      "distractor": " sixteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_x",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 4 + 6 * 2 equals",
-      "target": " sixteen",
-      "distractor": " twenty",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_y",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 3 + 7 ) * 2 equals",
-      "target": " twenty",
-      "distractor": " seventeen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_y",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 3 + 7 * 2 equals",
-      "target": " seventeen",
-      "distractor": " twenty",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_z",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 2 + 8 ) * 2 equals",
-      "target": " twenty",
-      "distractor": " eighteen",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_z",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 2 + 8 * 2 equals",
-      "target": " eighteen",
-      "distractor": " twenty",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_x26",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 4 + 1 ) * 4 equals",
-      "target": " twenty",
-      "distractor": " eight",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_x26",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 4 + 1 * 4 equals",
-      "target": " eight",
-      "distractor": " twenty",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_x27",
-      "condition": "straightforward",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. ( 3 + 2 ) * 4 equals",
-      "target": " twenty",
-      "distractor": " eleven",
-      "query_position": -1
-    },
-    {
-      "pair_id": "arith_x27",
-      "condition": "false_lead",
-      "family": "arithmetic",
-      "prompt": "Examples: 1+1 equals two. 2+2 equals four. 3 + 2 * 4 equals",
-      "target": " eleven",
-      "distractor": " twenty",
-      "query_position": -1
-    }
-  ]
+ "_notes": "Strictly matched pairs: within a pair_id, target and distractor are identical across conditions and only the prompt framing changes. Regenerated by build_stimuli.py on 2026-07-19 after run-1 diagnostics; see that script's docstring for the three defects this replaces. Validate with validate_stimuli.py before any GPU run.",
+ "stimuli": [
+  {
+   "pair_id": "capital_au",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Australia is",
+   "target": " Canberra",
+   "distractor": " Sydney",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_au",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of the largest country in the Southern Hemisphere, which is famous for Sydney Opera House and the Great Barrier Reef, is",
+   "target": " Canberra",
+   "distractor": " Sydney",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_be",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Belgium is",
+   "target": " Brussels",
+   "distractor": " Hague",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_be",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of Belgium, which is often confused with the nearby Hague, is",
+   "target": " Brussels",
+   "distractor": " Hague",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_ch",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Switzerland is",
+   "target": " Bern",
+   "distractor": " Zurich",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_ch",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of Switzerland, which is also known for zurich, is",
+   "target": " Bern",
+   "distractor": " Zurich",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_cl",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Chile is",
+   "target": " Santiago",
+   "distractor": " Lima",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_cl",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of the country known for Machu Picchu — wait, no, I mean the long thin country on South America's Pacific coast — is",
+   "target": " Santiago",
+   "distractor": " Lima",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_cz",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Czech Republic is",
+   "target": " Prague",
+   "distractor": " Vienna",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_cz",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of Czech Republic, which people sometimes confuse with Vienna, is",
+   "target": " Prague",
+   "distractor": " Vienna",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_de",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Germany is",
+   "target": " Berlin",
+   "distractor": " Munich",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_de",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of the country famous for beer and Bavaria — no wait, the political capital in the east — is",
+   "target": " Berlin",
+   "distractor": " Munich",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_dk",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Denmark is",
+   "target": " Copenhagen",
+   "distractor": " Oslo",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_dk",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of Denmark, which people sometimes confuse with Oslo, is",
+   "target": " Copenhagen",
+   "distractor": " Oslo",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_eg",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Egypt is",
+   "target": " Cairo",
+   "distractor": " Alexandria",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_eg",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of the country home to the Pyramids near Alexandria and the Nile — wait, the actual capital is",
+   "target": " Cairo",
+   "distractor": " Alexandria",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_fr",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of France is",
+   "target": " Paris",
+   "distractor": " Amsterdam",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_fr",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of the country famous for tulips and canals — wait, no, I mean the one famous for the Eiffel Tower — is",
+   "target": " Paris",
+   "distractor": " Amsterdam",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_gr",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Greece is",
+   "target": " Athens",
+   "distractor": " Olympia",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_gr",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of Greece, which is also known for olympia, is",
+   "target": " Athens",
+   "distractor": " Olympia",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_in",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of India is",
+   "target": " Delhi",
+   "distractor": " Mumbai",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_in",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of the most populous country in Asia, famous for Bollywood and finance — no, I meant the political center — is",
+   "target": " Delhi",
+   "distractor": " Mumbai",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_jp",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Japan is",
+   "target": " Tokyo",
+   "distractor": " Beijing",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_jp",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of the country that built the Great Wall — sorry, I meant the island nation famous for sushi and Mount Fuji — is",
+   "target": " Tokyo",
+   "distractor": " Beijing",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_mx",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Mexico is",
+   "target": " Mexico",
+   "distractor": " Leon",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_mx",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of the country famous for beaches and the city of Leon — wait, the actual government seat is",
+   "target": " Mexico",
+   "distractor": " Leon",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_nl",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Netherlands is",
+   "target": " Amsterdam",
+   "distractor": " Rotterdam",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_nl",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of Netherlands, which is also known for rotterdam, is",
+   "target": " Amsterdam",
+   "distractor": " Rotterdam",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_no",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Norway is",
+   "target": " Oslo",
+   "distractor": " Bergen",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_no",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of Norway, which is also known for bergen, is",
+   "target": " Oslo",
+   "distractor": " Bergen",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_pl",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Poland is",
+   "target": " Warsaw",
+   "distractor": " Berlin",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_pl",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of Poland, which people sometimes confuse with Berlin, is",
+   "target": " Warsaw",
+   "distractor": " Berlin",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_pt",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Portugal is",
+   "target": " Lisbon",
+   "distractor": " Porto",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_pt",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of Portugal, which is also known for porto, is",
+   "target": " Lisbon",
+   "distractor": " Porto",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_se",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Sweden is",
+   "target": " Stockholm",
+   "distractor": " Oslo",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_se",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of Sweden, which people sometimes confuse with Oslo, is",
+   "target": " Stockholm",
+   "distractor": " Oslo",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_sp",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of Spain is",
+   "target": " Madrid",
+   "distractor": " Barcelona",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_sp",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of Spain, which is also known for barcelona, is",
+   "target": " Madrid",
+   "distractor": " Barcelona",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_uk",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The capital of the United Kingdom is",
+   "target": " London",
+   "distractor": " Paris",
+   "query_position": -1
+  },
+  {
+   "pair_id": "capital_uk",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The capital of the country that was once the largest empire in history, but I'm thinking of a different European nation — the island nation — is",
+   "target": " London",
+   "distractor": " Paris",
+   "query_position": -1
+  },
+  {
+   "pair_id": "element_lightest",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The lightest element is",
+   "target": " hydrogen",
+   "distractor": " helium",
+   "query_position": -1
+  },
+  {
+   "pair_id": "element_lightest",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The element that makes up most of the sun and is second lightest — sorry, the actual lightest — is",
+   "target": " hydrogen",
+   "distractor": " helium",
+   "query_position": -1
+  },
+  {
+   "pair_id": "legs_spider",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: A spider has",
+   "target": " eight",
+   "distractor": " six",
+   "query_position": -1
+  },
+  {
+   "pair_id": "legs_spider",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The creature people often call an insect, though it is actually an arachnid that spins webs, has",
+   "target": " eight",
+   "distractor": " six",
+   "query_position": -1
+  },
+  {
+   "pair_id": "ocean_largest",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The largest ocean on Earth is the",
+   "target": " Pacific",
+   "distractor": " Atlantic",
+   "query_position": -1
+  },
+  {
+   "pair_id": "ocean_largest",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The ocean that touches North America and Europe is vast, but the one that covers the most area is the",
+   "target": " Pacific",
+   "distractor": " Atlantic",
+   "query_position": -1
+  },
+  {
+   "pair_id": "planet_largest",
+   "condition": "straightforward",
+   "family": "factual",
+   "prompt": "Fact: The largest planet in our solar system is",
+   "target": " Jupiter",
+   "distractor": " Saturn",
+   "query_position": -1
+  },
+  {
+   "pair_id": "planet_largest",
+   "condition": "false_lead",
+   "family": "factual",
+   "prompt": "Fact: The planet with the beautiful rings is quite large, but the one that dwarfs all others is",
+   "target": " Jupiter",
+   "distractor": " Saturn",
+   "query_position": -1
+  },
+  {
+   "pair_id": "arith_1_1_2",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 1 ) * 2\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " four",
+   "distractor": " three"
+  },
+  {
+   "pair_id": "arith_1_1_2",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 1 * 2 — no wait, the sum in brackets comes first: ( 1 + 1 ) * 2\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " four",
+   "distractor": " three"
+  },
+  {
+   "pair_id": "arith_1_1_3",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 1 ) * 3\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " six",
+   "distractor": " four"
+  },
+  {
+   "pair_id": "arith_1_1_3",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 1 * 3 — no wait, the sum in brackets comes first: ( 1 + 1 ) * 3\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " six",
+   "distractor": " four"
+  },
+  {
+   "pair_id": "arith_1_1_4",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 1 ) * 4\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " eight",
+   "distractor": " five"
+  },
+  {
+   "pair_id": "arith_1_1_4",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 1 * 4 — no wait, the sum in brackets comes first: ( 1 + 1 ) * 4\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " eight",
+   "distractor": " five"
+  },
+  {
+   "pair_id": "arith_1_1_5",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 1 ) * 5\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " ten",
+   "distractor": " six"
+  },
+  {
+   "pair_id": "arith_1_1_5",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 1 * 5 — no wait, the sum in brackets comes first: ( 1 + 1 ) * 5\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " ten",
+   "distractor": " six"
+  },
+  {
+   "pair_id": "arith_1_2_3",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 2 ) * 3\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " nine",
+   "distractor": " seven"
+  },
+  {
+   "pair_id": "arith_1_2_3",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 2 * 3 — no wait, the sum in brackets comes first: ( 1 + 2 ) * 3\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " nine",
+   "distractor": " seven"
+  },
+  {
+   "pair_id": "arith_1_2_4",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 2 ) * 4\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " twelve",
+   "distractor": " nine"
+  },
+  {
+   "pair_id": "arith_1_2_4",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 2 * 4 — no wait, the sum in brackets comes first: ( 1 + 2 ) * 4\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " twelve",
+   "distractor": " nine"
+  },
+  {
+   "pair_id": "arith_1_2_5",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 2 ) * 5\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " fifteen",
+   "distractor": " eleven"
+  },
+  {
+   "pair_id": "arith_1_2_5",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 2 * 5 — no wait, the sum in brackets comes first: ( 1 + 2 ) * 5\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " fifteen",
+   "distractor": " eleven"
+  },
+  {
+   "pair_id": "arith_1_3_2",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 3 ) * 2\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " eight",
+   "distractor": " seven"
+  },
+  {
+   "pair_id": "arith_1_3_2",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 3 * 2 — no wait, the sum in brackets comes first: ( 1 + 3 ) * 2\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " eight",
+   "distractor": " seven"
+  },
+  {
+   "pair_id": "arith_1_3_3",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 3 ) * 3\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " twelve",
+   "distractor": " ten"
+  },
+  {
+   "pair_id": "arith_1_3_3",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 3 * 3 — no wait, the sum in brackets comes first: ( 1 + 3 ) * 3\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " twelve",
+   "distractor": " ten"
+  },
+  {
+   "pair_id": "arith_1_3_4",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 3 ) * 4\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " sixteen",
+   "distractor": " thirteen"
+  },
+  {
+   "pair_id": "arith_1_3_4",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 3 * 4 — no wait, the sum in brackets comes first: ( 1 + 3 ) * 4\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " sixteen",
+   "distractor": " thirteen"
+  },
+  {
+   "pair_id": "arith_1_3_5",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 3 ) * 5\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " twenty",
+   "distractor": " sixteen"
+  },
+  {
+   "pair_id": "arith_1_3_5",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 3 * 5 — no wait, the sum in brackets comes first: ( 1 + 3 ) * 5\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " twenty",
+   "distractor": " sixteen"
+  },
+  {
+   "pair_id": "arith_1_4_2",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 4 ) * 2\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " ten",
+   "distractor": " nine"
+  },
+  {
+   "pair_id": "arith_1_4_2",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 4 * 2 — no wait, the sum in brackets comes first: ( 1 + 4 ) * 2\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " ten",
+   "distractor": " nine"
+  },
+  {
+   "pair_id": "arith_1_4_3",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 4 ) * 3\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " fifteen",
+   "distractor": " thirteen"
+  },
+  {
+   "pair_id": "arith_1_4_3",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 4 * 3 — no wait, the sum in brackets comes first: ( 1 + 4 ) * 3\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " fifteen",
+   "distractor": " thirteen"
+  },
+  {
+   "pair_id": "arith_1_4_4",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 4 ) * 4\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " twenty",
+   "distractor": " seventeen"
+  },
+  {
+   "pair_id": "arith_1_4_4",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 4 * 4 — no wait, the sum in brackets comes first: ( 1 + 4 ) * 4\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " twenty",
+   "distractor": " seventeen"
+  },
+  {
+   "pair_id": "arith_1_5_2",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 5 ) * 2\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " twelve",
+   "distractor": " eleven"
+  },
+  {
+   "pair_id": "arith_1_5_2",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 5 * 2 — no wait, the sum in brackets comes first: ( 1 + 5 ) * 2\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " twelve",
+   "distractor": " eleven"
+  },
+  {
+   "pair_id": "arith_1_5_3",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 5 ) * 3\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " eighteen",
+   "distractor": " sixteen"
+  },
+  {
+   "pair_id": "arith_1_5_3",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 5 * 3 — no wait, the sum in brackets comes first: ( 1 + 5 ) * 3\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " eighteen",
+   "distractor": " sixteen"
+  },
+  {
+   "pair_id": "arith_1_6_2",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 1 + 6 ) * 2\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " fourteen",
+   "distractor": " thirteen"
+  },
+  {
+   "pair_id": "arith_1_6_2",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 1 + 6 * 2 — no wait, the sum in brackets comes first: ( 1 + 6 ) * 2\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " fourteen",
+   "distractor": " thirteen"
+  },
+  {
+   "pair_id": "arith_2_1_3",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 2 + 1 ) * 3\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " nine",
+   "distractor": " five"
+  },
+  {
+   "pair_id": "arith_2_1_3",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 2 + 1 * 3 — no wait, the sum in brackets comes first: ( 2 + 1 ) * 3\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " nine",
+   "distractor": " five"
+  },
+  {
+   "pair_id": "arith_2_1_4",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 2 + 1 ) * 4\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " twelve",
+   "distractor": " six"
+  },
+  {
+   "pair_id": "arith_2_1_4",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 2 + 1 * 4 — no wait, the sum in brackets comes first: ( 2 + 1 ) * 4\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " twelve",
+   "distractor": " six"
+  },
+  {
+   "pair_id": "arith_2_1_5",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 2 + 1 ) * 5\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " fifteen",
+   "distractor": " seven"
+  },
+  {
+   "pair_id": "arith_2_1_5",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 2 + 1 * 5 — no wait, the sum in brackets comes first: ( 2 + 1 ) * 5\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " fifteen",
+   "distractor": " seven"
+  },
+  {
+   "pair_id": "arith_2_2_2",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 2 + 2 ) * 2\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " eight",
+   "distractor": " six"
+  },
+  {
+   "pair_id": "arith_2_2_2",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 2 + 2 * 2 — no wait, the sum in brackets comes first: ( 2 + 2 ) * 2\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " eight",
+   "distractor": " six"
+  },
+  {
+   "pair_id": "arith_2_2_4",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 2 + 2 ) * 4\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " sixteen",
+   "distractor": " ten"
+  },
+  {
+   "pair_id": "arith_2_2_4",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 2 + 2 * 4 — no wait, the sum in brackets comes first: ( 2 + 2 ) * 4\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " sixteen",
+   "distractor": " ten"
+  },
+  {
+   "pair_id": "arith_2_2_5",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 2 + 2 ) * 5\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " twenty",
+   "distractor": " twelve"
+  },
+  {
+   "pair_id": "arith_2_2_5",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 2 + 2 * 5 — no wait, the sum in brackets comes first: ( 2 + 2 ) * 5\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " twenty",
+   "distractor": " twelve"
+  },
+  {
+   "pair_id": "arith_2_3_2",
+   "condition": "straightforward",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: ( 2 + 3 ) * 2\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " ten",
+   "distractor": " eight"
+  },
+  {
+   "pair_id": "arith_2_3_2",
+   "condition": "false_lead",
+   "prompt": "Q: ( 1 + 2 ) * 2\nA: six\nQ: ( 3 + 1 ) * 4\nA: sixteen\nQ: ( 2 + 2 ) * 3\nA: twelve\nQ: 2 + 3 * 2 — no wait, the sum in brackets comes first: ( 2 + 3 ) * 2\nA:",
+   "family": "arithmetic",
+   "query_position": -1,
+   "target": " ten",
+   "distractor": " eight"
+  },
+  {
+   "pair_id": "gp_horse",
+   "condition": "straightforward",
+   "prompt": "The horse that was raced past the barn fell. The thing that fell was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " horse",
+   "distractor": " barn"
+  },
+  {
+   "pair_id": "gp_horse",
+   "condition": "false_lead",
+   "prompt": "The horse raced past the barn fell. The thing that fell was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " horse",
+   "distractor": " barn"
+  },
+  {
+   "pair_id": "gp_cat",
+   "condition": "straightforward",
+   "prompt": "The cat that was chased by the dog into the yard hid. The animal that hid was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " cat",
+   "distractor": " dog"
+  },
+  {
+   "pair_id": "gp_cat",
+   "condition": "false_lead",
+   "prompt": "The cat chased by the dog into the yard hid. The animal that hid was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " cat",
+   "distractor": " dog"
+  },
+  {
+   "pair_id": "gp_dog",
+   "condition": "straightforward",
+   "prompt": "The dog that was hit by the car near the park limped. The animal that limped was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " dog",
+   "distractor": " car"
+  },
+  {
+   "pair_id": "gp_dog",
+   "condition": "false_lead",
+   "prompt": "The dog hit by the car near the park limped. The animal that limped was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " dog",
+   "distractor": " car"
+  },
+  {
+   "pair_id": "gp_boy",
+   "condition": "straightforward",
+   "prompt": "The boy that was chased by the dog ran fast. The person who ran was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " boy",
+   "distractor": " dog"
+  },
+  {
+   "pair_id": "gp_boy",
+   "condition": "false_lead",
+   "prompt": "The boy chased by the dog ran fast. The person who ran was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " boy",
+   "distractor": " dog"
+  },
+  {
+   "pair_id": "gp_tree",
+   "condition": "straightforward",
+   "prompt": "The tree that was cut down in the forest by the logger fell. The thing that fell was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " tree",
+   "distractor": " logger"
+  },
+  {
+   "pair_id": "gp_tree",
+   "condition": "false_lead",
+   "prompt": "The tree cut down in the forest by the logger fell. The thing that fell was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " tree",
+   "distractor": " logger"
+  },
+  {
+   "pair_id": "gp_package",
+   "condition": "straightforward",
+   "prompt": "The package that was delivered to the house on Monday was missing. The thing that was missing was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " package",
+   "distractor": " house"
+  },
+  {
+   "pair_id": "gp_package",
+   "condition": "false_lead",
+   "prompt": "The package delivered to the house on Monday was missing. The thing that was missing was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " package",
+   "distractor": " house"
+  },
+  {
+   "pair_id": "gp_sheep",
+   "condition": "straightforward",
+   "prompt": "The sheep that were herded into the pen escaped. The animals that escaped were",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " sheep",
+   "distractor": " pen"
+  },
+  {
+   "pair_id": "gp_sheep",
+   "condition": "false_lead",
+   "prompt": "The sheep herded into the pen escaped. The animals that escaped were",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " sheep",
+   "distractor": " pen"
+  },
+  {
+   "pair_id": "gp_woman",
+   "condition": "straightforward",
+   "prompt": "The woman that was advised by the lawyer complained. The person who complained was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " woman",
+   "distractor": " lawyer"
+  },
+  {
+   "pair_id": "gp_woman",
+   "condition": "false_lead",
+   "prompt": "The woman advised by the lawyer complained. The person who complained was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " woman",
+   "distractor": " lawyer"
+  },
+  {
+   "pair_id": "gp_man",
+   "condition": "straightforward",
+   "prompt": "The man that was examined by the doctor recovered. The person who recovered was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " man",
+   "distractor": " doctor"
+  },
+  {
+   "pair_id": "gp_man",
+   "condition": "false_lead",
+   "prompt": "The man examined by the doctor recovered. The person who recovered was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " man",
+   "distractor": " doctor"
+  },
+  {
+   "pair_id": "gp_child",
+   "condition": "straightforward",
+   "prompt": "The child that was praised by the teacher smiled. The person who smiled was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " child",
+   "distractor": " teacher"
+  },
+  {
+   "pair_id": "gp_child",
+   "condition": "false_lead",
+   "prompt": "The child praised by the teacher smiled. The person who smiled was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " child",
+   "distractor": " teacher"
+  },
+  {
+   "pair_id": "gp_soldier",
+   "condition": "straightforward",
+   "prompt": "The soldier that was ordered by the general retreated. The person who retreated was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " soldier",
+   "distractor": " general"
+  },
+  {
+   "pair_id": "gp_soldier",
+   "condition": "false_lead",
+   "prompt": "The soldier ordered by the general retreated. The person who retreated was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " soldier",
+   "distractor": " general"
+  },
+  {
+   "pair_id": "gp_runner",
+   "condition": "straightforward",
+   "prompt": "The runner that was trained by the coach collapsed. The person who collapsed was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " runner",
+   "distractor": " coach"
+  },
+  {
+   "pair_id": "gp_runner",
+   "condition": "false_lead",
+   "prompt": "The runner trained by the coach collapsed. The person who collapsed was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " runner",
+   "distractor": " coach"
+  },
+  {
+   "pair_id": "gp_bird",
+   "condition": "straightforward",
+   "prompt": "The bird that was startled by the cat flew away. The animal that flew away was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " bird",
+   "distractor": " cat"
+  },
+  {
+   "pair_id": "gp_bird",
+   "condition": "false_lead",
+   "prompt": "The bird startled by the cat flew away. The animal that flew away was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " bird",
+   "distractor": " cat"
+  },
+  {
+   "pair_id": "gp_boat",
+   "condition": "straightforward",
+   "prompt": "The boat that was damaged by the storm sank. The thing that sank was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " boat",
+   "distractor": " storm"
+  },
+  {
+   "pair_id": "gp_boat",
+   "condition": "false_lead",
+   "prompt": "The boat damaged by the storm sank. The thing that sank was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " boat",
+   "distractor": " storm"
+  },
+  {
+   "pair_id": "gp_bridge",
+   "condition": "straightforward",
+   "prompt": "The bridge that was weakened by the flood collapsed. The thing that collapsed was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " bridge",
+   "distractor": " flood"
+  },
+  {
+   "pair_id": "gp_bridge",
+   "condition": "false_lead",
+   "prompt": "The bridge weakened by the flood collapsed. The thing that collapsed was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " bridge",
+   "distractor": " flood"
+  },
+  {
+   "pair_id": "gp_student",
+   "condition": "straightforward",
+   "prompt": "The student that was questioned by the professor hesitated. The person who hesitated was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " student",
+   "distractor": " professor"
+  },
+  {
+   "pair_id": "gp_student",
+   "condition": "false_lead",
+   "prompt": "The student questioned by the professor hesitated. The person who hesitated was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " student",
+   "distractor": " professor"
+  },
+  {
+   "pair_id": "gp_patient",
+   "condition": "straightforward",
+   "prompt": "The patient that was treated by the nurse improved. The person who improved was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " patient",
+   "distractor": " nurse"
+  },
+  {
+   "pair_id": "gp_patient",
+   "condition": "false_lead",
+   "prompt": "The patient treated by the nurse improved. The person who improved was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " patient",
+   "distractor": " nurse"
+  },
+  {
+   "pair_id": "gp_book",
+   "condition": "straightforward",
+   "prompt": "The book that was reviewed by the editor sold well. The thing that sold well was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " book",
+   "distractor": " editor"
+  },
+  {
+   "pair_id": "gp_book",
+   "condition": "false_lead",
+   "prompt": "The book reviewed by the editor sold well. The thing that sold well was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " book",
+   "distractor": " editor"
+  },
+  {
+   "pair_id": "gp_house",
+   "condition": "straightforward",
+   "prompt": "The house that was designed by the architect burned down. The thing that burned down was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " house",
+   "distractor": " architect"
+  },
+  {
+   "pair_id": "gp_house",
+   "condition": "false_lead",
+   "prompt": "The house designed by the architect burned down. The thing that burned down was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " house",
+   "distractor": " architect"
+  },
+  {
+   "pair_id": "gp_ship",
+   "condition": "straightforward",
+   "prompt": "The ship that was steered by the captain ran aground. The thing that ran aground was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " ship",
+   "distractor": " captain"
+  },
+  {
+   "pair_id": "gp_ship",
+   "condition": "false_lead",
+   "prompt": "The ship steered by the captain ran aground. The thing that ran aground was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " ship",
+   "distractor": " captain"
+  },
+  {
+   "pair_id": "gp_letter",
+   "condition": "straightforward",
+   "prompt": "The letter that was misplaced by the clerk arrived late. The thing that arrived late was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " letter",
+   "distractor": " clerk"
+  },
+  {
+   "pair_id": "gp_letter",
+   "condition": "false_lead",
+   "prompt": "The letter misplaced by the clerk arrived late. The thing that arrived late was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " letter",
+   "distractor": " clerk"
+  },
+  {
+   "pair_id": "gp_painting",
+   "condition": "straightforward",
+   "prompt": "The painting that was loaned to the museum was returned. The thing that was returned was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " painting",
+   "distractor": " museum"
+  },
+  {
+   "pair_id": "gp_painting",
+   "condition": "false_lead",
+   "prompt": "The painting loaned to the museum was returned. The thing that was returned was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " painting",
+   "distractor": " museum"
+  },
+  {
+   "pair_id": "gp_singer",
+   "condition": "straightforward",
+   "prompt": "The singer that was recorded by the producer quit. The person who quit was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " singer",
+   "distractor": " producer"
+  },
+  {
+   "pair_id": "gp_singer",
+   "condition": "false_lead",
+   "prompt": "The singer recorded by the producer quit. The person who quit was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " singer",
+   "distractor": " producer"
+  },
+  {
+   "pair_id": "gp_watch",
+   "condition": "straightforward",
+   "prompt": "The watch that was repaired by the tailor yesterday stopped. The thing that stopped was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " watch",
+   "distractor": " tailor"
+  },
+  {
+   "pair_id": "gp_watch",
+   "condition": "false_lead",
+   "prompt": "The watch repaired by the tailor yesterday stopped. The thing that stopped was the",
+   "family": "garden_path",
+   "query_position": -1,
+   "target": " watch",
+   "distractor": " tailor"
+  },
+  {
+   "pair_id": "hard_ctrl_currency",
+   "condition": "hard_control",
+   "family": "factual",
+   "prompt": "Fact: The currency used in Switzerland is the",
+   "target": " franc",
+   "distractor": " euro",
+   "query_position": -1
+  },
+  {
+   "pair_id": "hard_ctrl_president",
+   "condition": "hard_control",
+   "family": "factual",
+   "prompt": "Fact: The first president of the United States was",
+   "target": " George",
+   "distractor": " Thomas",
+   "query_position": -1
+  },
+  {
+   "pair_id": "hard_ctrl_painter",
+   "condition": "hard_control",
+   "family": "factual",
+   "prompt": "Fact: The artist who painted the Mona Lisa was",
+   "target": " Leonardo",
+   "distractor": " Picasso",
+   "query_position": -1
+  },
+  {
+   "pair_id": "hard_ctrl_element",
+   "condition": "hard_control",
+   "family": "factual",
+   "prompt": "Fact: The lightest chemical element is",
+   "target": " hydrogen",
+   "distractor": " helium",
+   "query_position": -1
+  },
+  {
+   "pair_id": "hard_ctrl_planet",
+   "condition": "hard_control",
+   "family": "factual",
+   "prompt": "Fact: The largest planet in the solar system is",
+   "target": " Jupiter",
+   "distractor": " Saturn",
+   "query_position": -1
+  },
+  {
+   "pair_id": "hard_ctrl_ocean",
+   "condition": "hard_control",
+   "family": "factual",
+   "prompt": "Fact: The largest ocean on Earth is the",
+   "target": " Pacific",
+   "distractor": " Atlantic",
+   "query_position": -1
+  },
+  {
+   "pair_id": "hard_ctrl_mountain",
+   "condition": "hard_control",
+   "family": "factual",
+   "prompt": "Fact: The highest mountain on Earth is Mount",
+   "target": " Everest",
+   "distractor": " Fuji",
+   "query_position": -1
+  },
+  {
+   "pair_id": "hard_ctrl_language",
+   "condition": "hard_control",
+   "family": "factual",
+   "prompt": "Fact: The official language of Brazil is",
+   "target": " Portuguese",
+   "distractor": " Spanish",
+   "query_position": -1
+  },
+  {
+   "pair_id": "hard_ctrl_metal",
+   "condition": "hard_control",
+   "family": "factual",
+   "prompt": "Fact: The metal that is liquid at room temperature is",
+   "target": " mercury",
+   "distractor": " lead",
+   "query_position": -1
+  },
+  {
+   "pair_id": "hard_ctrl_gas",
+   "condition": "hard_control",
+   "family": "factual",
+   "prompt": "Fact: The most abundant gas in Earth's atmosphere is",
+   "target": " nitrogen",
+   "distractor": " oxygen",
+   "query_position": -1
+  },
+  {
+   "pair_id": "hard_ctrl_river",
+   "condition": "hard_control",
+   "family": "factual",
+   "prompt": "Fact: The longest river in Africa is the",
+   "target": " Nile",
+   "distractor": " Congo",
+   "query_position": -1
+  },
+  {
+   "pair_id": "hard_ctrl_organ",
+   "condition": "hard_control",
+   "family": "factual",
+   "prompt": "Fact: The organ that pumps blood around the body is the",
+   "target": " heart",
+   "distractor": " brain",
+   "query_position": -1
+  }
+ ]
 }

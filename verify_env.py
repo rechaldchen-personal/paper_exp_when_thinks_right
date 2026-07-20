@@ -21,8 +21,8 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent
-PINNED = {"numpy": "1.26.4", "scipy": "1.13.1",
-          "matplotlib": "3.9.4", "pandas": "2.2.3"}
+PINNED = {"numpy": "1.26.4", "scipy": "1.13.1", "matplotlib": "3.9.4",
+          "pandas": "2.2.3", "transformers": "4.46.3"}
 
 ok = True
 print("Environment verification")
@@ -58,7 +58,7 @@ for pkg, want in PINNED.items():
         print(f"  ❌ {pkg:12} {got}  (pinned: {want})")
 
 print("\nGPU dependencies (only needed for 01_fit_lens / 02_run_experiment):")
-for pkg in ("torch", "transformers", "datasets", "jlens"):
+for pkg in ("torch", "datasets", "jlens"):
     try:
         mod = __import__(pkg)
         print(f"  ✅ {pkg:12} {getattr(mod, '__version__', 'unknown')}")
