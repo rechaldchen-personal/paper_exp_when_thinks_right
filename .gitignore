@@ -32,3 +32,7 @@ out/fit_ckpt.pt.tmp.*
 
 # Allow experiment logs
 !out/*.log
+
+# Regenerable per-stimulus heatmaps and scratch analysis dirs
+out/analysis_*/heatmaps/
+out/analysis_run2/

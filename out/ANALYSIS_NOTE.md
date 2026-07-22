@@ -1,8 +1,16 @@
 # Analysis note: why the numbers changed on 2026-07-19
 
-`out/analysis_real/` was regenerated after fixing three defects in the analysis
-pipeline. The traces (`out/traces.json`) and the fitted lens are unchanged — the
-model data is the same; only the analysis of it was wrong.
+> **Superseded 2026-07-22.** `out/analysis_real/` now holds the **run-2** result
+> (rebuilt stimuli, `out/traces_run2.json`), which is the current canonical
+> analysis. This note documents the earlier diagnostic re-analysis of the
+> withdrawn **run-1** traces (`out/traces.json`); those run-1 numbers live in git
+> history (commit 6e01b5c). The three pipeline defects below were fixed before
+> run 2, which is why run 2 is trustworthy.
+
+This note (below) concerns the run-1 re-analysis. `out/analysis_real/` was
+regenerated after fixing three defects in the analysis pipeline. The run-1
+traces (`out/traces.json`) and the fitted lens are unchanged — the model data is
+the same; only the analysis of it was wrong.
 
 ## Defects found and fixed
 

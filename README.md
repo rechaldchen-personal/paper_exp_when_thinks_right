@@ -6,49 +6,58 @@ temptation? We probe Qwen3 with a Jacobian lens on matched stimulus pairs
 commitment layer (H1), internal oscillation (H2), and the confidence–correctness
 dissociation gap (H3).
 
-**Status**: Run 1 (Qwen3-1.7B, 2026-07-17) is **superseded**. Diagnostics on
-2026-07-19 found defects in both the analysis pipeline and the stimulus set
-that invalidate its numbers. Both are now fixed; the run needs repeating.
-**Do not quote run-1 results.**
+**Status**: Run 2 (Qwen3-1.7B, 2026-07-22) is the current result — rebuilt
+stimuli, corrected analysis, passed the behavioural gate on all three families.
+Run 1 is withdrawn; do not quote its numbers (`out/ANALYSIS_NOTE.md` explains
+why). Robustness checks (θ/band sensitivity) and the paper rewrite are pending.
 
 ---
 
-## Where things stand
+## Results (run 2, Qwen3-1.7B holdout)
 
-Run 1's traces were analyzed with a non-reproducible dev/holdout split, a
-two-tailed test where the pre-registration specifies one-tailed, and a
-scipy-version-dependent p-value. Separately, only 31 of 78 stimulus pairs were
-valid matched pairs. Details: `out/ANALYSIS_NOTE.md` (analysis) and
-`build_stimuli.py`'s docstring (stimuli).
+Pre-registered one-tailed exact signed-rank tests, false-lead − straightforward.
+Full report: `out/analysis_real/report.json`; figures: `out/figures/`.
 
-Re-analyzing the same traces with the corrected pipeline moved every result —
-H1's effect vanished, H3 became significant, H2 weakened by two orders of
-magnitude — which shows the outcome was dominated by an arbitrary split at
-n≈6–11 pairs. The corrected numbers live in `out/analysis_real/report.json`,
-but they still rest on the old broken stimuli, so they are diagnostic only.
+| Hypothesis | Primary (pre-registered) | Confirmatory (2AFC) | Verdict |
+|---|---|---|---|
+| H1 delayed commitment | +0.0 layers, p=0.109 | +2.0 layers, p=0.002 | narrow-readout only |
+| H2 oscillation | +0.5, p=0.008 ✓ | 0.0, p=0.46 | churn, **not** candidate revision |
+| H3 dissociation gap | +1.0 layers, p=0.011 ✓ | +4.0 layers, p=0.002 ✓ | **robust — headline** |
 
-**Fixed so far**
+Reading (per `experiments/PRE_REGISTRATION_AMENDMENT.md` §5): **H3 is the robust
+finding** — models grow confident before they are correct, and that window
+widens under false lead, under both readouts. **H2's "internal revision between
+candidate answers" framing is refuted** — the oscillation is real but is churn
+among unrelated tokens (confirmatory null; hard controls oscillate too), so that
+language must come out of the Abstract and Discussion. **H1** holds only for the
+target-vs-distractor readout, not global commitment.
+
+Behavioural gate (straightforward top-1 accuracy): factual 95.8%, garden-path
+75.0%, arithmetic 70.8% — all clear 50%. Run 1 had arithmetic at 3.6%.
+
+Caveats: H1/H3 primary rest on 14 pairs; this is the one registered split
+(seed 42); single model. Robustness checks and 4B replication are the next
+credibility steps.
+
+**Repository background**
 
 - Analysis is reproducible, exact, and one-tailed as pre-registered
   (`03_analyze.py`); environment pinned and self-checking (`verify_env.py`).
 - Stimuli rebuilt as **72/72 strictly matched pairs**, balanced 24 per family,
   plus 12 hard controls (`build_stimuli.py`), all passing `validate_stimuli.py`.
 
-**Still open**
+**Still open (all CPU/free unless noted)**
 
-1. **Re-run the GPU traces** on the new stimuli (lens already fitted, ~30 min).
-2. **Amend the pre-registration** before that run — see "Next steps".
-3. **H2's mechanism is unverified**: a target-vs-distractor (2AFC) oscillation
-   metric does not reach significance where the primary metric does, so the
-   measured top-1 churn may be among arbitrary tokens rather than wavering
-   between the candidate answers. Confirmatory metrics are now implemented and
-   pre-registered, with the permitted claim for each outcome fixed in advance
-   (`experiments/PRE_REGISTRATION_AMENDMENT.md` §5). Until run 2 settles it, the
-   "revision between candidates" reading in `paper/ABSTRACT.md` and
-   `paper/DISCUSSION_OUTLINE.md` is not supported.
-4. **Promised robustness checks not yet run**: logit-lens secondary readout
-   (`lens_utils.py`, not integrated) and per-model workspace-band
-   identification (band is the pre-registered default [0.25, 0.90]).
+1. **θ/band sensitivity checks** — pre-registered robustness (re-run
+   `03_analyze.py` at θ 70/90 and bands [0.20,0.95]/[0.30,0.85] on
+   `out/traces_run2.json`). No GPU.
+2. **Rewrite the paper to match run 2**: H3 headline; strike the H2
+   "revision between candidates" language from `paper/ABSTRACT.md` and
+   `paper/DISCUSSION_OUTLINE.md` per amendment §5; H1 as narrow-readout only.
+3. **Logit-lens secondary readout** (`lens_utils.py`, not integrated) — needs
+   code work + a GPU re-run.
+4. **Generalization (GPU, deliberate next session)**: Qwen3-4B replication
+   (fresh lens fit) and/or more stimuli for power on H1/H3.
 
 ## Repository layout
 
