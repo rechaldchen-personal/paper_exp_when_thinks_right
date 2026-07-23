@@ -2,47 +2,58 @@
 
 **Title**: Commitment Dynamics in the J-Space: When Do Language Models Commit to Answers, and What Happens Under False-Lead Temptation?
 
-**Status** (2026-07-19): All sections drafted. Abstract and Results are filled
-with real Qwen3-1.7B numbers (H2 supported; H1/H3 directional, not significant).
-Discussion still contains mock-era placeholders and must be reconciled with the
-real results before compilation.
+**Status** (2026-07-22): All sections drafted and reconciled with run-2
+results (Qwen3-1.7B, rebuilt stimulus set, pre-registration amendment). The
+headline finding is **H3 (dissociation gap)**, robust under every sensitivity
+check; **H2 (oscillation)** is real but its "internal revision" reading is
+refuted by the confirmatory 2AFC test and the hard-control comparison; **H1**
+holds only under the confirmatory (narrow) readout. Run 1 (2026-07-17) is
+withdrawn — see `out/ANALYSIS_NOTE.md` — and does not appear in any section.
 
 ---
 
 ## Paper Sections (in order)
 
 ### Front Matter
-- **ABSTRACT.md** ✅ — Filled with real results (honest framing: H2 supported;
-  H1/H3 provisional pending higher-powered re-run)
+- **ABSTRACT.md** ✅ — Filled with run-2 results: H3 headline (robust to
+  sensitivity), H2 reframed as unattributed churn, H1 supported only under
+  the confirmatory readout
 
 ### Main Sections
 
 1. **INTRODUCTION_AND_RELATED_WORK.md** ✅ — Complete (~1400 words)
-   - 1.1–1.5: Motivation, garden-path hook, workspace context, contributions, roadmap
+   - 1.1–1.5: Motivation, garden-path hook, workspace context, contributions
+     (stimulus count updated to 156), roadmap
    - 2.1–2.8: Lens lineage, Gurnee et al., interpretability, uncertainty
-     quantification, psycholinguistics, distractor robustness, lens reliability, positioning
+     quantification, psycholinguistics, distractor robustness, lens
+     reliability, positioning (§2.8 table updated to not overclaim oscillation)
 
 2. **BACKGROUND.md** ✅ — Complete (~1500 words)
    - 3.1 Global Workspace Theory · 3.2 Jacobian lens · 3.3 Commitment and
-     confidence · 3.4 Three mechanisms (H1–H3) · 3.5 Why this matters
+     confidence · 3.4 Three mechanisms (H1–H3, described as pre-registered
+     hypotheses — language is appropriately conditional, no changes needed)
+     · 3.5 Why this matters
 
 3. **METHODS_DRAFT.md** ✅ — Complete (~2500 words)
    - 4.1 Model/setup · 4.2–4.3 Stimulus design · 4.4 Metrics · 4.5 Pipeline
      (dev/holdout, θ) · 4.6 Statistics · 4.7 Robustness checks
    - ⚠ 4.7 promises logit-lens replication and per-model band identification
-     that have not been run yet — run them or soften the text.
+     that still have not run — θ/band *sensitivity* has now run
+     (`SENSITIVITY_REPORT.md`), but logit-lens replication and per-model band
+     identification have not; run them or soften the text before submission
 
-4. **RESULTS_TEMPLATE.md** ✅ — Filled from Qwen3-1.7B run (2026-07-17)
-   - 5.1 Sanity check · 5.2 H1 (not sig., n=6) · 5.3 H2 (**supported**,
-     p=4.89×10⁻⁵) · 5.4 H3 (not sig., n=6) · 5.5 Hard controls (⚠ holdout n=0)
-     · 5.6 Distractor temptation · 5.7 Oscillation detail · 5.8 Summary table
-   - ⚠ Should gain a per-family behavioral-accuracy table (arithmetic 1/56
-     correct — currently one sentence in §5.x limitations).
+4. **RESULTS_TEMPLATE.md** ✅ — Filled from Qwen3-1.7B run 2 (2026-07-22)
+   - 5.1 Sanity check · 5.2 H1/H2/H3 (primary + confirmatory each) · 5.3 Case
+     studies · 5.4 Distractor temptation (+ per-family behavioral rates)
+     · 5.5 Sensitivity checks (done) · 5.6 Natural Stories (not run)
+     · 5.7 Summary table (6 rows: primary + confirmatory × 3) · Interpretation
 
-5. **DISCUSSION_OUTLINE.md** ⚠ — Skeleton (~1850 words), NEEDS UPDATING
-   - Still has placeholders ("X top-1 flips", "r ≈ ?") and Natural Stories
-     correlation claims for an analysis that never ran; language implies all
-     hypotheses supported. Reconcile with real H1/H3 outcome.
+5. **DISCUSSION_OUTLINE.md** ✅ — Rewritten around run-2 results
+   - §6.2.2 (oscillation) and §6.4 (psycholinguistics) are the sections that
+     changed most: both were originally built on the revision interpretation
+     that the confirmatory test refutes, and are now reframed accordingly
+   - Templates are structured but still template-shaped; expand into final
+     submission prose before compiling
 
 ### Back Matter
 
@@ -50,15 +61,19 @@ real results before compilation.
 
 ### Appendices (planned, not yet written)
 
-- A: Full stimuli table (163 items)
-- B: Natural Stories correlation (only if the analysis is actually run)
-- C: Workspace band identification (pending; band currently pre-registered default)
-- D: Robustness checks (band/θ sensitivity, logit-lens agreement — pending)
+- A: Full stimuli table (156 items: 72 matched pairs + 12 hard controls)
+- B: Natural Stories correlation (only if run; should target H3, not H2 —
+  see `DISCUSSION_OUTLINE.md` §6.4)
+- C: Workspace band identification (pending; band is still the pre-registered
+  default — this is per-model *identification*, distinct from the band
+  *sensitivity* check already run)
+- D: Robustness checks — sensitivity (θ/band) done, see
+  `experiments/SENSITIVITY_REPORT.md`; logit-lens agreement still pending
 - E: Computational details (lens fitting parameters)
 
 ---
 
-## Figures & Tables (real data, already generated)
+## Figures & Tables (run-2 data)
 
 Generated by `generate_figures.py` into `out/figures/`:
 H1/H2/H3 box plots, H2 histogram, entropy collapse curves,
@@ -70,9 +85,9 @@ oscillation-vs-commitment scatter, selected heatmaps,
 ## Compilation order
 
 ABSTRACT → INTRODUCTION_AND_RELATED_WORK → BACKGROUND → METHODS_DRAFT →
-RESULTS_TEMPLATE → DISCUSSION_OUTLINE (after reconciliation) → REFERENCES →
-Appendices.
+RESULTS_TEMPLATE → DISCUSSION_OUTLINE → REFERENCES → Appendices.
 
-Blockers before compiling: fix Discussion placeholders; decide on hard-control
-claim (no holdout data); add behavioral-accuracy table; run or soften §4.7
-robustness checks.
+Blockers before compiling: expand Discussion writing templates into final
+prose; run or soften the still-pending §4.7 items (logit-lens replication,
+per-model band identification); decide whether to attempt Qwen 4B before
+submission or note it as future work.

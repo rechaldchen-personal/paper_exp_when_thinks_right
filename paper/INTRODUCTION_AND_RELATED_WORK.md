@@ -35,7 +35,7 @@ This paper introduces layer-wise commitment metrics and tests three hypotheses a
 
 3. **H3 (Dissociation Gap)**: False-lead prompts show a "confidently-wrong window"—the model achieves high confidence (low entropy collapse) before the correct answer becomes top-1, creating a dangerous window for hallucination.
 
-We validate these hypotheses on 77 carefully designed stimuli spanning three domains (factual, arithmetic, garden-path), with hard controls that isolate false-lead effects from difficulty confounds. All analyses are CPU-tractable and replicable on open-weights models.
+We validate these hypotheses on 156 stimuli spanning three domains (factual, arithmetic, garden-path)—72 strictly matched straightforward/false-lead pairs, 24 per domain, plus 12 hard controls that isolate false-lead effects from difficulty confounds. All analyses are CPU-tractable for the analysis pipeline and replicable on open-weights models; trace collection requires a single consumer GPU for tens of minutes.
 
 ### 1.5 Roadmap
 
@@ -106,7 +106,7 @@ It's important to note independent replication attempts have flagged reliability
 | **What** | Workspace band exists | Commitment layer ℓ* when target stabilizes |
 | **How** | Excess kurtosis, accuracy | Entropy collapse ℓ_H, oscillation depth |
 | **Scope** | Aggregate statistics | Per-prompt dynamics |
-| **New finding** | Workspace acts as bottleneck | Oscillation & dissociation reveal backtracking |
+| **New finding** | Workspace acts as bottleneck | Confidence–correctness dissociation is real and robust; oscillation increases but is not shown to reflect candidate-level backtracking |
 
 Our contribution is orthogonal and complementary: we accept their framework and add a temporal dimension.
 

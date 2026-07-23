@@ -7,9 +7,10 @@ commitment layer (H1), internal oscillation (H2), and the confidence–correctne
 dissociation gap (H3).
 
 **Status**: Run 2 (Qwen3-1.7B, 2026-07-22) is the current result — rebuilt
-stimuli, corrected analysis, passed the behavioural gate on all three families.
-Run 1 is withdrawn; do not quote its numbers (`out/ANALYSIS_NOTE.md` explains
-why). Robustness checks (θ/band sensitivity) and the paper rewrite are pending.
+stimuli, corrected analysis, passed the behavioural gate on all three families,
+θ/band sensitivity checked, and the paper (Abstract/Results/Discussion)
+rewritten to match. Run 1 is withdrawn; do not quote its numbers
+(`out/ANALYSIS_NOTE.md` explains why).
 
 ---
 
@@ -29,15 +30,25 @@ finding** — models grow confident before they are correct, and that window
 widens under false lead, under both readouts. **H2's "internal revision between
 candidate answers" framing is refuted** — the oscillation is real but is churn
 among unrelated tokens (confirmatory null; hard controls oscillate too), so that
-language must come out of the Abstract and Discussion. **H1** holds only for the
+language is out of the Abstract and Discussion. **H1** holds only for the
 target-vs-distractor readout, not global commitment.
 
 Behavioural gate (straightforward top-1 accuracy): factual 95.8%, garden-path
 75.0%, arithmetic 70.8% — all clear 50%. Run 1 had arithmetic at 3.6%.
 
-Caveats: H1/H3 primary rest on 14 pairs; this is the one registered split
-(seed 42); single model. Robustness checks and 4B replication are the next
-credibility steps.
+**Sensitivity checks** (`experiments/SENSITIVITY_REPORT.md`, pre-registered θ ∈
+{70,80,90} pct × band ∈ {[.20,.95],[.25,.90],[.30,.85]}): direction never flips
+sign anywhere. But significance is not uniform — the **confirmatory** metrics
+(`l_star_2afc`, `gap_2afc`) are significant at *every* setting tested, while
+the **primary** `oscillation` and `gap` are significant only near the
+pre-registered θ=80 default and lose significance at θ=70/90. This is why the
+Results and Discussion lead with the confirmatory numbers for H1/H3 rather
+than the primary ones — the confirmatory readout is the one that's actually
+robust, not just correctly directioned.
+
+Caveats: H1/H3 primary rest on 14 pairs (confirmatory on 18–19); this is the
+one registered split (seed 42); single model. 4B replication is the next
+credibility step.
 
 **Repository background**
 
@@ -46,18 +57,16 @@ credibility steps.
 - Stimuli rebuilt as **72/72 strictly matched pairs**, balanced 24 per family,
   plus 12 hard controls (`build_stimuli.py`), all passing `validate_stimuli.py`.
 
-**Still open (all CPU/free unless noted)**
+**Still open**
 
-1. **θ/band sensitivity checks** — pre-registered robustness (re-run
-   `03_analyze.py` at θ 70/90 and bands [0.20,0.95]/[0.30,0.85] on
-   `out/traces_run2.json`). No GPU.
-2. **Rewrite the paper to match run 2**: H3 headline; strike the H2
-   "revision between candidates" language from `paper/ABSTRACT.md` and
-   `paper/DISCUSSION_OUTLINE.md` per amendment §5; H1 as narrow-readout only.
-3. **Logit-lens secondary readout** (`lens_utils.py`, not integrated) — needs
+1. **Expand the writing templates** in `paper/DISCUSSION_OUTLINE.md` into
+   final submission prose — structurally complete, still template-shaped.
+   Free/CPU.
+2. **Logit-lens secondary readout** (`lens_utils.py`, not integrated) — needs
    code work + a GPU re-run.
-4. **Generalization (GPU, deliberate next session)**: Qwen3-4B replication
-   (fresh lens fit) and/or more stimuli for power on H1/H3.
+3. **Generalization (GPU, deliberate next session)**: Qwen3-4B replication
+   (fresh lens fit) and/or more stimuli for power on H1/H3 (currently
+   14–19 pairs).
 
 ## Repository layout
 
@@ -102,25 +111,32 @@ venv/bin/python validate_stimuli.py --stimuli stimuli.json
 venv/bin/python 00_generate_mock_traces.py --out out/traces_mock.json
 venv/bin/python 03_analyze.py --traces out/traces_mock.json --outdir out/analysis_mock
 
-# Full pipeline (GPU) — see experiments/README_GPU_PHASE.md
+# Full pipeline (GPU) — see experiments/README_GPU_PHASE.md.
+# out/traces_run2.json + out/analysis_real/ are already the current, checked-in
+# result (Qwen3-1.7B); only re-run this if collecting NEW data (e.g. 4B, or a
+# stimuli expansion) — write to a new --out/--outdir so you don't overwrite it.
 python 01_fit_lens.py --model Qwen/Qwen3-1.7B --n-prompts 1000 --out out/lens_qwen3_1p7b.pt
-python 02_run_experiment.py --model Qwen/Qwen3-1.7B --lens out/lens_qwen3_1p7b.pt --out out/traces.json
-venv/bin/python 03_analyze.py --traces out/traces.json --outdir out/analysis_real --dev-split 0.6
-venv/bin/python generate_figures.py
+python 02_run_experiment.py --model Qwen/Qwen3-1.7B --lens out/lens_qwen3_1p7b.pt --out out/traces_run3.json
+venv/bin/python 03_analyze.py --traces out/traces_run3.json --outdir out/analysis_run3 --dev-split 0.6
+venv/bin/python generate_figures.py   # reads out/analysis_real/ by default — repoint or promote first
+
+# Sensitivity checks (already run once; commands to re-verify or extend):
+venv/bin/python 03_analyze.py --traces out/traces_run2.json --outdir out/sensitivity/theta70 --dev-split 0.6 --theta-pct 70
 ```
 
 The analysis plan (band, θ procedure, dev/holdout split, tests) is locked in
-`experiments/PRE_REGISTRATION.md` — do not tune it post hoc.
+`experiments/PRE_REGISTRATION.md` + `experiments/PRE_REGISTRATION_AMENDMENT.md`
+— do not tune it post hoc.
 
 ## Next steps
 
-1. ✅ **Pre-registration amended and locked** before the re-run —
+1. ✅ Pre-registration amended and locked —
    `experiments/PRE_REGISTRATION_AMENDMENT.md`.
-2. **Re-run traces on the new stimuli** — follow
-   `experiments/README_GPU_PHASE.md` (run-2 procedure, ~35 min GPU since the
-   lens is already fitted). It has a hard gate at Step 4: `prescreen.py` must
-   pass per family before any analysis, per amendment §8.
-3. Re-analyze, regenerate figures, and only then rewrite Results/Abstract.
-4. Integrate logit-lens robustness readout; band identification (Appendix C).
-5. Reconcile `paper/DISCUSSION_OUTLINE.md` with whatever the re-run shows.
-6. Only after 1.7B is clean: Qwen3-4B replication; Natural Stories.
+2. ✅ Run 2 traces collected and gated —
+   `out/traces_run2.json`, `prescreen.py` passed all families.
+3. ✅ Analyzed, figures regenerated, results promoted to `out/analysis_real/`.
+4. ✅ Sensitivity checks run — `experiments/SENSITIVITY_REPORT.md`.
+5. ✅ Results/Abstract/Discussion rewritten to match run 2 + sensitivity.
+6. **Next**: expand Discussion templates into final prose; logit-lens
+   readout; band identification (Appendix C); Qwen3-4B replication;
+   Natural Stories (retarget at H3, not H2 — see Discussion §6.4).

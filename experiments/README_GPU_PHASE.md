@@ -1,8 +1,13 @@
-# GPU Phase Guide — Run 2
+# GPU Phase Guide — Run 2 (complete) / template for future runs
 
-**Status**: everything CPU-side is verified and committed. This guide is the
-run-2 procedure on the rebuilt stimuli. Run 1 is withdrawn — see
-`PRE_REGISTRATION_AMENDMENT.md` §1; do not quote its numbers.
+**Status**: Run 2 completed 2026-07-22 — `out/traces_run2.json`, gated
+(`prescreen.py` passed all families), analyzed (`out/analysis_real/`), and
+sensitivity-checked (`SENSITIVITY_REPORT.md`). Results are in
+`paper/RESULTS_TEMPLATE.md`. This guide remains the procedure to follow for
+**any future GPU run** (4B replication, expanded stimuli, etc.) — swap the
+model/output paths and follow the same steps, especially the Step 4 gate.
+Run 1 (2026-07-17) is withdrawn — see `PRE_REGISTRATION_AMENDMENT.md` §1; do
+not quote its numbers.
 
 **Budget**: ~35 min GPU if the fitted lens is available, ~2.5 h if it must be
 refitted. Nothing here needs a fresh lens unless you are changing model.

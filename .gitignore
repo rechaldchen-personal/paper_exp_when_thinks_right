@@ -36,3 +36,4 @@ out/fit_ckpt.pt.tmp.*
 # Regenerable per-stimulus heatmaps and scratch analysis dirs
 out/analysis_*/heatmaps/
 out/analysis_run2/
+out/sensitivity/*/heatmaps/

@@ -5,45 +5,49 @@ temptation, probed with a Jacobian lens on Qwen3-1.7B. See `README.md` for
 current status, results, and known issues; see git history for the full
 session-by-session log (the old CLAUDE.md tracker was condensed on 2026-07-19).
 
-## Current state (2026-07-19)
+## Current state (2026-07-22)
 
-- **Run 1 is superseded — do not quote its numbers.** Diagnostics found defects
-  in both the analysis pipeline and the stimulus set. Both are now fixed; the
-  GPU run needs repeating on the rebuilt stimuli.
-- **Analysis fixed** (`out/ANALYSIS_NOTE.md`): the dev/holdout split was
-  non-reproducible (`list(set(...))` + per-process string hashing defeated
-  `seed=42`), the test was two-tailed while the pre-registration says
-  one-tailed, and p-values depended on the scipy version. `03_analyze.py` now
-  computes the exact signed-rank null itself. Re-analyzing the *same* traces
-  moved every result (H1 vanished, H3 became significant, H2 weakened from
-  4.9e-5 to 0.0038), showing the outcome was split-dominated at n≈6–11.
-- **Stimuli rebuilt** (`build_stimuli.py`): 72/72 strictly matched pairs,
-  24 per family, + 12 hard controls, all passing `validate_stimuli.py`.
-  Previously only 31/78 pairs were valid; arithmetic swapped target and
-  distractor between conditions, and 15 garden-path prompts ended with the
-  answer word.
-- **Lens is unchanged and still valid** (`out/lens_qwen3_1p7b.pt`, git-lfs) —
-  a re-run skips fitting and costs ~30 min GPU.
+- **Run 2 is the current, trustworthy result.** Rebuilt stimuli (156 items,
+  72 matched pairs + 12 hard controls) on GPU, gated by `prescreen.py` (all
+  three families cleared 70%+ accuracy), analyzed with the corrected pipeline,
+  and sensitivity-checked. `out/traces_run2.json` +
+  `out/analysis_real/report.json` are canonical. Run 1 (2026-07-17) is
+  withdrawn — see `out/ANALYSIS_NOTE.md` — do not quote it.
+- **Headline finding: H3 (dissociation gap), not H2.** Confirmatory metric
+  significant at every θ/band setting tested (`experiments/SENSITIVITY_REPORT.md`).
+  **H2's "internal revision" reading is refuted**: primary oscillation metric
+  is significant but θ-fragile (null at θ70/θ90), the confirmatory
+  target-vs-distractor test is a stable null (p≈0.46–0.62 everywhere), and
+  hard controls (no tempting distractor) oscillate almost as much as
+  false-lead items. **H1** holds only under the confirmatory readout
+  (robust), not the primary global-argmax one.
+- **Paper rewritten to match**: `paper/ABSTRACT.md`, `paper/RESULTS_TEMPLATE.md`,
+  `paper/DISCUSSION_OUTLINE.md` (esp. §6.2.2 oscillation and §6.4
+  psycholinguistics, both originally built on the now-refuted reading),
+  `paper/INDEX.md`, `paper/INTRODUCTION_AND_RELATED_WORK.md` (stimulus count,
+  §2.8 summary table) all updated 2026-07-22.
+- **Lens unchanged and still valid** (`out/lens_qwen3_1p7b.pt`, git-lfs).
 
 ## Priority queue (in order)
 
-1. ✅ **Pre-registration amended and locked** —
-   `experiments/PRE_REGISTRATION_AMENDMENT.md` (2026-07-19). Primary metrics
-   unchanged; confirmatory 2AFC metrics added and implemented in
-   `03_analyze.py`; interpretation rules for every primary×confirmatory outcome
-   fixed in advance; run 1 formally withdrawn.
-2. **Re-run GPU traces** on the new stimuli, then re-analyze and regenerate
-   figures. Run the **per-family behavioural pre-screen first** — amendment §8
-   makes it a stop condition, not a formality.
-3. **Rewrite Results/Abstract** from the new numbers — not before.
-4. **Robustness checks promised in Methods 4.7** — logit-lens secondary readout
-   (`lens_utils.py` not yet integrated into `02_run_experiment.py`) and
-   per-model workspace band (`experiments/workspace_band_guide.md`).
-5. **Reconcile `paper/DISCUSSION_OUTLINE.md`** — remove "X flips", "r ≈ ?", and
-   the unrun Natural Stories claims; H2's "revision between candidates" reading
-   is contradicted by the 2AFC check (p≈0.67) and must be softened or retested.
-6. Only once 1.7B is clean: Qwen3-4B replication, CoT variant
-   (`02_run_experiment_cot.py`), Natural Stories.
+1. ✅ Pre-registration amended and locked — `experiments/PRE_REGISTRATION_AMENDMENT.md`.
+2. ✅ Run-2 GPU traces collected and gated.
+3. ✅ Analyzed; `out/analysis_real/` promoted to run-2; figures regenerated.
+4. ✅ Sensitivity checks (θ 70/80/90 × band 3 settings) —
+   `experiments/SENSITIVITY_REPORT.md`.
+5. ✅ Results/Abstract/Discussion rewritten from the real numbers.
+6. **Next**: expand `paper/DISCUSSION_OUTLINE.md` writing templates into
+   final submission prose (structurally complete, still template-shaped).
+7. **Robustness checks still promised in Methods 4.7 but not run**: logit-lens
+   secondary readout (`lens_utils.py` not yet integrated into
+   `02_run_experiment.py`) and per-model workspace band *identification*
+   (`experiments/workspace_band_guide.md`) — distinct from the band
+   *sensitivity* check already done.
+8. Deliberate next GPU session: Qwen3-4B replication (fresh lens fit) and/or
+   more stimuli for power (H1/H3 primary rest on 14 pairs). CoT variant
+   (`02_run_experiment_cot.py`) and Natural Stories optional; if Natural
+   Stories is run, correlate against H3 (dissociation gap), not H2 — see
+   Discussion §6.4.
 
 ## Ground rules
 
