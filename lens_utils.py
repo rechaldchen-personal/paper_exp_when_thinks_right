@@ -13,11 +13,13 @@ def apply_logit_lens(
     model,
     input_ids: torch.Tensor,
     positions: list = None,
-) -> Tuple[Dict[int, torch.Tensor], torch.Tensor]:
+) -> Tuple[Dict[int, torch.Tensor], torch.Tensor, Dict[int, torch.Tensor]]:
     """Logit lens (identity transport): residual -> lm_head directly.
 
     This is the "naive" identity-based lens: h_ℓ → norm → lm_head, ignoring
-    the Jacobian. It's a sanity check and robustness baseline.
+    the Jacobian. It's a sanity check and robustness baseline (Methods §4.7 /
+    Appendix D): if H1-H3 hold under both J-lens and logit-lens, the findings
+    are not an artifact of J-lens-specific reliability issues (§2.7).
 
     Args:
         model: HuggingFace model (already loaded and in eval mode)
@@ -25,8 +27,12 @@ def apply_logit_lens(
         positions: list of positions to read at; if None, all positions
 
     Returns:
-        logit_lens_readouts: dict {layer_idx: tensor[n_positions_requested, vocab]}
+        logits_by_layer: dict {layer_idx: tensor[n_positions_requested, vocab]}
         final_logits: (seq_len, vocab) from model's final output
+        residuals: dict {layer_idx: tensor[seq, d_model]} (batch dim removed) —
+            the same shape 02_run_experiment.py's capture_residuals() returns,
+            so callers get the residual norms needed for the random-direction
+            baseline (random_baseline_entropy) without a second forward pass.
 
     Note: Only works for models with .model.layers and standard norm + lm_head.
     """
@@ -73,7 +79,27 @@ def apply_logit_lens(
 
             logits_by_layer[layer_idx] = torch.stack(logits_at_layer)  # (n_pos, vocab)
 
-    return logits_by_layer, final_logits
+    residuals_no_batch = {i: r[0] for i, r in residuals.items()}  # (seq, d_model)
+    return logits_by_layer, final_logits, residuals_no_batch
+
+
+def logit_lens_unembed_fn(model):
+    """Build unembed_fn(layer, h) -> logits for the logit-lens random baseline.
+
+    Identity transport needs no per-layer matrix (unlike the Jacobian lens'
+    unembed_fn in 02_run_experiment.py, which calls lens.transport(layer, h)):
+    every layer shares the same norm + lm_head. `layer` is accepted and
+    ignored so this drops into random_baseline_entropy()'s signature unchanged.
+    """
+    norm_layer = model.model.norm
+    lm_head = model.lm_head
+
+    def unembed_fn(layer, h):
+        with torch.no_grad():
+            h_normed = norm_layer(h.unsqueeze(0))
+            return lm_head(h_normed)[0].float()
+
+    return unembed_fn
 
 
 def entropy_from_logits(logits: torch.Tensor) -> torch.Tensor:

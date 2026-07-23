@@ -12,6 +12,12 @@ not quote its numbers.
 **Budget**: ~35 min GPU if the fitted lens is available, ~2.5 h if it must be
 refitted. Nothing here needs a fresh lens unless you are changing model.
 
+**Next up** (2026-07-22): three follow-ups are code-complete and CPU-side
+tested, GPU-side unrun — see "After run 2" below: (A) logit-lens robustness
+readout, ~20-30 min; (B) per-model band identification, ~5-15 min; (C)
+Qwen3-4B replication, ~5-7 h (needs its own lens fit). None require further
+code changes; A and B don't even need a fresh lens fit.
+
 **The one rule**: there is a hard gate at Step 4. If the pre-screen fails, fix
 the stimuli and recollect — do not proceed to analysis. Run 1's arithmetic
 scored 1/56 and was analyzed anyway; that is the failure this gate exists to
@@ -155,16 +161,94 @@ still holds mock-era placeholders such as "X top-1 flips" and "r ≈ ?").
 
 ---
 
-## After run 2 is clean
+## After run 2 (2026-07-22 status: all three below are code-complete, CPU-side
+## tested, and unrun — each needs its own GPU session)
 
-Only once 1.7B passes the gate and the analysis is stable:
+### A. Logit-lens robustness readout (~20-30 min GPU, no lens fit needed)
 
-- **Robustness** promised in Methods §4.7: logit-lens secondary readout
-  (`lens_utils.py`, not yet wired into `02_run_experiment.py`) and per-model
-  workspace band (`workspace_band_guide.md`, Appendix C).
-- **Qwen3-4B replication** — needs its own lens fit (Step 2, ~2 h).
-- **Optional**: CoT variant (`02_run_experiment_cot.py`, H4), Natural Stories
-  (`natural_stories_plan.md`).
+`02_run_experiment.py --readout logit_lens` is implemented (identity
+transport, no `jlens` dependency, output schema identical to the primary
+readout). Run it, analyze it, and compare directions against run 2:
+
+```bash
+python 02_run_experiment.py --model Qwen/Qwen3-1.7B --readout logit_lens \
+    --out out/traces_run2_logitlens.json
+python prescreen.py --traces out/traces_run2_logitlens.json
+venv/bin/python 03_analyze.py --traces out/traces_run2_logitlens.json \
+    --outdir out/analysis_run2_logitlens --dev-split 0.6
+```
+
+Compare `out/analysis_run2_logitlens/report.json` against
+`out/analysis_real/report.json`: do the same hypotheses come out significant,
+in the same direction, especially H3 (the headline)? Report as Appendix D.
+
+### B. Per-model workspace band identification (~5-15 min GPU per readout)
+
+`04_identify_band.py` + `band_analysis.py` are implemented and unit-tested
+(`venv/bin/python test_band_analysis.py`, CPU-only, passes). Needs a GPU pass
+over a held-out corpus (cheaper than lens fitting — forward passes only):
+
+```bash
+python 04_identify_band.py --model Qwen/Qwen3-1.7B --readout jlens \
+    --lens out/lens_qwen3_1p7b.pt --n-prompts 200 \
+    --out out/band_identification_jlens.json
+python 04_identify_band.py --model Qwen/Qwen3-1.7B --readout logit_lens \
+    --n-prompts 200 --out out/band_identification_logitlens.json
+```
+
+Inspect `out/figures/band_identification_*.png` and the `suggested_band_*`
+fields before trusting them (§ full guidance in `workspace_band_guide.md`).
+If you adopt a different band, that's a pre-registration amendment (rerun
+sensitivity + main analysis with the new default), not a silent swap.
+
+### C. Qwen3-4B replication (~5-7 h GPU total, budget accordingly)
+
+Verified CPU-side before spending any GPU time: **stimuli need no rework** —
+`validate_stimuli.py --model Qwen/Qwen3-4B` passes all 156 stimuli, all 7
+rules (Qwen3-1.7B and 4B share the same 151,936-token vocabulary, confirmed
+via each model's `config.json`). The scripts are already model-agnostic
+(`--model` is a real parameter everywhere, nothing hardcoded to 1.7B) — no
+code changes needed, only new output paths so nothing overwrites the 1.7B
+run.
+
+Rough compute estimate (layers × hidden_size²: 28×2048² for 1.7B vs
+36×2560² for 4B ≈ **2.0×** the compute per token) — expect **lens fitting
+roughly 2× longer than 1.7B's** (which took a few hours), so budget ~4-6h for
+fitting alone, plus ~30-40 min for trace collection. This is an estimate from
+published configs, not a measurement — confirm early and adjust.
+
+```bash
+# 1. Fit a fresh lens (4B needs its own; do NOT reuse the 1.7B lens)
+python 01_fit_lens.py --model Qwen/Qwen3-4B --n-prompts 1000 --seq-len 128 \
+    --out out/lens_qwen3_4b.pt --checkpoint out/fit_ckpt_4b.pt
+
+# 2. Behavioral pre-screen still applies — same stimuli, different model,
+#    accuracy could differ meaningfully
+python 02_run_experiment.py --model Qwen/Qwen3-4B --readout jlens \
+    --lens out/lens_qwen3_4b.pt --out out/traces_4b.json
+python prescreen.py --traces out/traces_4b.json   # HARD GATE, same as run 2
+
+# 3. Analyze under the SAME pre-registered plan (band, theta, split, tests) —
+#    this is what makes it a real replication rather than a fresh fishing
+#    expedition. PRE_REGISTRATION_AMENDMENT.md §"Applies to" already covers
+#    "any later model" under the same plan; no new amendment needed unless
+#    you want to change something (e.g. adopt a band from step B above).
+venv/bin/python 03_analyze.py --traces out/traces_4b.json \
+    --outdir out/analysis_4b --dev-split 0.6
+venv/bin/python generate_figures.py   # repoint at out/analysis_4b or promote it
+```
+
+Interpretation: this is a genuine replication attempt (same plan, second
+model), not new hypothesis mining. Report whichever way it comes out — H3
+replicating on 4B is the strongest possible credibility signal this paper can
+get; H3 *not* replicating is equally important to report honestly, and would
+mean the 1.7B finding doesn't generalize past a single small model.
+
+### Optional (lower priority, not scoped in detail here)
+
+CoT variant (`02_run_experiment_cot.py`, H4), Natural Stories
+(`natural_stories_plan.md` — target the correlation at the dissociation gap,
+not oscillation; see `paper/DISCUSSION_OUTLINE.md` §6.4).
 
 ## Troubleshooting
 

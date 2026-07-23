@@ -37,10 +37,12 @@ withdrawn — see `out/ANALYSIS_NOTE.md` — and does not appear in any section.
 3. **METHODS_DRAFT.md** ✅ — Complete (~2500 words)
    - 4.1 Model/setup · 4.2–4.3 Stimulus design · 4.4 Metrics · 4.5 Pipeline
      (dev/holdout, θ) · 4.6 Statistics · 4.7 Robustness checks
-   - ⚠ 4.7 promises logit-lens replication and per-model band identification
-     that still have not run — θ/band *sensitivity* has now run
-     (`SENSITIVITY_REPORT.md`), but logit-lens replication and per-model band
-     identification have not; run them or soften the text before submission
+   - ⚠ 4.7 promises logit-lens replication and per-model band identification.
+     θ/band *sensitivity* has run (`SENSITIVITY_REPORT.md`). Logit-lens
+     (`02_run_experiment.py --readout logit_lens`) and band identification
+     (`04_identify_band.py`/`band_analysis.py`, unit-tested) are now
+     code-complete but still GPU-unrun — see
+     `experiments/README_GPU_PHASE.md` §"After run 2" (§A, §B)
 
 4. **RESULTS_TEMPLATE.md** ✅ — Filled from Qwen3-1.7B run 2 (2026-07-22)
    - 5.1 Sanity check · 5.2 H1/H2/H3 (primary + confirmatory each) · 5.3 Case
@@ -64,12 +66,14 @@ withdrawn — see `out/ANALYSIS_NOTE.md` — and does not appear in any section.
 - A: Full stimuli table (156 items: 72 matched pairs + 12 hard controls)
 - B: Natural Stories correlation (only if run; should target H3, not H2 —
   see `DISCUSSION_OUTLINE.md` §6.4)
-- C: Workspace band identification (pending; band is still the pre-registered
-  default — this is per-model *identification*, distinct from the band
-  *sensitivity* check already run)
+- C: Workspace band identification — tool ready (`04_identify_band.py`),
+  band is still the pre-registered default pending a GPU run; distinct from
+  the band *sensitivity* check already done
 - D: Robustness checks — sensitivity (θ/band) done, see
-  `experiments/SENSITIVITY_REPORT.md`; logit-lens agreement still pending
-- E: Computational details (lens fitting parameters)
+  `experiments/SENSITIVITY_REPORT.md`; logit-lens agreement tool ready
+  (`02_run_experiment.py --readout logit_lens`), pending a GPU run
+- E: Computational details (lens fitting parameters; 4B replication plan and
+  compute estimate in `experiments/README_GPU_PHASE.md` §C)
 
 ---
 
@@ -88,6 +92,8 @@ ABSTRACT → INTRODUCTION_AND_RELATED_WORK → BACKGROUND → METHODS_DRAFT →
 RESULTS_TEMPLATE → DISCUSSION_OUTLINE → REFERENCES → Appendices.
 
 Blockers before compiling: expand Discussion writing templates into final
-prose; run or soften the still-pending §4.7 items (logit-lens replication,
-per-model band identification); decide whether to attempt Qwen 4B before
-submission or note it as future work.
+prose; run the now-code-complete §4.7 items on GPU (logit-lens replication,
+per-model band identification — both ~30 min or less) or soften the text if
+skipped; decide whether to attempt the ~5-7h Qwen 4B replication before
+submission or note it as future work (stimuli are pre-verified to need no
+rework for 4B).

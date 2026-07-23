@@ -13,35 +13,52 @@
 - Jacobian: Averaged ∂h_final / ∂h_{ℓ,t} over the corpus
 - Tool: Official anthropics/jacobian-lens reference implementation
 
-**Workspace band**: [0.25, 0.90] as default; per-model identification via Gurnee et al. Fig 28 criteria (excess kurtosis, autocorrelation, next-token accuracy) in Appendix C.
+**Workspace band**: [0.25, 0.90] as default (all run-2 results use this). Per-model identification via Gurnee et al. Fig 28-style criteria (excess kurtosis, layer-to-layer rank autocorrelation, next-token accuracy) is implemented in `04_identify_band.py`/`band_analysis.py` (Appendix C) and unit-tested (`test_band_analysis.py`), but has not yet been run — it requires a GPU pass over a held-out corpus. See `experiments/workspace_band_guide.md` for the exact commands and for a note on where our autocorrelation operationalization deviates from the original guide's ambiguous pseudocode.
 
 ## 4.2 Stimuli
 
-**Design**: Matched minimal pairs (false_lead vs. straightforward) across three families:
+**Design**: 156 stimuli — **72 strictly matched pairs** (24 per family) +
+**12 hard controls**, built by `build_stimuli.py`. "Strictly matched" is a
+hard requirement, enforced by `validate_stimuli.py` (rule R1): within a pair,
+target and distractor must be IDENTICAL across the straightforward and
+false_lead conditions, so only the framing differs — see
+`build_stimuli.py`'s module docstring for why an earlier version of this
+stimulus set (run 1) violated this for all 28 of its arithmetic pairs, which
+invalidated its paired tests.
 
-### Factual (29 items → ~15 pairs)
+### Factual (24 pairs)
 Single-fact questions where a plausible distractor can mislead:
 - Example: "The capital of France is **[Paris vs. Amsterdam]**" (straightforward)
 - vs. "The capital of the country famous for tulips — no wait, the Eiffel Tower — is **[Paris vs. Amsterdam]**" (false_lead)
-- Design: Lure initiates plausible parse; "wait" cue triggers revision
+- Design: Lure initiates plausible parse; "wait" cue triggers revision; target/distractor identical across conditions
 
-### Arithmetic (16 items → 8 pairs)
-Order-of-operations ambiguity: left-to-right (naive) vs. PEMDAS (correct)
-- Example: "calc: ( 4 + 17 ) * 2 = **[42]**" (straightforward)
-- vs. "calc: 4 + 17 * 2 = **[38 vs. 42]**" (false_lead: target shifts!)
-- Design: Parentheses vs. bare expression; answers swap per condition
+### Arithmetic (24 pairs)
+Order-of-operations ambiguity: left-to-right (naive) vs. PEMDAS (correct).
+Answer is a **fixed** English number word (' word' form) across both
+conditions — only the framing (parenthesized vs. bare, then corrected)
+changes; the expression and answer never swap.
+- Example: "Q: ( 1 + 4 ) * 2\nA:" → **ten** (straightforward)
+- vs. "Q: 1 + 4 * 2 — no wait, the sum in brackets comes first: ( 1 + 4 ) * 2\nA:" → **ten** (false_lead, same target)
+- Few-shot frame required: Qwen3 tokenizes digit answers (' 10' → [space, '1', '0']) as multiple tokens, and the model defaults to a digit continuation unless number words are demonstrated first
 
-### Garden-Path (10 items → 5 pairs)
-Syntactic ambiguity from psycholinguistics literature (Natural Stories anchor):
-- Example: "The horse **that was** raced past the barn fell. The thing that fell was the **[horse vs. barn]**" (straightforward)
-- vs. "The horse raced past the barn fell. The thing that fell was the **[horse vs. barn]**" (false_lead: reduced relative clause)
-- Design: Omitting "that was" triggers garden-path garden-path effect in humans
+### Garden-Path (24 pairs)
+Reduced relative clause syntactic ambiguity:
+- Example: "The horse **that was** raced past the barn fell. The thing that fell was the" → **horse** (straightforward)
+- vs. "The horse raced past the barn fell. The thing that fell was the" → **horse** (false_lead: reduced relative clause, same target)
+- Design: Omitting "that was" triggers the garden-path effect documented in humans; the probe sentence always ends on "the" so the query position is a genuine prediction, not an already-answered slot
 
-**Hard controls** (3 items):
-Difficult problems WITHOUT a tempting distractor, to isolate false-lead effect from difficulty confound.
-- Example: "The first president of a nation that declared independence in 1776 was **[Washington vs. Jefferson]**"
+**Hard controls** (12 items):
+Difficult factual retrieval WITHOUT a tempting distractor, to isolate
+false-lead effect from difficulty confound.
+- Example: "Fact: The first president of the United States was" → **George** vs. **Thomas**
 
-**Tokenization validation**: All targets and distractors are single tokens (with leading space) under the target model's tokenizer. Validated via `02_run_experiment.py --validate` before GPU runs.
+**Validation**: `validate_stimuli.py` enforces 7 design rules (matched pairs,
+no answer leakage, single-token targets, no answer-in-context among them) on
+every edit to `stimuli.json`, using the real tokenizer (CPU-only, no torch
+needed). `02_run_experiment.py --validate` remains available as a quick
+tokenization-only pre-GPU check but does not replace it — tokenization-OK is
+not the same as design-sound, which is exactly how run 1's defects passed
+undetected.
 
 ## 4.3 Metrics (Per-stimulus, per-layer, per-position)
 
@@ -76,10 +93,14 @@ All computed at **query position** (−1 ≡ last token) within the **workspace 
 - θ = 80th percentile of ΔH over straightforward-condition band positions
 - (Set on dev split; holdout used for testing)
 
-**Oscillation depth**:
+**Oscillation depth** (primary; see also the confirmatory 2AFC variant below):
 - Number of distinct top-1 token identity changes at query position
 - Counted in band layers after ℓ_H is first exceeded
-- Signature of backtracking: model revises its confident prediction
+- Originally hypothesized as a signature of backtracking (model revising
+  between the target and distractor); run 2's confirmatory test does not
+  support that reading — see Results §5.2 (H2) and Discussion §6.2.2. The
+  metric itself (top-1 identity churn) is defined and computed as above
+  regardless of interpretation.
 
 **Dissociation gap**: ℓ* − ℓ_H  
 - "Confidently-wrong window" (Zhang et al. 2023 framing)
@@ -129,35 +150,69 @@ python 03_analyze.py --traces out/traces.json \
 
 ## 4.5 Statistical Tests
 
-**Paired Wilcoxon signed-rank test** on false_lead − straightforward per pair.
-- Appropriate for paired, non-Gaussian data
-- Report: n, median difference, W, p-value
-- Significance: α = 0.05 (two-tailed)
-- Correction: Bonferroni across 3 hypotheses (H1, H2, H3)
+**Paired, one-tailed, exact signed-rank test** on false_lead − straightforward
+per pair (`03_analyze.py`), for the directional hypotheses H1-H3 as specified
+in `PRE_REGISTRATION.md`.
+- Zero differences dropped (standard `zero_method="wilcox"`); exact null
+  distribution computed via subset-sum DP over signed mid-ranks, not
+  scipy's `wilcoxon()` — scipy's `method="auto"` silently falls back to a
+  normal approximation under ties/zeros at small n while warning that the
+  approximation is invalid, and reproducibility across scipy versions is not
+  guaranteed; see `out/ANALYSIS_NOTE.md` for the concrete case where this
+  produced two different p-values (0.0625 vs 0.0339) for identical data.
+- Report: n_pairs, n_nonzero, median difference, W₊, p (one-tailed, with the
+  two-tailed value also recorded)
+- Significance: α = 0.05
+- **No Bonferroni correction applied.** Per `PRE_REGISTRATION.md` §8, all
+  three hypotheses (and, per the amendment, their confirmatory counterparts)
+  are reported together and the pattern across all six is what's interpreted,
+  rather than correcting each test individually.
 
-**Fallback**: Mann-Whitney U if not all pairs present in both conditions.
+**Confirmatory readout** (`PRE_REGISTRATION_AMENDMENT.md` §4): the same three
+tests, re-computed over a readout restricted to {target, distractor} rather
+than the full vocabulary, reported alongside the primary tests with the
+interpretation rule for agreement/disagreement fixed in advance (amendment §5).
 
-**Caution**: θ set and tested on same (or overlapping) data in this analysis.  
-Split to dev/holdout before reporting p-values for paper submission.
+**Dev/holdout split**: θ set on 60% of pairs (dev), all tests run on the
+remaining 40% (holdout), seed fixed at 42 for reproducibility — this is
+implemented, not a caution for future work.
 
 ## 4.6 Robustness Checks (Tier 2)
 
 ### Secondary Readout: Logit-Lens (Identity Transport)
-Run all analyses with logit-lens (J_ℓ = I) as alternative:
-- If main findings hold under both J-lens and logit-lens, robust to lens reliability issues
+**Status: implemented, not yet run.** `02_run_experiment.py --readout logit_lens`
+collects traces via identity transport (residual → norm → lm_head directly,
+no fitted lens or `jlens` dependency) with an output schema identical to the
+primary `--readout jlens` traces, so `03_analyze.py` runs on either
+unmodified. Plan: collect `out/traces_run2_logitlens.json`, analyze, and
+report:
+- If main findings (esp. H3, the headline result) hold under both J-lens and
+  logit-lens, that rules out J-lens-specific reliability issues (§2.7) as an
+  explanation
 - Appendix D: side-by-side comparison for all figures
 
 ### Model Ablations
-- Band sensitivity: rerun 03_analyze.py with --band [0.15, 0.95], [0.30, 0.85], etc.
-- Theta sensitivity: rerun with --theta-pct 70, 90
-- Report: do H1–H3 results hold across parameters?
+- **Band sensitivity: done.** `experiments/SENSITIVITY_REPORT.md` — θ ∈
+  {70,80,90} pct × band ∈ {[.20,.95],[.25,.90],[.30,.85]} on run-2 traces.
+  Direction never flips; confirmatory metrics are significant at every
+  setting, primary metrics only near the pre-registered default (see report
+  for the mechanism).
+- **Per-model band identification: implemented, not yet run** — distinct from
+  band *sensitivity* above; this identifies a data-driven band per model
+  rather than perturbing the pre-registered default. See §4.1 and
+  `experiments/workspace_band_guide.md`.
+- Theta sensitivity: done, part of the same sensitivity report.
 
 ## 4.7 External Validity: Natural Stories
 
 (See natural_stories_plan.md for details)
 
-Correlate internal metrics with human reading times on garden-path sentences.  
-Expected: oscillation_depth and dissociation_gap correlate with human RT slowdown (r > 0.4, p < 0.05).
+Correlate internal metrics with human reading times on garden-path sentences.
+**Updated target (2026-07-22, per Discussion §6.4)**: correlate against the
+dissociation gap, not oscillation depth — oscillation's mechanism is
+unresolved (§4.3.2), so a correlation with human RT would not be
+interpretable as a revision-cost analog the way the gap would be. If run,
+expected: dissociation_gap correlates with human RT slowdown (r > 0.4, p < 0.05).
 
 ---
 

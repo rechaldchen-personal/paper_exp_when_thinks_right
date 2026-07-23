@@ -36,18 +36,30 @@ session-by-session log (the old CLAUDE.md tracker was condensed on 2026-07-19).
 4. ✅ Sensitivity checks (θ 70/80/90 × band 3 settings) —
    `experiments/SENSITIVITY_REPORT.md`.
 5. ✅ Results/Abstract/Discussion rewritten from the real numbers.
-6. **Next**: expand `paper/DISCUSSION_OUTLINE.md` writing templates into
-   final submission prose (structurally complete, still template-shaped).
-7. **Robustness checks still promised in Methods 4.7 but not run**: logit-lens
-   secondary readout (`lens_utils.py` not yet integrated into
-   `02_run_experiment.py`) and per-model workspace band *identification*
-   (`experiments/workspace_band_guide.md`) — distinct from the band
-   *sensitivity* check already done.
-8. Deliberate next GPU session: Qwen3-4B replication (fresh lens fit) and/or
-   more stimuli for power (H1/H3 primary rest on 14 pairs). CoT variant
-   (`02_run_experiment_cot.py`) and Natural Stories optional; if Natural
-   Stories is run, correlate against H3 (dissociation gap), not H2 — see
-   Discussion §6.4.
+6. ✅ **Logit-lens readout implemented**: `02_run_experiment.py --readout
+   logit_lens` (also fixed a pre-existing bug where `--validate` imported
+   torch unconditionally, contradicting its own "CPU-only" doc). Unrun —
+   needs ~20-30 min GPU (`experiments/README_GPU_PHASE.md` §A).
+7. ✅ **Per-model band identification implemented**: `04_identify_band.py` +
+   `band_analysis.py`. Math is unit-tested on synthetic data
+   (`test_band_analysis.py`, CPU, all passing) — the autocorrelation
+   criterion in the original guide's pseudocode was ambiguous (no natural
+   ordering to autocorrelate query positions against), so this uses a
+   different, well-defined operationalization (layer-to-layer rank
+   correlation); documented in `band_analysis.py` and
+   `experiments/workspace_band_guide.md`. Unrun — needs ~5-15 min GPU per
+   readout (§B).
+8. ✅ **4B replication pre-verified, not yet run**: `validate_stimuli.py
+   --model Qwen/Qwen3-4B` passes all 156 stimuli — no stimulus rework needed
+   (1.7B and 4B share a 151,936-token vocab, confirmed via each model's
+   config.json). Compute estimate ~2× 1.7B (28×2048² vs 36×2560² layers ×
+   hidden²) — budget ~5-7h GPU. Scripts are already model-agnostic, no code
+   changes needed (§C).
+9. **Next**: run the three GPU sessions above; expand
+   `paper/DISCUSSION_OUTLINE.md` writing templates into final prose. CoT
+   variant (`02_run_experiment_cot.py`) and Natural Stories remain optional;
+   if Natural Stories is run, correlate against H3 (dissociation gap), not
+   H2 — see Discussion §6.4.
 
 ## Ground rules
 
@@ -81,4 +93,11 @@ session-by-session log (the old CLAUDE.md tracker was condensed on 2026-07-19).
   top1_id per layer×position + behavioral top-5 check).
 - Metrics: ℓ_H (entropy collapse), ℓ* (stable target top-1 in band),
   gap = ℓ* − ℓ_H, oscillation (top-1 changes after ℓ_H) — `03_analyze.py`.
+  Confirmatory 2AFC variants (`l_star_2afc`, `gap_2afc`, `oscillation_2afc`)
+  read out over {target, distractor} only.
 - Analysis flags: `--outdir` (not `--out`), `--theta-pct`, `--dev-split 0.6`.
+- Qwen3-1.7B config: hidden=2048, layers=28, vocab=151936. Qwen3-4B: hidden=2560,
+  layers=36, same 151936 vocab (so stimuli need no rework across sizes).
+- `02_run_experiment.py --readout {jlens,logit_lens}`: both produce identical
+  record schemas, so `03_analyze.py` runs on either unmodified — that's the
+  whole point of the robustness comparison.
