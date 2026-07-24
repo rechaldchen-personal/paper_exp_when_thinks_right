@@ -1,169 +1,207 @@
 # Discussion Section Outline (Section 6)
 
-**Status**: Filled from Qwen3-1.7B run 2 (2026-07-22), superseding the run-1
-draft. The headline changed: H3 (dissociation gap) is now the lead finding,
-and §6.2.2/§6.4 are substantially rewritten because the confirmatory 2AFC
-test (`PRE_REGISTRATION_AMENDMENT.md`) refutes the "internal revision"
-reading of oscillation that the original draft was built around.
-**Target length**: 1500–2000 words
+**Status**: Filled from Qwen3-1.7B run 2 (2026-07-22) and the Qwen3-4B
+replication (2026-07-24), superseding the run-1 and run-2-only drafts. Two
+headline changes across these revisions: (1) H3 (dissociation gap) replaced
+H2 (oscillation) as the lead finding once the confirmatory 2AFC test refuted
+the "internal revision" reading; (2) **H3 itself does not replicate on
+Qwen3-4B**, which is now the single most important qualifier in this section
+and reframes the paper's contribution from "we found a mechanism" to "we
+found a mechanism, and demonstrated that it does not generalize across model
+scale the way a single-model study would assume." §6.2.2 (new) and §6.5–6.7
+carry most of that reframing.
+**Target length**: 2100–2400 words
 
 ---
 
 ## 6. Discussion
 
-### 6.1 Summary of Findings (200 words)
+### 6.1 Summary of Findings (250 words)
 
-**Filled from run 2**:
-- **H1 (later commitment)**: primary null (p=0.109, n=14; median Δ=0.0
-  layers); confirmatory **supported** (p=0.0021, n=19; median Δ=+2.0 layers),
-  robust across all sensitivity settings
-- **H2 (oscillation)**: primary supported at the pre-registered default
-  (p=0.0077, n=28; median Δ=+0.5) but **not robust to θ** (null at θ70/θ90);
-  confirmatory **null and stable** (p=0.46, consistent p≈0.46–0.62 across
-  every sensitivity setting); hard controls oscillate nearly as much as
-  false-lead items (median 2.0 vs 2.5, both above straightforward's 1.0)
-- **H3 (dissociation gap)**: primary supported at the default (p=0.0112,
-  n=14) but θ-fragile; confirmatory **supported and robust everywhere**
-  (p=0.0016, n=18; median Δ=+4.0 layers) — the strongest and most stable
-  result in the study
-- Overall: the dissociation gap (H3) is the headline finding. Delayed
-  target-vs-distractor commitment (H1) holds in the same robust,
-  confirmatory sense. Oscillation (H2) is a real effect of unresolved origin,
-  not confirmed evidence of revision between candidate answers.
+**Filled from run 2 + 4B replication**:
+- **H1 (later commitment)**: on 1.7B, primary null (p=0.109); confirmatory
+  **supported** (p=0.0021, median Δ=+2.0 layers), robust across every θ/band
+  setting, though markedly weaker under logit-lens (p=0.040). **Does not
+  replicate on 4B** under either readout (p=0.334, p=0.461).
+- **H2 (oscillation)**: primary supported on 1.7B at the pre-registered
+  default only (p=0.0077) — null under θ=70/90, null under logit-lens
+  (p=0.453), and null on 4B under both readouts. Confirmatory version is a
+  **stable null across all four model×readout combinations** (p=0.27–0.46).
+  Hard controls oscillate nearly as much as false-lead items on 1.7B.
+- **H3 (dissociation gap)**: on 1.7B, the most robust result in the study —
+  significant across every θ/band setting *and* under logit-lens (confirmatory
+  p=0.0016 jlens, p=0.033 logit-lens). **Does not replicate on 4B** under
+  either readout (p=0.369, p=0.434) — the same non-replication pattern as H1.
+- Overall: on Qwen3-1.7B, the dissociation gap (H3) is a genuinely robust
+  finding along every within-model axis tested (θ, band, lens method).
+  Delayed target-vs-distractor commitment (H1) holds in the same sense.
+  Neither generalizes to Qwen3-4B. Oscillation (H2) is not shown to reflect
+  candidate revision at any setting or model tested — now the best-supported
+  single conclusion in the paper.
 
 **Key sentence**:
-> "False-lead prompts reliably open a wider confidence–correctness
-> dissociation window before the model reaches the target answer, a finding
-> that holds across every workspace-band and threshold setting we tested.
-> Top-1 oscillation also increases under false lead, but a targeted
-> confirmatory test shows this is not attributable to wavering between the
-> candidate answers specifically, so we report it as unattributed churn
-> rather than internal revision."
+> "In Qwen3-1.7B, false-lead prompts reliably open a wider confidence–
+> correctness dissociation window, a finding that survives every threshold,
+> band, and lens-readout choice we tested. The same effect, measured
+> identically, is absent in Qwen3-4B — evidence that this signature is
+> scale- or capability-dependent rather than a fixed property of how these
+> models process false-lead prompts, and a caution against generalizing
+> single-model interpretability findings without testing them."
 
 ---
 
-### 6.2 Interpretation: What This Means (450 words)
+### 6.2 Interpretation: What This Means (700 words)
 
-#### 6.2.1 The Dissociation Gap as a Hallucination Risk Marker
+#### 6.2.1 The Dissociation Gap as a Hallucination Risk Marker — Within Qwen3-1.7B
 
 **What to emphasize**:
 - Model achieves high confidence (low ΔH) before locking onto the correct
-  answer, and this window is measurably larger under false lead
+  answer, and this window is measurably larger under false lead, in Qwen3-1.7B
 - This "confidently-wrong window" is exactly where hallucinations happen
-- The result is robust: significant under both readouts, and under every
-  pre-registered θ/band sensitivity setting for the confirmatory metric
-
-**Discussion points**:
-- Connection to overconfidence biases in neural networks
-- Alignment with human psychology: confidence ≠ correctness
-- Practical application: real-time uncertainty flagging
-- Why this is the strongest claim in the paper: unlike H1/H2, H3's
-  confirmatory metric never loses significance across the sensitivity grid,
-  and its primary metric never disagrees in direction
+- The result is robust *within that model*: significant under both readouts
+  and every pre-registered θ/band setting for the confirmatory metric — three
+  independent robustness axes, all passed
+- **This robustness claim must be stated with its scope attached going
+  forward**: "robust" here means robust to analysis choices within Qwen3-1.7B,
+  not robust across model scale — §6.2.2 shows those are different claims
 
 **Writing template**:
-> "The dissociation gap (ℓ* − ℓ_H), measured against the target/distractor
-> comparison, widens by a median of 4.0 layers under false-lead prompts
-> (p = 0.0016), and this holds across every θ percentile (70th/80th/90th)
-> and workspace-band width we pre-registered for sensitivity testing. During
-> this window, the model has already committed to a high-confidence state —
-> low excess entropy — before the correct answer has overtaken the tempting
-> distractor. This dissociation is smaller in straightforward prompts and is
-> the single most robust signature in this study. It has direct implications
-> for hallucination detection: a model's entropy collapse before answer
-> commitment is a measurable, pre-output red flag, and — unlike the
-> oscillation signature discussed next — this one survives every robustness
-> check we ran."
+> "Within Qwen3-1.7B, the dissociation gap (ℓ* − ℓ_H, measured against the
+> target/distractor comparison) widens by a median of 4.0 layers under
+> false-lead prompts (p = 0.0016), and this holds across every θ percentile,
+> workspace-band width, and — critically — under an independent logit-lens
+> readout that shares no fitted parameters with the primary Jacobian lens.
+> During this window, the model has already committed to a high-confidence
+> state before the correct answer has overtaken the tempting distractor.
+> This is the most robust signature in the 1.7B analysis by a wide margin.
+> It has direct implications for hallucination detection — a model's entropy
+> collapse before answer commitment is a measurable, pre-output red flag —
+> with one caveat that governs everything else in this Discussion: this
+> robustness was established *within one model*. Whether it holds *across*
+> models turns out to be a separate question with a different answer."
 
 ---
 
-#### 6.2.2 Oscillation: A Real Effect of Unresolved Origin
+#### 6.2.2 Why the Effect Doesn't Generalize: Scale, Susceptibility, and a Caution for Single-Model Claims [NEW]
 
-**This subsection replaces the original "oscillation as backtracking
-signal" framing.** The original draft treated increased top-1 oscillation as
-direct evidence of internal revision between the target and the tempting
-distractor. Run 2's confirmatory test — read out over {target, distractor}
-only, rather than the full vocabulary — was added specifically to test that
-claim, and it does not support it (p = 0.46, stable across every sensitivity
-setting), while hard-control items with no tempting distractor at all
-oscillate almost as much as false-lead items (median 2.0 vs 2.5). The
-primary metric's own significance is also θ-fragile (null at θ70/θ90),
-which independently weakens confidence in it as a robust phenomenon.
-
-**What to emphasize instead**:
-- Global top-1 churn genuinely increases under false lead by the
-  pre-registered metric, at the pre-registered θ — this is not nothing
-- But the mechanism is open: churn among vocabulary tokens unrelated to
-  either candidate answer is at least as plausible an explanation as
-  "wavering between target and distractor," given the confirmatory null
-- Hard controls oscillating nearly as much as false-lead items suggests the
-  effect may track general representational instability or difficulty
-  rather than false-lead-specific conflict
-- This is a case study in why the confirmatory-metric design was worth
-  building: a plausible, appealing mechanistic story (candidate revision)
-  did not survive a direct test, and the pre-registered decision rule
-  (amendment §5) caught it before it became an overclaim
-
-**Discussion points**:
-- What "unattributed churn" could mean mechanistically: attention pattern
-  instability, competition among near-synonyms or distractor-adjacent
-  tokens not scored here, or general effects of prompt length/complexity
-  (false-lead prompts are longer)
-- Why the parallel to human garden-path revision (§6.4 in the original
-  draft) is now a much weaker claim than previously framed
-- What would resolve this: extending the 2AFC comparison to a wider
-  candidate set, or a causal ablation of the distractor direction (future
-  work, §6.5)
-
-**Writing template**:
-> "Top-1 identity changes after confidence collapse increase under
-> false-lead prompts by the pre-registered global metric (median Δ=+0.5,
-> p=0.0077), but a confirmatory test restricted to the target and distractor
-> tokens specifically — designed to test whether this churn reflects
-> wavering between the two candidate answers — is null and stable across
-> every sensitivity setting we ran (p≈0.46–0.62). Hard-control items, which
-> contain no tempting distractor at all, oscillate almost as much as
-> false-lead items (median 2.0 vs. 2.5 changes). Taken together, we do not
-> find evidence that this oscillation reflects internal revision between
-> candidate answers; it more plausibly reflects general representational
-> instability that is not specific to the false-lead manipulation. We report
-> the primary effect because it is real and pre-registered, but we
-> explicitly withhold the 'internal backtracking' interpretation that a
-> single-metric analysis would have invited."
-
----
-
-#### 6.2.3 Hard Controls: Evidence Against H2 Specificity, Not Evidence For It
-
-**This subsection is reframed from the original draft**, which anticipated
-hard controls validating specificity (no oscillation without a tempting
-distractor). Run 2's hard controls show the opposite pattern for H2 and are
-inconclusive (n=2) for H3.
+**This subsection is new** and is arguably the most important addition to
+the Discussion. §6.2.1 establishes H3 as robust to every analysis choice
+*within* Qwen3-1.7B. This subsection establishes that the same effect is
+absent in Qwen3-4B, under the identical pre-registered pipeline, and argues
+for what that means.
 
 **What to emphasize**:
-- Hard-control oscillation (median 2.0, n=6 holdout) is comparable to
-  false-lead oscillation (2.5) and above straightforward (1.0) — this
-  undermines rather than supports treating oscillation as false-lead-specific,
-  and is the second independent piece of evidence (alongside the confirmatory
-  null) against the revision interpretation
-- Hard-control gap (median 1.5, n=2 holdout) is too small a sample to test,
-  but is not obviously larger than straightforward's gap (1.0), which is at
-  least not inconsistent with H3 being false-lead-specific
-- Small n (2–6) means neither reading should be treated as conclusive;
-  expanding hard controls further is listed under Future Work
+- H3 and H1 (confirmatory) are null on Qwen3-4B under both readouts — not
+  marginally null, and not underpowered: median effect sizes are ~0 (vs. +2
+  to +4 layers at 1.7B), and 4B's sample sizes are, if anything, larger
+- Behavioral evidence points at *why*: Qwen3-4B is both more accurate (100%
+  vs. 70.8% straightforward accuracy on arithmetic) and far less internally
+  tempted by the false-lead framing (4.2% vs. 29.2% behavioral temptation
+  rate on arithmetic; internal `distractor_lead_layers` gap shrinks from
+  +4.5 to +1.5 layers) — roughly a threefold reduction in how much the
+  manipulation perturbs the model's internal computation at all
+- The natural reading: **the dissociation-gap mechanism may require a model
+  susceptible enough to actually be internally tempted by the false-lead
+  framing.** 1.7B was; 4B largely is not. This is a capability-gated effect,
+  not a universal transformer property.
+- This is not a failed replication to explain away — it is itself a
+  substantive finding, and arguably a more important one than uniform
+  replication would have been: it demonstrates concretely that a rigorously
+  validated, multiply-robust single-model interpretability finding can fail
+  to generalize one step up in scale, which is a caution the interpretability
+  literature does not emphasize enough. Most single-model mechanistic
+  findings are never tested this way.
 
 **Discussion points**:
-- Design robustness: the controls behaved informatively even without
-  reaching significance — they changed which claims we're willing to make
-- This is a case where a null/ambiguous control result did real
-  evidentiary work rather than being a formality
+- Connects to the broader "faithfulness across scale" question in
+  interpretability: robustness-to-analysis-choice (what §6.2.1 established)
+  and robustness-to-scale are genuinely separate properties, and papers that
+  establish only the former often implicitly claim the latter
+- One data point (1.7B → 4B) cannot distinguish "the effect fades smoothly
+  with scale/capability" from "1.7B has some specific property"; a third
+  model size is the natural next test (§6.5)
+- Practical implication for anyone building on dissociation-gap-style
+  hallucination detectors: validate per-model before deploying, don't assume
+  portability within a model family
+
+**Writing template**:
+> "The dissociation gap that is so robust in Qwen3-1.7B is entirely absent
+> in Qwen3-4B: all six pre-registered tests (primary and confirmatory, H1
+> and H3) that were significant in 1.7B are null in 4B, under both the
+> primary and the logit-lens readout, with effect sizes near zero rather
+> than merely non-significant. The explanation is not mysterious: Qwen3-4B
+> is both more accurate on our stimuli and measurably less internally
+> tempted by the false-lead framing — the median internal distractor-
+> competition window shrinks roughly threefold, from +4.5 layers at 1.7B to
+> +1.5 at 4B. If the manipulation barely perturbs the larger model's internal
+> computation to begin with, there is little dissociation window left to
+> detect. We read this as evidence that the effect is gated by a model's
+> susceptibility to the false-lead framing rather than being a fixed
+> property of how transformers process conflicting evidence in general. We
+> report this prominently, rather than as a limitation buried in §6.5,
+> because a within-model-robust effect that fails to generalize one step up
+> in scale is itself an important finding about the fragility of
+> single-model interpretability claims — one this study is positioned to
+> demonstrate precisely because we tested for it rather than assuming it
+> away."
 
 ---
 
-### 6.3 Broader Context: Situating Within Gurnee et al. (2026) (300 words)
+#### 6.2.3 Oscillation: A Real Effect of Unresolved Origin
 
-**What to write**: How this work extends Gurnee et al.'s global workspace
-findings, updated to the run-2 numbers and the narrower H1/H2 claims.
+*(Renumbered from the previous draft's §6.2.2; content unchanged in
+substance, now reinforced by the 4B data.)*
+
+The original framing treated increased top-1 oscillation as direct evidence
+of internal revision between the target and the tempting distractor. The
+confirmatory test — read out over {target, distractor} only — does not
+support that (p = 0.46 on 1.7B, stable across every sensitivity setting),
+and hard-control items with no tempting distractor oscillate almost as much
+as false-lead items. **The 4B data add a fourth independent line of
+evidence**: the confirmatory metric is a stable null across all four
+model×readout combinations (p range 0.27–0.46), the most consistent result
+anywhere in this study.
+
+**What to emphasize**:
+- Global top-1 churn increases under false lead at the 1.7B/jlens/default-θ
+  setting only — not nothing, but the narrowest possible evidentiary base
+- The mechanism is open: churn among vocabulary tokens unrelated to either
+  candidate is at least as plausible as "wavering between target and
+  distractor," given four independent null results for the latter
+- This is a case study in why the confirmatory-metric design was worth
+  building, twice over: it caught an appealing but unsupported mechanistic
+  story on 1.7B, and the 4B replication shows the same caution generalizes
+
+**Writing template**:
+> "Top-1 identity churn increases under false-lead prompts at the
+> pre-registered 1.7B/jlens setting (median Δ=+0.5, p=0.0077), but every
+> other test we ran — the confirmatory target-vs-distractor comparison, θ
+> sensitivity, the logit-lens readout, the hard-control comparison, and the
+> 4B replication — returns a null. We do not find evidence that this
+> oscillation reflects internal revision between candidate answers at any
+> setting; it more plausibly reflects general representational instability
+> specific to a narrow analysis configuration on one model. We report the
+> primary 1.7B effect because it is real and pre-registered, but withhold
+> any 'internal backtracking' interpretation, which four independent checks
+> now argue against."
+
+---
+
+#### 6.2.4 Hard Controls: Evidence Against H2 Specificity
+
+*(Renumbered from the previous draft's §6.2.3; unchanged.)*
+
+Hard-control oscillation (median 2.0, n=6 holdout, 1.7B) is comparable to
+false-lead oscillation (2.5) and above straightforward (1.0) — undermining
+rather than supporting oscillation as false-lead-specific. Hard-control gap
+(median 1.5, n=2 holdout) is too small a sample to test but not obviously
+larger than straightforward's, at least not inconsistent with H3 being
+false-lead-specific within 1.7B. Small n means neither reading is
+conclusive; expanding hard controls remains future work (§6.5).
+
+---
+
+### 6.3 Broader Context: Situating Within Gurnee et al. (2026) (350 words)
 
 **Key contrasts**:
 
@@ -172,227 +210,224 @@ findings, updated to the run-2 numbers and the narrower H1/H2 claims.
 | Workspace band exists | When does the target overtake a specific distractor within the band? |
 | Multi-hop rank climbs | What triggers rank climbs? (distraction vs. clarity) |
 | Aggregate statistics | Per-prompt commitment and dissociation trajectories |
-| Architecture properties | False-lead framing modulates confidence–correctness dissociation |
+| Architecture properties (one model class) | False-lead dissociation is capability-gated, tested explicitly across two model sizes |
 
 **Writing template**:
 > "Gurnee et al. (2026) established that a sparse J-space acts as a
-> verbalizable workspace, with answers surfacing at intermediate layers. Our
-> work asks a complementary question: *when and how* does commitment occur
-> within this workspace, and whether a false-lead framing leaves measurable
-> traces beyond the final answer. We find that false-lead prompts widen the
-> confidence–correctness dissociation window by a median of 4.0 layers
-> (confirmatory metric, p=0.0016, robust to every sensitivity setting
-> tested) and delay the point at which the target specifically overtakes a
-> tempting distractor by a median of 2.0 layers (p=0.0021, likewise robust).
-> Both effects hold even though a naively appealing companion claim —
-> that the model's oscillating top-1 identity reflects active revision
-> between the two candidates — did not survive a targeted confirmatory
-> test. This suggests the workspace's *dynamics* under conflicting evidence
-> are real but more subtle than a single aggregate metric would suggest:
-> confidence and correctness can dissociate measurably, while the mechanism
-> behind increased output instability requires further, more targeted
-> readouts to resolve."
+> verbalizable workspace, with answers surfacing at intermediate layers,
+> demonstrated primarily through aggregate, largely single-model-class
+> statistics. Our work asks a complementary question — *when and how* does
+> commitment occur within this workspace under conflicting evidence — and
+> additionally asks whether the answer is a fixed property of the
+> architecture or contingent on model scale. We find that in Qwen3-1.7B,
+> false-lead prompts widen the confidence–correctness dissociation window by
+> a median of 4.0 layers (p=0.0016, robust to every sensitivity setting and
+> to an independent lens method) and delay target-over-distractor commitment
+> by 2.0 layers (p=0.0021, likewise robust). Neither effect appears in
+> Qwen3-4B under an identical pipeline. This suggests the workspace's
+> *dynamics* under conflicting evidence are real, but — unlike the band's
+> existence itself, which Gurnee et al. show to be consistent across model
+> families — the false-lead dissociation dynamic we identify is
+> capability-gated rather than a fixed architectural property. This is a
+> meaningfully different kind of claim than 'the workspace exists,' and one
+> that a single-model study would not have been positioned to make."
 
 ---
 
 ### 6.4 Connection to Psycholinguistics & Human Cognition (200 words)
 
-**Substantially weakened from the original draft**, which built the entire
-parallel on oscillation-as-revision — the claim the confirmatory test does
-not support. What remains defensible is narrower and should be framed as
-motivation for future work, not as a supported finding.
+**What survives**: garden-path stimuli showed the highest false-lead
+temptation rate of the three families at 1.7B (66.7% vs. 25–29%; §5.4), and
+the same qualitative pattern — garden-path most tempting, arithmetic
+increasingly resistant — persists at 4B, where arithmetic temptation drops
+to 4.2%. This is a behavioral fact about which stimulus types remain
+effective at misleading a stronger model, independent of the internal-metric
+non-replication.
 
-**What survives**:
-- Garden-path stimuli showed the highest false-lead temptation rate of the
-  three families (66.7% distractor-in-top5, vs. 25–29% for factual and
-  arithmetic; §5.4), consistent with garden-path sentences being
-  particularly effective at inducing a temporary wrong reading — this is a
-  behavioral fact about the stimuli, not yet a claim about internal revision
-- The dissociation gap (H3) is the mechanistically relevant analog worth
-  pursuing for a human-comparison study, not oscillation
-
-**What must be dropped or heavily hedged**:
-- Any claim that oscillation depth is a model-internal analog of human
-  reading-time slowdowns — the mechanism this rested on (candidate
-  revision) is not supported
-- The "r ≈ ?" placeholder correlation with Natural Stories reading times —
-  this analysis was never run and should not be implied as pending
-  confirmation of the revision story; if run in future work, it should be
-  correlated against the dissociation gap (H3) rather than oscillation
-  (H2), since H3 is the effect that is actually robust
+**What must be dropped or heavily hedged**: any claim that oscillation depth
+is a model-internal analog of human reading-time slowdowns — the mechanism
+this rested on (candidate revision) is unsupported at every setting tested,
+including 4B. The "r ≈ ?" Natural Stories correlation, if ever run, should
+target the dissociation gap (H3), not oscillation — and should now be
+understood as a Qwen3-1.7B-specific correlation to test, not a general model
+property, given §6.2.2.
 
 **Writing template**:
 > "Garden-path stimuli produced the strongest false-lead temptation of the
-> three families we tested (66.7% of items had the distractor reach the
-> model's final top-5, versus 25–29% for factual and arithmetic prompts),
-> consistent with the classical psycholinguistic observation that reduced
-> relative clauses are unusually effective at inducing a temporary incorrect
-> parse. We had originally hypothesized that model-internal oscillation
-> would provide a mechanistic analog to human garden-path reading-time
-> slowdowns; our confirmatory test does not support this, and we withhold
-> the claim. The dissociation gap — confidence preceding correctness — is
-> the more promising candidate for a future correlational study against
-> human reading times, since it is the effect that survives targeted
-> confirmatory testing in this work."
+> three families in both models we tested, though the absolute rate drops
+> substantially for the more capable model — consistent with larger models
+> being more robust to the kind of temporary misparse that reliably
+> misleads humans and smaller models alike. We had hypothesized that
+> model-internal oscillation would provide a mechanistic analog to human
+> garden-path reading-time slowdowns; neither the confirmatory test on
+> Qwen3-1.7B nor the Qwen3-4B replication supports this, and we withhold the
+> claim. The dissociation gap remains the more promising candidate for a
+> future correlational study against human reading times, with the added
+> caveat that any such study should be run per-model rather than assumed to
+> transfer."
 
 ---
 
-### 6.5 Limitations & Future Work (350 words)
+### 6.5 Limitations & Future Work (450 words)
 
 #### Limitations
 
-**1. Small model size**
-- Qwen 1.7B: open-weight advantage but smaller than frontier models
-- Future: replicate on Qwen 4B (fresh lens fit already scoped) and other
-  open-weight families
+**1. The dissociation-gap effect does not replicate at 4B — this is now a
+finding, not an open gap**
+- Previously framed as "single model, generalization untested." That framing
+  is no longer accurate: generalization *was* tested, and failed, for the
+  one step in scale available. The honest limitation is narrower and sharper:
+  **one replication attempt, at one specific step in scale (≈2×
+  compute), establishes non-replication at that step — not a monotonic
+  scaling trend.** A third model size is needed to distinguish "the effect
+  fades smoothly across this range" from "1.7B has some specific property a
+  smooth story wouldn't predict."
+- Future: replicate at a third size (e.g. Qwen3-8B or 14B) to distinguish
+  these; ideally also a different model family, to separate "scale" from
+  "this specific model family's training."
 
 **2. Modest complete-pair counts**
-- Primary H1/H3 rest on 14 complete holdout pairs; confirmatory metrics on
-  18–19. Larger than run 1's n=6, but still modest
-- Future: expand the matched-pair stimulus set further, particularly
-  arithmetic and garden-path, whose behavioral accuracy (70.8%, 75.0%) has
-  more room to grow than factual's 95.8%
+- Primary H1/H3 rest on 14 complete holdout pairs at 1.7B (17–18 at 4B);
+  confirmatory metrics on 18–26 across models. Larger than run 1's n=6, but
+  a larger stimulus set would strengthen any future scale claim further.
+- Future: expand the matched-pair set, particularly arithmetic and
+  garden-path (behavioral accuracy still below factual's ceiling at 1.7B,
+  though 4B is already near-ceiling on arithmetic).
 
-**3. Single registered split**
-- All results reflect one pre-registered 60/40 dev/holdout split (seed 42);
-  we did not resample the split itself, only θ and band within it
-- Future: report split-resampling stability (e.g., repeated random splits,
-  each with fresh θ estimation) as an additional robustness axis
+**3. Single registered split per model**
+- Results reflect one pre-registered 60/40 dev/holdout split (seed 42) per
+  model; we did not resample the split itself.
+- Future: report split-resampling stability as an additional robustness axis.
 
-**4. Oscillation mechanism unresolved**
-- We know oscillation increases (primary metric, θ-fragile) but not why —
-  the confirmatory 2AFC test rules out simple candidate-revision but does
-  not identify an alternative mechanism
-- Future: extend the confirmatory readout beyond a 2-way comparison (e.g.,
-  top-k restricted entropy), or a causal ablation of the distractor
-  direction to test whether it drives the churn at all
+**4. Oscillation mechanism unresolved (not merely unreplicated)**
+- Four independent checks (confirmatory metric, θ-sensitivity, logit-lens,
+  4B) now argue against the candidate-revision reading, but none identify
+  an alternative mechanism for the real 1.7B/jlens/default-θ effect.
+- Future: extend the confirmatory readout beyond a 2-way comparison, or a
+  causal ablation of the distractor direction to test whether it drives the
+  churn at all.
 
-**5. Single-token targets**
-- J-lens vocabulary limitation; multi-token completions (reasoning steps)
-  not captured
-- Future: extend to multi-token or logit-lens-only readouts
+**5. Single-token targets; English-only; correlational not causal; no
+Natural Stories run** — unchanged from the previous draft; see prior
+sessions' notes. If Natural Stories is run, target H3, not H2 (§6.4).
 
-**6. English-dominant, single-language stimuli**
-- Future: cross-linguistic replication
-
-**7. Correlational, not causal**
-- We observe the dissociation gap and oscillation but don't manipulate what
-  causes either
-- Future: ablation experiments on the distractor representation specifically
-
-**8. No Natural Stories correlation run**
-- Deferred; if run, should target the dissociation gap (H3), not
-  oscillation (H2) — see §6.4
+**6. Band identification not adopted**
+- All four model×readout combinations suggest a band shifted later and
+  wider than the pre-registered default, but the suggestion is partly driven
+  by a next-token-accuracy signal that rises near-monotonically with depth
+  and isn't specific to a genuine bounded workspace (`BAND_IDENTIFICATION_REPORT.md`).
+  Not adopted; an open methodological question, not resolved here.
 
 #### Future Directions
 
-**Immediate**:
-- Qwen 4B replication (fresh lens fit)
-- Expand stimuli, especially arithmetic/garden-path, for power
-- Logit-lens secondary readout validation (`lens_utils.py`, not yet wired in)
+**Immediate**: a third model size to distinguish smooth scaling from a
+1.7B-specific property; expand stimuli for power; logit-lens integration is
+done (this session) — extend it to any future model added.
 
-**Medium-term**:
-- Causal ablation of the distractor direction, to test the oscillation
-  mechanism directly rather than inferring it from a second readout
-- Multi-token extension
-- Cross-lingual generalization
+**Medium-term**: causal ablation of the distractor direction; multi-token
+extension; cross-lingual generalization; a systematic study of *which*
+capability threshold gates the dissociation-gap effect (accuracy? explicit
+uncertainty calibration? something else?).
 
-**Long-term (speculative)**:
-- Real-time uncertainty quantification based on the dissociation gap
-  specifically (not oscillation, given its unresolved mechanism)
-- Pre-answer hallucination detection systems
-- Architectural insights for improving model robustness
+**Long-term (speculative)**: real-time uncertainty quantification based on
+the dissociation gap, *conditional on per-model validation* given §6.2.2;
+pre-answer hallucination detection systems; architectural insights into why
+larger models resist the false-lead manipulation internally, not just
+behaviorally.
 
 ---
 
-### 6.6 Practical Implications (250 words)
-
-**What to emphasize**: Why the dissociation gap, specifically, matters
-beyond academia — this section is now built around H3 rather than H2.
+### 6.6 Practical Implications (300 words)
 
 **Applications**:
 
-**1. Hallucination Detection**
-- Dissociation gap as a risk marker — the one signature in this study
-  robust to every sensitivity check
-- Could be monitored at inference time
-- No auxiliary models needed (already in lens readouts)
+**1. Hallucination Detection — With a New Caveat**
+- Dissociation gap as a risk marker — robust to every within-model check on
+  1.7B — but §6.2.2 means it **cannot be assumed to transfer to a different
+  model size without validation**. This is now the central practical caveat.
+- No auxiliary models needed; monitorable at inference time — for models
+  where the effect is confirmed to exist.
 
 **2. Uncertainty Quantification**
 - A model's internal confidence (ΔH collapse) can precede correctness by a
-  measurable, false-lead-sensitive margin
-- Pre-output signal, unlike temperature scaling or other post-hoc methods
+  measurable, false-lead-sensitive margin, in models susceptible to the
+  manipulation — pre-output signal, unlike post-hoc calibration.
 
-**3. Model Auditing & Safety**
-- Inspect "confidently-wrong windows" for patterns across prompt types
-- Identify which prompt types (per §5.4, garden-path most of all) are
-  highest-risk for false-lead-induced dissociation
-- Improve data collection and training with this signal in mind
+**3. Model Auditing & Safety — Validate Per-Model, Not Per-Family**
+- The single clearest practical lesson from this study: a rigorously
+  validated single-model interpretability signature (H3 on 1.7B, robust to
+  θ, band, and lens method) failed to replicate one step up in scale within
+  the same model family. Auditors should not assume a validated signature
+  transfers across model sizes without re-testing it — the cost of testing
+  (one GPU session per model, as done here) is small relative to the risk
+  of deploying an audit signal that silently stops working at a different
+  scale.
 
-**4. A Cautionary Methodological Point**
-- The oscillation result is itself a useful case study: a single aggregate
-  metric suggested a mechanistic story (revision) that a targeted
-  confirmatory test did not support. Auditing and interpretability claims
-  built on one readout should budget for this kind of check.
+**4. A Cautionary Methodological Point (Oscillation)**
+- The oscillation result remains a useful case study independent of scale:
+  a single aggregate metric suggested a mechanistic story (revision) that a
+  targeted confirmatory test — and, now, replication — did not support.
 
 **Writing template**:
-> "Beyond theoretical interest, the dissociation gap has practical
-> implications. It identifies a 'hallucination-prone window' where models
-> are most confident yet most vulnerable, and — unlike the oscillation
-> signal we initially expected to be the headline result — it survives every
-> robustness check we applied. In deployment, monitoring this gap in
-> real-time could flag unreliable outputs before they reach users. For model
-> auditors, the false-lead temptation rates broken down by family (§5.4)
-> offer a starting point for identifying which prompt types carry the
-> highest dissociation risk. Just as importantly, the fate of the
-> oscillation hypothesis in this study is itself a caution: a plausible,
-> appealing single-metric finding did not survive a pre-registered
-> confirmatory test, which is exactly the outcome pre-registration and
-> dual-readout designs are meant to catch."
+> "Beyond theoretical interest, this study's practical lesson is less 'the
+> dissociation gap is a useful hallucination signal' and more 'validated
+> interpretability signals need re-validation across scale before they are
+> trusted as general auditing tools.' The dissociation gap survives every
+> within-model robustness check we applied to Qwen3-1.7B — θ, band, and lens
+> method — and would, on that evidence alone, look like a strong candidate
+> for deployment. It is entirely absent in Qwen3-4B under the identical
+> pipeline. For model auditors and safety researchers, the actionable
+> takeaway is procedural: budget for a replication check across at least one
+> step in model scale before treating any single-model interpretability
+> signature as a general property of a model family."
 
 ---
 
-### 6.7 Concluding Remarks (150 words)
+### 6.7 Concluding Remarks (200 words)
 
 **Key take-home messages**:
-1. The confidence–correctness dissociation gap is real, false-lead-sensitive,
-   and robust to every analysis choice we tested — the strongest claim this
-   paper can make
-2. Delayed target-vs-distractor commitment is real in the same robust sense,
-   at a narrower readout than originally hypothesized
-3. Internal oscillation increases under false lead but is not shown to
-   reflect revision between candidate answers; we report it honestly as an
-   open question rather than a resolved mechanism
-4. Pre-registering a confirmatory readout, and fixing the interpretation
-   rule for disagreement in advance, is what let us catch (2) rather than
-   report it as a finding
+1. The confidence–correctness dissociation gap is real and robust to every
+   within-model analysis choice tested in Qwen3-1.7B — the strongest
+   single-model claim this paper can make
+2. **The same effect does not replicate in Qwen3-4B**, and behavioral
+   evidence suggests why: larger, more capable models are less internally
+   susceptible to the false-lead manipulation to begin with
+3. Internal oscillation increases under false lead only at the narrowest
+   possible setting and is not shown to reflect candidate revision at any
+   of four independent checks, including the 4B replication
+4. Pre-registering a confirmatory readout and a cross-scale replication, with
+   interpretation rules fixed in advance, is what let us report (2) and (3)
+   honestly rather than as unqualified positive findings
 
 **Final paragraph template**:
 > "We began with a simple question: when does a language model know its
-> answer? Instrumenting the J-space with layer-wise metrics shows that
-> confidence and correctness can measurably dissociate — models are
-> sometimes confident well before they are right, and false-lead framing
-> widens this window in a way that survives every robustness check we ran.
-> A second, more tempting story — that the model's shifting top-1 identity
-> reflects active revision between candidate answers — did not survive a
-> targeted confirmatory test we pre-registered specifically to check it. We
-> report both outcomes, because the discipline of testing an appealing
-> mechanistic claim and being willing to walk it back is, in our view, as
-> much a contribution here as the dissociation gap itself."
+> answer? In Qwen3-1.7B, confidence and correctness measurably dissociate
+> under false-lead framing, robust to every analysis choice we threw at it.
+> But the same pipeline, applied identically to Qwen3-4B, found nothing —
+> and the behavioral data suggest a coherent reason: the larger model is
+> simply harder to fool, internally as well as behaviorally. We report this
+> not as a disappointing footnote but as the paper's second real finding: a
+> mechanistically clean, multiply-robust single-model interpretability
+> result can fail to generalize one step up in scale, and the field should
+> treat that possibility as a default hypothesis to test, not an edge case
+> to assume away. The discipline of building a confirmatory readout, and
+> then a cross-scale replication, and reporting both outcomes honestly, is,
+> in our view, as much a contribution here as the dissociation gap itself."
 
 ---
 
 ## Writing Checklist
 
-- [x] 6.1 Summary (all hypotheses stated, both readouts)
-- [x] 6.2.1 Dissociation gap (hallucination angle — headline)
-- [x] 6.2.2 Oscillation (reframed: unattributed churn, not revision)
-- [x] 6.2.3 Hard controls (reframed: evidence against H2 specificity)
-- [x] 6.3 Gurnee et al. context (updated numbers, narrower claims)
-- [x] 6.4 Psycholinguistics connection (weakened, redirected toward H3)
-- [x] 6.5 Limitations (sensitivity fragility, unresolved H2 mechanism)
-- [x] 6.6 Practical implications (H3-centric)
-- [x] 6.7 Concluding remarks (honest headline)
+- [x] 6.1 Summary (all hypotheses, both models, both readouts)
+- [x] 6.2.1 Dissociation gap, explicitly scoped to Qwen3-1.7B
+- [x] 6.2.2 NEW: scale-dependence / non-replication at 4B, with mechanism
+- [x] 6.2.3 Oscillation (reframed: unattributed churn, reinforced by 4B)
+- [x] 6.2.4 Hard controls (reframed: evidence against H2 specificity)
+- [x] 6.3 Gurnee et al. context (updated for cross-scale framing)
+- [x] 6.4 Psycholinguistics connection (weakened, cross-scale caveat added)
+- [x] 6.5 Limitations (non-replication reframed as a finding, not a gap)
+- [x] 6.6 Practical implications (validate-per-model as the headline lesson)
+- [x] 6.7 Concluding remarks (leads with 1.7B robustness, pivots to 4B null)
 
 ---
 
@@ -400,11 +435,12 @@ beyond academia — this section is now built around H3 rather than H2.
 
 - Use "we find" / "our results show" (active voice)
 - Avoid overclaiming ("reveals," "proves" → "suggests," "indicates")
-- Lead with H3 (dissociation gap), not H2 (oscillation) — this is the
-  single biggest change from the original outline
+- **Never state an H1/H3 robustness claim without its model scope attached**
+  — "robust in Qwen3-1.7B" is a materially different claim from "robust,"
+  and conflating them is the single most important thing to avoid in the
+  final prose
 - When mentioning oscillation, always pair the primary result with the
-  confirmatory null and the hard-control comparison; never state the
-  primary result alone
+  confirmatory null, the hard-control comparison, and the 4B null
 - Link back to Gurnee et al. throughout
 - Acknowledge limitations upfront
 - End on future-work note (not closure)
@@ -413,27 +449,28 @@ beyond academia — this section is now built around H3 rather than H2.
 
 ## Length Target
 
-- 6.1: 200 words
-- 6.2: 450 words (3 subsections)
-- 6.3: 300 words
-- 6.4: 200 words (shortened — the parallel is weaker now)
-- 6.5: 350 words
-- 6.6: 250 words
-- 6.7: 150 words
-- **Total: ~1900 words**
+- 6.1: 250 words · 6.2: 700 words (4 subsections) · 6.3: 350 words ·
+  6.4: 200 words · 6.5: 450 words · 6.6: 300 words · 6.7: 200 words
+- **Total: ~2450 words** (grew from ~1900 to accommodate the 4B section)
 
 ---
 
 ## Integration with GPU Results
 
-Qwen3-1.7B run 2 integrated (2026-07-22):
-1. ✅ H1–H3 numbers (primary + confirmatory) filled in §6.1 and
-   `RESULTS_TEMPLATE.md`
-2. ✅ Sensitivity results integrated throughout (`SENSITIVITY_REPORT.md`)
-3. ✅ Hard-control comparison integrated (§6.2.3)
-4. ⏸ Natural Stories correlation still pending — retarget at H3 if run
-5. ⏸ Qwen 4B deferred
-6. ✅ Figure paths: `out/figures/H1_*.png`, `H2_*.png`, `H3_*.png`,
-   `entropy_curves.png`, `heatmaps/`
-7. Remaining work: expand the writing templates above into final
-   submission-ready prose (they are structured but still template-shaped)
+Qwen3-1.7B run 2 (2026-07-22) + logit-lens (2026-07-22) + band identification
+and Qwen3-4B replication (2026-07-24), all integrated:
+1. ✅ H1–H3 numbers (primary + confirmatory, both models, both readouts)
+   filled in §6.1 and `RESULTS_TEMPLATE.md`
+2. ✅ Sensitivity results integrated (`SENSITIVITY_REPORT.md`)
+3. ✅ Logit-lens comparison integrated (`LOGIT_LENS_REPORT.md`)
+4. ✅ Hard-control comparison integrated (§6.2.4)
+5. ✅ 4B replication integrated as a new major subsection (§6.2.2), not a
+   footnote — this is the most consequential update in this revision
+6. ✅ Band identification integrated (§6.5 limitation 6,
+   `BAND_IDENTIFICATION_REPORT.md`)
+7. ⏸ Natural Stories correlation still pending — retarget at H3 if run,
+   understood as per-model given §6.2.2
+8. ✅ Figure paths: `out/figures/H1_*.png`, `H2_*.png`, `H3_*.png`,
+   `entropy_curves.png`, `heatmaps/`, `model_comparison_1p7b_vs_4b.png`
+9. Remaining work: expand the writing templates above into final
+   submission-ready prose (structured but still template-shaped)

@@ -180,16 +180,18 @@ implemented, not a caution for future work.
 ## 4.6 Robustness Checks (Tier 2)
 
 ### Secondary Readout: Logit-Lens (Identity Transport)
-**Status: implemented, not yet run.** `02_run_experiment.py --readout logit_lens`
-collects traces via identity transport (residual → norm → lm_head directly,
-no fitted lens or `jlens` dependency) with an output schema identical to the
-primary `--readout jlens` traces, so `03_analyze.py` runs on either
-unmodified. Plan: collect `out/traces_run2_logitlens.json`, analyze, and
-report:
-- If main findings (esp. H3, the headline result) hold under both J-lens and
-  logit-lens, that rules out J-lens-specific reliability issues (§2.7) as an
-  explanation
-- Appendix D: side-by-side comparison for all figures
+**Status: run** (`out/traces_run2_logitlens.json`, `experiments/LOGIT_LENS_REPORT.md`).
+`02_run_experiment.py --readout logit_lens` collects traces via identity
+transport (residual → norm → lm_head directly, no fitted lens or `jlens`
+dependency), output schema identical to the primary `--readout jlens`
+traces. Result: **H3 confirmatory holds under both readouts** (jlens
+p=0.0021, logit-lens p=0.040), ruling out J-lens-specific reliability issues
+(§2.7) as an explanation for the headline finding. H1 confirmatory holds
+under both but more marginally under logit-lens. H2 primary loses
+significance under logit-lens (p=0.453) — a third line of evidence against
+treating it as a real, lens-independent phenomenon, alongside its
+θ-fragility and the confirmatory null. Full comparison table: Results §5.2 /
+`LOGIT_LENS_REPORT.md`; figure/side-by-side: Appendix D.
 
 ### Model Ablations
 - **Band sensitivity: done.** `experiments/SENSITIVITY_REPORT.md` — θ ∈
@@ -197,8 +199,9 @@ report:
   Direction never flips; confirmatory metrics are significant at every
   setting, primary metrics only near the pre-registered default (see report
   for the mechanism).
-- **Per-model band identification: implemented, not yet run** — distinct from
-  band *sensitivity* above; this identifies a data-driven band per model
+- **Per-model band identification: run**, all 4 model×readout combinations
+  (`experiments/BAND_IDENTIFICATION_REPORT.md`) — distinct from band
+  *sensitivity* above; this identifies a data-driven band per model
   rather than perturbing the pre-registered default. See §4.1 and
   `experiments/workspace_band_guide.md`.
 - Theta sensitivity: done, part of the same sensitivity report.

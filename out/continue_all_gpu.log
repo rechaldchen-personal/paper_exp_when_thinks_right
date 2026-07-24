@@ -1,0 +1,360 @@
+===== CONTINUE_ALL START Fri Jul 24 06:48:42 UTC 2026 =====
+Waiting for 4B lens fit / resume pipeline ...
+  progress n_done=706/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=712/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=718/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=725/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=731/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=737/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=743/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=749/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=755/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=762/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=767/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=774/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=780/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=786/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=792/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=798/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=804/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=810/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=816/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=822/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=828/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=834/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=841/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=847/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=853/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=859/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=865/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=871/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=878/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=884/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=890/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=896/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=902/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=908/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=915/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=921/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=927/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=933/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=939/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=945/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=951/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=957/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=963/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=969/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=976/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=982/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=988/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  progress n_done=994/1000 $(__import__('datetime').datetime.utcnow().isoformat())Z
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+  resume_4b_pipeline still running ...
+Fit/resume cleared at Fri Jul 24 08:44:45 UTC 2026
+-rw-rw-rw- 1 root root 438M Jul 24 08:27 out/lens_qwen3_4b.pt
+-rw-rw-rw- 1 root root 15M Jul 24 08:43 out/traces_4b.json
+===== PRESCREEN 4B Fri Jul 24 08:44:45 UTC 2026 =====
+out/traces_4b.json: 156 traces
+
+straightforward top-1 accuracy (must clear 50% per family):
+  ✅ arithmetic    24/24   100.0%
+  ✅ factual       22/24    91.7%
+  ✅ garden_path   20/24    83.3%
+
+false-lead temptation (distractor in final top-5 — diagnostic, not a gate):
+     arithmetic     1/24     4.2%
+     factual        7/24    29.2%
+     garden_path   13/24    54.2%
+
+✅ pre-screen PASSED — safe to run 03_analyze.py
+-rw-rw-rw- 1 root root 3.8K Jul 24 08:44 out/analysis_4b/report.json
+===== 4B band jlens Fri Jul 24 08:44:45 UTC 2026 =====
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights: 100%|██████████| 398/398 [00:00<00:00, 6582.65it/s]
+Loading held-out corpus (200 x 128 tokens, skipping first 1000) ...
+  got 200 held-out sequences
+  processed 20/200 prompts
+  processed 40/200 prompts
+===== CONTINUE_ALL START Fri Jul 24 16:15:44 UTC 2026 =====
+Waiting for 4B lens fit / resume pipeline ...
+Fit/resume cleared at Fri Jul 24 16:15:44 UTC 2026
+-rw-rw-rw- 1 root root 438M Jul 24 08:27 out/lens_qwen3_4b.pt
+-rw-rw-rw- 1 root root 15M Jul 24 08:43 out/traces_4b.json
+===== PRESCREEN 4B Fri Jul 24 16:15:44 UTC 2026 =====
+out/traces_4b.json: 156 traces
+
+straightforward top-1 accuracy (must clear 50% per family):
+  ✅ arithmetic    24/24   100.0%
+  ✅ factual       22/24    91.7%
+  ✅ garden_path   20/24    83.3%
+
+false-lead temptation (distractor in final top-5 — diagnostic, not a gate):
+     arithmetic     1/24     4.2%
+     factual        7/24    29.2%
+     garden_path   13/24    54.2%
+
+✅ pre-screen PASSED — safe to run 03_analyze.py
+-rw-rw-rw- 1 root root 3.8K Jul 24 08:44 out/analysis_4b/report.json
+===== 4B band jlens Fri Jul 24 16:15:45 UTC 2026 =====
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:  15%|█▍        | 59/398 [00:00<00:00, 372.10it/s]Loading weights:  32%|███▏      | 126/398 [00:00<00:00, 483.80it/s]Loading weights:  44%|████▍     | 177/398 [00:00<00:00, 436.27it/s]Loading weights:  56%|█████▌    | 222/398 [00:00<00:00, 293.03it/s]Loading weights:  65%|██████▍   | 257/398 [00:00<00:00, 285.57it/s]Loading weights:  86%|████████▋ | 344/398 [00:00<00:00, 406.07it/s]Loading weights: 100%|██████████| 398/398 [00:00<00:00, 409.98it/s]
+Loading held-out corpus (200 x 128 tokens, skipping first 1000) ...
+  got 200 held-out sequences
+  processed 20/200 prompts
+  processed 40/200 prompts
+  processed 60/200 prompts
+  processed 80/200 prompts
+  processed 100/200 prompts
+  processed 120/200 prompts
+  processed 140/200 prompts
+  processed 160/200 prompts
+  processed 180/200 prompts
+  processed 200/200 prompts
+Computing kurtosis / autocorrelation / accuracy curves ...
+
+Suggested band (layers): [23, 34]
+Suggested band (fraction): [0.676, 1.0]
+Wrote out/band_identification_4b_jlens.json
+Wrote out/figures/band_identification_jlens.png
+===== 4B band logit_lens Fri Jul 24 16:55:58 UTC 2026 =====
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:  20%|█▉        | 78/398 [00:00<00:00, 551.00it/s]Loading weights:  34%|███▎      | 134/398 [00:00<00:00, 439.13it/s]Loading weights:  52%|█████▏    | 206/398 [00:00<00:00, 512.22it/s]Loading weights:  65%|██████▌   | 259/398 [00:00<00:00, 268.81it/s]Loading weights: 100%|██████████| 398/398 [00:00<00:00, 451.98it/s]
+Loading held-out corpus (200 x 128 tokens, skipping first 1000) ...
+  got 200 held-out sequences
+  processed 20/200 prompts
+  processed 40/200 prompts
+  processed 60/200 prompts
+  processed 80/200 prompts
+  processed 100/200 prompts
+  processed 120/200 prompts
+  processed 140/200 prompts
+  processed 160/200 prompts
+  processed 180/200 prompts
+  processed 200/200 prompts
+Computing kurtosis / autocorrelation / accuracy curves ...
+
+Suggested band (layers): [24, 35]
+Suggested band (fraction): [0.686, 1.0]
+Wrote out/band_identification_4b_logitlens.json
+Wrote out/figures/band_identification_logit_lens.png
+===== 4B logit-lens traces Fri Jul 24 17:02:50 UTC 2026 =====
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Tokenization OK: 156 stimuli, all targets single-token.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:  22%|██▏       | 88/398 [00:00<00:00, 575.62it/s]Loading weights:  37%|███▋      | 146/398 [00:00<00:00, 564.07it/s]Loading weights:  51%|█████     | 203/398 [00:00<00:00, 429.88it/s]Loading weights:  63%|██████▎   | 249/398 [00:00<00:00, 316.10it/s]Loading weights: 100%|██████████| 398/398 [00:00<00:00, 588.32it/s]
+done:         capital_au / straightforward top1=' Canberra'
+done:         capital_au / false_lead      top1=' Canberra'
+done:         capital_be / straightforward top1=' Brussels'
+done:         capital_be / false_lead      top1=' Brussels'
+done:         capital_ch / straightforward top1=' Bern'
+done:         capital_ch / false_lead      top1=' Bern'
+done:         capital_cl / straightforward top1=' Santiago'
+done:         capital_cl / false_lead      top1=' C'
+done:         capital_cz / straightforward top1=' Prague'
+done:         capital_cz / false_lead      top1=' Prague'
+done:         capital_de / straightforward top1=' Berlin'
+done:         capital_de / false_lead      top1=' Munich'
+done:         capital_dk / straightforward top1=' Copenhagen'
+done:         capital_dk / false_lead      top1=' Copenhagen'
+done:         capital_eg / straightforward top1=' Cairo'
+done:         capital_eg / false_lead      top1=' not'
+done:         capital_fr / straightforward top1=' Paris'
+done:         capital_fr / false_lead      top1=' Paris'
+done:         capital_gr / straightforward top1=' Athens'
+done:         capital_gr / false_lead      top1=' Athens'
+done:         capital_in / straightforward top1=' New'
+done:         capital_in / false_lead      top1=' New'
+done:         capital_jp / straightforward top1=' Tokyo'
+done:         capital_jp / false_lead      top1=' Tokyo'
+done:         capital_mx / straightforward top1=' Mexico'
+done:         capital_mx / false_lead      top1=' in'
+done:         capital_nl / straightforward top1=' Amsterdam'
+done:         capital_nl / false_lead      top1=' amsterdam'
+done:         capital_no / straightforward top1=' Oslo'
+done:         capital_no / false_lead      top1=' Oslo'
+done:         capital_pl / straightforward top1=' Warsaw'
+done:         capital_pl / false_lead      top1=' Warsaw'
+done:         capital_pt / straightforward top1=' Lisbon'
+done:         capital_pt / false_lead      top1=' Lisbon'
+done:         capital_se / straightforward top1=' Stockholm'
+done:         capital_se / false_lead      top1=' Stockholm'
+done:         capital_sp / straightforward top1=' Madrid'
+done:         capital_sp / false_lead      top1=' madrid'
+done:         capital_uk / straightforward top1=' London'
+done:         capital_uk / false_lead      top1=' located'
+done:   element_lightest / straightforward top1=' hydrogen'
+done:   element_lightest / false_lead      top1=' hydrogen'
+done:        legs_spider / straightforward top1=' '
+done:        legs_spider / false_lead      top1=' eight'
+done:      ocean_largest / straightforward top1=' Pacific'
+done:      ocean_largest / false_lead      top1=' Pacific'
+done:     planet_largest / straightforward top1=' Jupiter'
+done:     planet_largest / false_lead      top1=' the'
+done:        arith_1_1_2 / straightforward top1=' four'
+done:        arith_1_1_2 / false_lead      top1=' four'
+done:        arith_1_1_3 / straightforward top1=' six'
+done:        arith_1_1_3 / false_lead      top1=' six'
+done:        arith_1_1_4 / straightforward top1=' eight'
+done:        arith_1_1_4 / false_lead      top1=' eight'
+done:        arith_1_1_5 / straightforward top1=' ten'
+done:        arith_1_1_5 / false_lead      top1=' ten'
+done:        arith_1_2_3 / straightforward top1=' nine'
+done:        arith_1_2_3 / false_lead      top1=' nine'
+done:        arith_1_2_4 / straightforward top1=' twelve'
+done:        arith_1_2_4 / false_lead      top1=' twelve'
+done:        arith_1_2_5 / straightforward top1=' fifteen'
+done:        arith_1_2_5 / false_lead      top1=' fifteen'
+done:        arith_1_3_2 / straightforward top1=' eight'
+done:        arith_1_3_2 / false_lead      top1=' eight'
+done:        arith_1_3_3 / straightforward top1=' twelve'
+done:        arith_1_3_3 / false_lead      top1=' twelve'
+done:        arith_1_3_4 / straightforward top1=' sixteen'
+done:        arith_1_3_4 / false_lead      top1=' sixteen'
+done:        arith_1_3_5 / straightforward top1=' twenty'
+done:        arith_1_3_5 / false_lead      top1=' twenty'
+done:        arith_1_4_2 / straightforward top1=' ten'
+done:        arith_1_4_2 / false_lead      top1=' ten'
+done:        arith_1_4_3 / straightforward top1=' fifteen'
+done:        arith_1_4_3 / false_lead      top1=' fifteen'
+done:        arith_1_4_4 / straightforward top1=' twenty'
+done:        arith_1_4_4 / false_lead      top1=' twenty'
+done:        arith_1_5_2 / straightforward top1=' twelve'
+done:        arith_1_5_2 / false_lead      top1=' twelve'
+done:        arith_1_5_3 / straightforward top1=' eighteen'
+done:        arith_1_5_3 / false_lead      top1=' eighteen'
+done:        arith_1_6_2 / straightforward top1=' fourteen'
+done:        arith_1_6_2 / false_lead      top1=' fourteen'
+done:        arith_2_1_3 / straightforward top1=' nine'
+done:        arith_2_1_3 / false_lead      top1=' nine'
+done:        arith_2_1_4 / straightforward top1=' twelve'
+done:        arith_2_1_4 / false_lead      top1=' twelve'
+done:        arith_2_1_5 / straightforward top1=' fifteen'
+done:        arith_2_1_5 / false_lead      top1=' fifteen'
+done:        arith_2_2_2 / straightforward top1=' eight'
+done:        arith_2_2_2 / false_lead      top1=' eight'
+done:        arith_2_2_4 / straightforward top1=' sixteen'
+done:        arith_2_2_4 / false_lead      top1=' sixteen'
+done:        arith_2_2_5 / straightforward top1=' twenty'
+done:        arith_2_2_5 / false_lead      top1=' twenty'
+done:        arith_2_3_2 / straightforward top1=' ten'
+done:        arith_2_3_2 / false_lead      top1=' ten'
+done:           gp_horse / straightforward top1=' horse'
+done:           gp_horse / false_lead      top1=' horse'
+done:             gp_cat / straightforward top1=' cat'
+done:             gp_cat / false_lead      top1=' cat'
+done:             gp_dog / straightforward top1=' dog'
+done:             gp_dog / false_lead      top1=' dog'
+done:             gp_boy / straightforward top1=' boy'
+done:             gp_boy / false_lead      top1=' one'
+done:            gp_tree / straightforward top1=' tree'
+done:            gp_tree / false_lead      top1=' tree'
+done:         gp_package / straightforward top1=' package'
+done:         gp_package / false_lead      top1=' package'
+done:           gp_sheep / straightforward top1=' sheep'
+done:           gp_sheep / false_lead      top1=' sheep'
+done:           gp_woman / straightforward top1=' woman'
+done:           gp_woman / false_lead      top1=' one'
+done:             gp_man / straightforward top1=' doctor'
+done:             gp_man / false_lead      top1=' one'
+done:           gp_child / straightforward top1=' child'
+done:           gp_child / false_lead      top1=' child'
+done:         gp_soldier / straightforward top1=' soldier'
+done:         gp_soldier / false_lead      top1=' soldier'
+done:          gp_runner / straightforward top1=' one'
+done:          gp_runner / false_lead      top1=' runner'
+done:            gp_bird / straightforward top1=' bird'
+done:            gp_bird / false_lead      top1=' bird'
+done:            gp_boat / straightforward top1=' boat'
+done:            gp_boat / false_lead      top1=' boat'
+done:          gp_bridge / straightforward top1=' bridge'
+done:          gp_bridge / false_lead      top1=' bridge'
+done:         gp_student / straightforward top1=' student'
+done:         gp_student / false_lead      top1=' student'
+done:         gp_patient / straightforward top1=' one'
+done:         gp_patient / false_lead      top1=' patient'
+done:            gp_book / straightforward top1=' book'
+done:            gp_book / false_lead      top1=' book'
+done:           gp_house / straightforward top1=' house'
+done:           gp_house / false_lead      top1=' house'
+done:            gp_ship / straightforward top1=' ship'
+done:            gp_ship / false_lead      top1=' ship'
+done:          gp_letter / straightforward top1=' letter'
+done:          gp_letter / false_lead      top1=' letter'
+done:        gp_painting / straightforward top1=' painting'
+done:        gp_painting / false_lead      top1=' painting'
+done:          gp_singer / straightforward top1=' lead'
+done:          gp_singer / false_lead      top1=' singer'
+done:           gp_watch / straightforward top1=' watch'
+done:           gp_watch / false_lead      top1=' watch'
+done: hard_ctrl_currency / hard_control    top1=' Swiss'
+done: hard_ctrl_president / hard_control    top1=' a'
+done:  hard_ctrl_painter / hard_control    top1=' born'
+done:  hard_ctrl_element / hard_control    top1=' hydrogen'
+done:   hard_ctrl_planet / hard_control    top1=' Jupiter'
+done:    hard_ctrl_ocean / hard_control    top1=' Pacific'
+done: hard_ctrl_mountain / hard_control    top1=' Everest'
+done: hard_ctrl_language / hard_control    top1=' Portuguese'
+done:    hard_ctrl_metal / hard_control    top1=' mercury'
+done:      hard_ctrl_gas / hard_control    top1=' nitrogen'
+done:    hard_ctrl_river / hard_control    top1=' Nile'
+done:    hard_ctrl_organ / hard_control    top1=' heart'
+
+Wrote 156 traces (readout=logit_lens) -> out/traces_4b_logitlens.json
+out/traces_4b_logitlens.json: 156 traces
+
+straightforward top-1 accuracy (must clear 50% per family):
+  ✅ arithmetic    24/24   100.0%
+  ✅ factual       22/24    91.7%
+  ✅ garden_path   20/24    83.3%
+
+false-lead temptation (distractor in final top-5 — diagnostic, not a gate):
+     arithmetic     1/24     4.2%
+     factual        7/24    29.2%
+     garden_path   13/24    54.2%
+
+✅ pre-screen PASSED — safe to run 03_analyze.py
+Dev/holdout split: 50 dev pairs, 34 holdout pairs
+theta (dH threshold) = 5.874 nats (80th pct of straightforward condition)
+
+=== condition medians (value, n) ===
+  straightforward  l_star=(29.0, 26)  l_H=(26.0, 27)  gap=(3.0, 25)  oscillation=(1.0, 28)  distractor_lead_layers=(7.0, 28)  l_star_2afc=(23.0, 27)  gap_2afc=(-3.0, 26)  oscillation_2afc=(0.0, 28)
+  false_lead       l_star=(30.0, 25)  l_H=(27.0, 28)  gap=(3.0, 25)  oscillation=(1.0, 28)  distractor_lead_layers=(8.0, 28)  l_star_2afc=(24.0, 27)  gap_2afc=(-3.0, 27)  oscillation_2afc=(0.0, 28)
+  hard_control     l_star=(30.0, 2)  l_H=(26.0, 6)  gap=(4.5, 2)  oscillation=(1.0, 6)  distractor_lead_layers=(11.0, 6)  l_star_2afc=(20.5, 4)  gap_2afc=(-6.0, 4)  oscillation_2afc=(0.0, 6)
+
+=== PRIMARY (pre-registered) tests (false_lead − straightforward) ===
+  l_star       {'hypothesis': 'H1: later commitment under false lead', 'n_pairs': 24, 'median_diff': 0.0, 'alternative': 'greater', 'n_nonzero': 13, 'W_plus': 65.0, 'W_min': 26.0, 'p': 0.094970703125, 'p_one_sided_greater': 0.094970703125, 'p_two_sided': 0.18994140625, 'method': 'exact (subset-sum DP, n=13)'}
+  gap          {'hypothesis': 'H3: larger dissociation gap under false lead', 'n_pairs': 23, 'median_diff': 1.0, 'alternative': 'greater', 'n_nonzero': 21, 'W_plus': 138.0, 'W_min': 93.0, 'p': 0.22365665435791016, 'p_one_sided_greater': 0.22365665435791016, 'p_two_sided': 0.4473133087158203, 'method': 'exact (subset-sum DP, n=21)'}
+  oscillation  {'hypothesis': 'H2: more oscillation under false lead', 'n_pairs': 28, 'median_diff': 0.0, 'alternative': 'greater', 'n_nonzero': 20, 'W_plus': 146.0, 'W_min': 64.0, 'p': 0.06077289581298828, 'p_one_sided_greater': 0.06077289581298828, 'p_two_sided': 0.12154579162597656, 'method': 'exact (subset-sum DP, n=20)'}
+
+=== CONFIRMATORY 2AFC tests (target vs distractor only) ===
+  l_star_2afc        {'hypothesis': 'H1-C: later target-over-distractor commitment', 'n_pairs': 26, 'median_diff': 0.0, 'alternative': 'greater', 'n_nonzero': 15, 'W_plus': 62.0, 'W_min': 58.0, 'p': 0.461395263671875, 'p_one_sided_greater': 0.461395263671875, 'p_two_sided': 0.92279052734375, 'method': 'exact (subset-sum DP, n=15)'}
+  gap_2afc           {'hypothesis': 'H3-C: larger dissociation gap (2AFC commitment)', 'n_pairs': 25, 'median_diff': 1.0, 'alternative': 'greater', 'n_nonzero': 22, 'W_plus': 132.0, 'W_min': 121.0, 'p': 0.4336540699005127, 'p_one_sided_greater': 0.4336540699005127, 'p_two_sided': 0.8673081398010254, 'method': 'exact (subset-sum DP, n=22)'}
+  oscillation_2afc   {'hypothesis': 'H2-C: more target/distractor preference flips', 'n_pairs': 28, 'median_diff': 0.0, 'alternative': 'greater', 'n_nonzero': 9, 'W_plus': 26.5, 'W_min': 18.5, 'p': 0.34765625, 'p_one_sided_greater': 0.34765625, 'p_two_sided': 0.6953125, 'method': 'exact (subset-sum DP, n=9)'}
+
+Heatmaps + report -> out/analysis_4b_logitlens/
+===== ALL GPU EXPERIMENTS DONE Fri Jul 24 17:06:30 UTC 2026 =====
+-rw-rw-rw- 1 root root 3.8K Jul 24 08:44 out/analysis_4b/report.json
+-rw-rw-rw- 1 root root 3.9K Jul 24 17:06 out/analysis_4b_logitlens/report.json
+-rw-rw-rw- 1 root root 6.5K Jul 24 16:55 out/band_identification_4b_jlens.json
+-rw-rw-rw- 1 root root 6.7K Jul 24 17:02 out/band_identification_4b_logitlens.json
+-rw-rw-rw- 1 root root 438M Jul 24 08:27 out/lens_qwen3_4b.pt
+-rw-rw-rw- 1 root root  15M Jul 24 08:43 out/traces_4b.json
+-rw-rw-rw- 1 root root  15M Jul 24 17:06 out/traces_4b_logitlens.json

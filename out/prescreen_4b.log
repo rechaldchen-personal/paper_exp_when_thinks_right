@@ -1,0 +1,13 @@
+out/traces_4b.json: 156 traces
+
+straightforward top-1 accuracy (must clear 50% per family):
+  ✅ arithmetic    24/24   100.0%
+  ✅ factual       22/24    91.7%
+  ✅ garden_path   20/24    83.3%
+
+false-lead temptation (distractor in final top-5 — diagnostic, not a gate):
+     arithmetic     1/24     4.2%
+     factual        7/24    29.2%
+     garden_path   13/24    54.2%
+
+✅ pre-screen PASSED — safe to run 03_analyze.py

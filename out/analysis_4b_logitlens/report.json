@@ -1,0 +1,193 @@
+{
+  "theta": 5.874392056465149,
+  "band": [
+    0.25,
+    0.9
+  ],
+  "conditions": {
+    "straightforward": {
+      "l_star": [
+        29.0,
+        26
+      ],
+      "l_H": [
+        26.0,
+        27
+      ],
+      "gap": [
+        3.0,
+        25
+      ],
+      "oscillation": [
+        1.0,
+        28
+      ],
+      "distractor_lead_layers": [
+        7.0,
+        28
+      ],
+      "l_star_2afc": [
+        23.0,
+        27
+      ],
+      "gap_2afc": [
+        -3.0,
+        26
+      ],
+      "oscillation_2afc": [
+        0.0,
+        28
+      ]
+    },
+    "false_lead": {
+      "l_star": [
+        30.0,
+        25
+      ],
+      "l_H": [
+        27.0,
+        28
+      ],
+      "gap": [
+        3.0,
+        25
+      ],
+      "oscillation": [
+        1.0,
+        28
+      ],
+      "distractor_lead_layers": [
+        8.0,
+        28
+      ],
+      "l_star_2afc": [
+        24.0,
+        27
+      ],
+      "gap_2afc": [
+        -3.0,
+        27
+      ],
+      "oscillation_2afc": [
+        0.0,
+        28
+      ]
+    },
+    "hard_control": {
+      "l_star": [
+        30.0,
+        2
+      ],
+      "l_H": [
+        26.0,
+        6
+      ],
+      "gap": [
+        4.5,
+        2
+      ],
+      "oscillation": [
+        1.0,
+        6
+      ],
+      "distractor_lead_layers": [
+        11.0,
+        6
+      ],
+      "l_star_2afc": [
+        20.5,
+        4
+      ],
+      "gap_2afc": [
+        -6.0,
+        4
+      ],
+      "oscillation_2afc": [
+        0.0,
+        6
+      ]
+    }
+  },
+  "tests": {
+    "l_star": {
+      "hypothesis": "H1: later commitment under false lead",
+      "n_pairs": 24,
+      "median_diff": 0.0,
+      "alternative": "greater",
+      "n_nonzero": 13,
+      "W_plus": 65.0,
+      "W_min": 26.0,
+      "p": 0.094970703125,
+      "p_one_sided_greater": 0.094970703125,
+      "p_two_sided": 0.18994140625,
+      "method": "exact (subset-sum DP, n=13)"
+    },
+    "gap": {
+      "hypothesis": "H3: larger dissociation gap under false lead",
+      "n_pairs": 23,
+      "median_diff": 1.0,
+      "alternative": "greater",
+      "n_nonzero": 21,
+      "W_plus": 138.0,
+      "W_min": 93.0,
+      "p": 0.22365665435791016,
+      "p_one_sided_greater": 0.22365665435791016,
+      "p_two_sided": 0.4473133087158203,
+      "method": "exact (subset-sum DP, n=21)"
+    },
+    "oscillation": {
+      "hypothesis": "H2: more oscillation under false lead",
+      "n_pairs": 28,
+      "median_diff": 0.0,
+      "alternative": "greater",
+      "n_nonzero": 20,
+      "W_plus": 146.0,
+      "W_min": 64.0,
+      "p": 0.06077289581298828,
+      "p_one_sided_greater": 0.06077289581298828,
+      "p_two_sided": 0.12154579162597656,
+      "method": "exact (subset-sum DP, n=20)"
+    }
+  },
+  "confirmatory_2afc": {
+    "l_star_2afc": {
+      "hypothesis": "H1-C: later target-over-distractor commitment",
+      "n_pairs": 26,
+      "median_diff": 0.0,
+      "alternative": "greater",
+      "n_nonzero": 15,
+      "W_plus": 62.0,
+      "W_min": 58.0,
+      "p": 0.461395263671875,
+      "p_one_sided_greater": 0.461395263671875,
+      "p_two_sided": 0.92279052734375,
+      "method": "exact (subset-sum DP, n=15)"
+    },
+    "gap_2afc": {
+      "hypothesis": "H3-C: larger dissociation gap (2AFC commitment)",
+      "n_pairs": 25,
+      "median_diff": 1.0,
+      "alternative": "greater",
+      "n_nonzero": 22,
+      "W_plus": 132.0,
+      "W_min": 121.0,
+      "p": 0.4336540699005127,
+      "p_one_sided_greater": 0.4336540699005127,
+      "p_two_sided": 0.8673081398010254,
+      "method": "exact (subset-sum DP, n=22)"
+    },
+    "oscillation_2afc": {
+      "hypothesis": "H2-C: more target/distractor preference flips",
+      "n_pairs": 28,
+      "median_diff": 0.0,
+      "alternative": "greater",
+      "n_nonzero": 9,
+      "W_plus": 26.5,
+      "W_min": 18.5,
+      "p": 0.34765625,
+      "p_one_sided_greater": 0.34765625,
+      "p_two_sided": 0.6953125,
+      "method": "exact (subset-sum DP, n=9)"
+    }
+  }
+}

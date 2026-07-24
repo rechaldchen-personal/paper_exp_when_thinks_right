@@ -5,61 +5,63 @@ temptation, probed with a Jacobian lens on Qwen3-1.7B. See `README.md` for
 current status, results, and known issues; see git history for the full
 session-by-session log (the old CLAUDE.md tracker was condensed on 2026-07-19).
 
-## Current state (2026-07-22)
+## Current state (2026-07-24)
 
-- **Run 2 is the current, trustworthy result.** Rebuilt stimuli (156 items,
-  72 matched pairs + 12 hard controls) on GPU, gated by `prescreen.py` (all
-  three families cleared 70%+ accuracy), analyzed with the corrected pipeline,
-  and sensitivity-checked. `out/traces_run2.json` +
-  `out/analysis_real/report.json` are canonical. Run 1 (2026-07-17) is
-  withdrawn — see `out/ANALYSIS_NOTE.md` — do not quote it.
-- **Headline finding: H3 (dissociation gap), not H2.** Confirmatory metric
-  significant at every θ/band setting tested (`experiments/SENSITIVITY_REPORT.md`).
-  **H2's "internal revision" reading is refuted**: primary oscillation metric
-  is significant but θ-fragile (null at θ70/θ90), the confirmatory
-  target-vs-distractor test is a stable null (p≈0.46–0.62 everywhere), and
-  hard controls (no tempting distractor) oscillate almost as much as
-  false-lead items. **H1** holds only under the confirmatory readout
-  (robust), not the primary global-argmax one.
-- **Paper rewritten to match**: `paper/ABSTRACT.md`, `paper/RESULTS_TEMPLATE.md`,
-  `paper/DISCUSSION_OUTLINE.md` (esp. §6.2.2 oscillation and §6.4
-  psycholinguistics, both originally built on the now-refuted reading),
-  `paper/INDEX.md`, `paper/INTRODUCTION_AND_RELATED_WORK.md` (stimulus count,
-  §2.8 summary table) all updated 2026-07-22.
-- **Lens unchanged and still valid** (`out/lens_qwen3_1p7b.pt`, git-lfs).
+- **Run 2 (Qwen3-1.7B) is complete and trustworthy.** Rebuilt stimuli (156
+  items, 72 matched pairs + 12 hard controls), gated by `prescreen.py`,
+  analyzed with the corrected pipeline, sensitivity-checked, and cross-checked
+  with an independent logit-lens readout. `out/traces_run2.json` +
+  `out/analysis_real/report.json` are canonical for 1.7B. Run 1 (2026-07-17)
+  is withdrawn — see `out/ANALYSIS_NOTE.md` — do not quote it.
+- **Headline finding #1 (within 1.7B): H3 (dissociation gap), not H2.**
+  Confirmatory metric significant at every θ/band setting *and* under
+  logit-lens (`experiments/SENSITIVITY_REPORT.md`,
+  `experiments/LOGIT_LENS_REPORT.md`). H2's "internal revision" reading is
+  refuted at every setting tested. H1 holds only under the confirmatory
+  readout.
+- **Headline finding #2 (THE key update this session): H3 does NOT replicate
+  on Qwen3-4B, under either readout.** Fresh lens fit
+  (`out/lens_qwen3_4b.pt`), full pre-screen/analysis pass, both readouts —
+  every test significant on 1.7B is null on 4B (p 0.061–0.469, near-zero
+  effect sizes, not underpowered). Explanation: 4B is more accurate and far
+  less internally tempted by the false-lead framing (arithmetic: 100% vs.
+  70.8% accuracy; 4.2% vs. 29.2% behavioral temptation; internal
+  `distractor_lead_layers` gap shrinks ~3×). Full report:
+  `experiments/4B_REPLICATION_REPORT.md`. **This is reported as a finding
+  about scale-dependence, not minimized as a limitation** — see that report
+  and `paper/DISCUSSION_OUTLINE.md` §6.2.2 for how it's framed.
+- **Paper fully rewritten to match** (2026-07-24): `paper/ABSTRACT.md`,
+  `paper/RESULTS_TEMPLATE.md` (new §5.8 for the 4B replication),
+  `paper/DISCUSSION_OUTLINE.md` (new §6.2.2 "Why the Effect Doesn't
+  Generalize"), `paper/INDEX.md` all updated. Every numeric claim across all
+  docs was verified programmatically against the underlying report.json
+  files before committing — see the verification commands in this session's
+  history if you need to re-check.
+- All raw GPU outputs (traces, lens, analyses, band-ID JSONs) are local —
+  pod is shut down. `out/PIPELINE_PAUSED.md` and `out/SYNC_COMPLETE.md`
+  document what was and wasn't synced (4B's band-ID PNG plots were not).
 
 ## Priority queue (in order)
 
 1. ✅ Pre-registration amended and locked — `experiments/PRE_REGISTRATION_AMENDMENT.md`.
-2. ✅ Run-2 GPU traces collected and gated.
-3. ✅ Analyzed; `out/analysis_real/` promoted to run-2; figures regenerated.
-4. ✅ Sensitivity checks (θ 70/80/90 × band 3 settings) —
-   `experiments/SENSITIVITY_REPORT.md`.
-5. ✅ Results/Abstract/Discussion rewritten from the real numbers.
-6. ✅ **Logit-lens readout implemented**: `02_run_experiment.py --readout
-   logit_lens` (also fixed a pre-existing bug where `--validate` imported
-   torch unconditionally, contradicting its own "CPU-only" doc). Unrun —
-   needs ~20-30 min GPU (`experiments/README_GPU_PHASE.md` §A).
-7. ✅ **Per-model band identification implemented**: `04_identify_band.py` +
-   `band_analysis.py`. Math is unit-tested on synthetic data
-   (`test_band_analysis.py`, CPU, all passing) — the autocorrelation
-   criterion in the original guide's pseudocode was ambiguous (no natural
-   ordering to autocorrelate query positions against), so this uses a
-   different, well-defined operationalization (layer-to-layer rank
-   correlation); documented in `band_analysis.py` and
-   `experiments/workspace_band_guide.md`. Unrun — needs ~5-15 min GPU per
-   readout (§B).
-8. ✅ **4B replication pre-verified, not yet run**: `validate_stimuli.py
-   --model Qwen/Qwen3-4B` passes all 156 stimuli — no stimulus rework needed
-   (1.7B and 4B share a 151,936-token vocab, confirmed via each model's
-   config.json). Compute estimate ~2× 1.7B (28×2048² vs 36×2560² layers ×
-   hidden²) — budget ~5-7h GPU. Scripts are already model-agnostic, no code
-   changes needed (§C).
-9. **Next**: run the three GPU sessions above; expand
-   `paper/DISCUSSION_OUTLINE.md` writing templates into final prose. CoT
+2. ✅ Run-2 GPU traces (1.7B) collected, gated, analyzed, sensitivity-checked.
+3. ✅ Results/Abstract/Discussion rewritten from the real 1.7B numbers.
+4. ✅ Logit-lens readout: implemented AND run (1.7B) —
+   `experiments/LOGIT_LENS_REPORT.md`.
+5. ✅ Per-model band identification: implemented AND run (all 4
+   model×readout combos) — `experiments/BAND_IDENTIFICATION_REPORT.md`,
+   not adopted as a new default (accuracy-curve caveat documented there).
+6. ✅ Qwen3-4B replication: fresh lens fit, both readouts, full pipeline —
+   `experiments/4B_REPLICATION_REPORT.md` — **H1/H3 do not replicate**.
+7. ✅ Paper (Abstract/Results/Discussion/INDEX) rewritten to integrate all
+   of the above, numbers verified against source JSON.
+8. **Next**: expand `paper/DISCUSSION_OUTLINE.md` writing templates into
+   final submission prose. Consider a third model size (8B/14B) to
+   distinguish smooth scale-dependence from a 1.7B-specific property — one
+   data point can't tell these apart (see Results §5.8 limitations). CoT
    variant (`02_run_experiment_cot.py`) and Natural Stories remain optional;
-   if Natural Stories is run, correlate against H3 (dissociation gap), not
-   H2 — see Discussion §6.4.
+   if Natural Stories is run, correlate against H3, not H2, and treat as
+   per-model (§6.4).
 
 ## Ground rules
 
@@ -101,3 +103,11 @@ session-by-session log (the old CLAUDE.md tracker was condensed on 2026-07-19).
 - `02_run_experiment.py --readout {jlens,logit_lens}`: both produce identical
   record schemas, so `03_analyze.py` runs on either unmodified — that's the
   whole point of the robustness comparison.
+- **4B replication result** (memorize this — it's the paper's second
+  headline): H1/H3 confirmatory, robust across every θ/band/lens-method
+  setting on 1.7B, are null on 4B under both readouts. Do not describe H3 as
+  "robust" without the "within Qwen3-1.7B" qualifier — that's the single
+  most important phrasing rule in the whole paper now.
+- 4B traces/analysis: `out/traces_4b.json` (jlens), `out/traces_4b_logitlens.json`,
+  `out/analysis_4b/`, `out/analysis_4b_logitlens/`. Comparison figure:
+  `out/figures/model_comparison_1p7b_vs_4b.png` (`make_comparison_figure.py`).

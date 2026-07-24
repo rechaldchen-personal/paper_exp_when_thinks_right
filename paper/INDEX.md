@@ -2,12 +2,16 @@
 
 **Title**: Commitment Dynamics in the J-Space: When Do Language Models Commit to Answers, and What Happens Under False-Lead Temptation?
 
-**Status** (2026-07-22): All sections drafted and reconciled with run-2
-results (Qwen3-1.7B, rebuilt stimulus set, pre-registration amendment). The
-headline finding is **H3 (dissociation gap)**, robust under every sensitivity
-check; **H2 (oscillation)** is real but its "internal revision" reading is
-refuted by the confirmatory 2AFC test and the hard-control comparison; **H1**
-holds only under the confirmatory (narrow) readout. Run 1 (2026-07-17) is
+**Status** (2026-07-24): All sections drafted and reconciled with the
+complete result set: Qwen3-1.7B (run 2, rebuilt stimulus set), the logit-lens
+robustness readout, per-model band identification, and — the most
+consequential update — a **Qwen3-4B replication that fails to replicate H1/H3**.
+Two headline findings now: (1) within Qwen3-1.7B, **H3 (dissociation gap)** is
+robust to every θ/band/lens-method setting tested; **H2 (oscillation)**'s
+"internal revision" reading is refuted at every setting; **H1** holds only
+under the confirmatory (narrow) readout. (2) **Neither H1 nor H3 replicates on
+Qwen3-4B**, under either readout — reported as a substantive finding about
+scale-dependence, not a limitation to minimize. Run 1 (2026-07-17) is
 withdrawn — see `out/ANALYSIS_NOTE.md` — and does not appear in any section.
 
 ---
@@ -15,47 +19,53 @@ withdrawn — see `out/ANALYSIS_NOTE.md` — and does not appear in any section.
 ## Paper Sections (in order)
 
 ### Front Matter
-- **ABSTRACT.md** ✅ — Filled with run-2 results: H3 headline (robust to
-  sensitivity), H2 reframed as unattributed churn, H1 supported only under
-  the confirmatory readout
+- **ABSTRACT.md** ✅ — Reports both headline findings: 1.7B robustness (H3
+  across θ/band/lens-method) *and* the 4B non-replication, with the
+  behavioral/internal-temptation explanation for why
 
 ### Main Sections
 
 1. **INTRODUCTION_AND_RELATED_WORK.md** ✅ — Complete (~1400 words)
    - 1.1–1.5: Motivation, garden-path hook, workspace context, contributions
-     (stimulus count updated to 156), roadmap
+     (stimulus count 156), roadmap
    - 2.1–2.8: Lens lineage, Gurnee et al., interpretability, uncertainty
      quantification, psycholinguistics, distractor robustness, lens
-     reliability, positioning (§2.8 table updated to not overclaim oscillation)
+     reliability, positioning
+   - ⚠ Not yet updated for the 4B finding — written before the replication.
+     §2.8's summary table and the Introduction's contribution framing should
+     gain a line on cross-scale testing before final compilation; not
+     currently a blocker since Discussion/Results carry the full finding.
 
 2. **BACKGROUND.md** ✅ — Complete (~1500 words)
    - 3.1 Global Workspace Theory · 3.2 Jacobian lens · 3.3 Commitment and
-     confidence · 3.4 Three mechanisms (H1–H3, described as pre-registered
-     hypotheses — language is appropriately conditional, no changes needed)
-     · 3.5 Why this matters
+     confidence · 3.4 Three mechanisms (H1–H3, pre-registered hypotheses,
+     appropriately conditional language — no changes needed) · 3.5 Why this
+     matters
 
-3. **METHODS_DRAFT.md** ✅ — Complete (~2500 words)
-   - 4.1 Model/setup · 4.2–4.3 Stimulus design · 4.4 Metrics · 4.5 Pipeline
-     (dev/holdout, θ) · 4.6 Statistics · 4.7 Robustness checks
-   - ⚠ 4.7 promises logit-lens replication and per-model band identification.
-     θ/band *sensitivity* has run (`SENSITIVITY_REPORT.md`). Logit-lens
-     (`02_run_experiment.py --readout logit_lens`) and band identification
-     (`04_identify_band.py`/`band_analysis.py`, unit-tested) are now
-     code-complete but still GPU-unrun — see
-     `experiments/README_GPU_PHASE.md` §"After run 2" (§A, §B)
+3. **METHODS_DRAFT.md** ✅ — Complete (~2500 words), robustness section
+   updated 2026-07-22 for what's implemented; **not yet updated to say the
+   logit-lens/band-ID/4B items actually ran** (still describes them as
+   "implemented, not yet run" as of that session) — low priority since
+   Results/Discussion carry the actual findings, but should be synced before
+   final compilation.
 
-4. **RESULTS_TEMPLATE.md** ✅ — Filled from Qwen3-1.7B run 2 (2026-07-22)
-   - 5.1 Sanity check · 5.2 H1/H2/H3 (primary + confirmatory each) · 5.3 Case
-     studies · 5.4 Distractor temptation (+ per-family behavioral rates)
-     · 5.5 Sensitivity checks (done) · 5.6 Natural Stories (not run)
-     · 5.7 Summary table (6 rows: primary + confirmatory × 3) · Interpretation
+4. **RESULTS_TEMPLATE.md** ✅ — Fully updated 2026-07-24
+   - 5.1 Sanity check · 5.2 H1/H2/H3 on 1.7B (primary + confirmatory +
+     logit-lens comparison folded in) · 5.3 Case studies · 5.4 Distractor
+     temptation · 5.5 Sensitivity (θ/band) · 5.6 Band identification (new)
+     · 5.7 Natural Stories (not run) · **5.8 Qwen3-4B replication (new,
+     the headline non-replication finding)** · 5.9 Summary table (all axes)
+     · Interpretation & Scope (rewritten around both headlines)
 
-5. **DISCUSSION_OUTLINE.md** ✅ — Rewritten around run-2 results
-   - §6.2.2 (oscillation) and §6.4 (psycholinguistics) are the sections that
-     changed most: both were originally built on the revision interpretation
-     that the confirmatory test refutes, and are now reframed accordingly
+5. **DISCUSSION_OUTLINE.md** ✅ — Fully rewritten 2026-07-24
+   - **§6.2.2 is new**: "Why the Effect Doesn't Generalize" — the 4B
+     non-replication and its behavioral/internal-temptation explanation,
+     framed as a substantive finding, not a limitation
+   - §6.2.1 (dissociation gap) now explicitly scopes its robustness claim to
+     Qwen3-1.7B; §6.2.3/§6.2.4 (oscillation, hard controls) reinforced by 4B
+     as a fourth independent null; §6.3/§6.4/§6.5/§6.6/§6.7 all updated
    - Templates are structured but still template-shaped; expand into final
-     submission prose before compiling
+     submission prose before compiling — this is the main remaining blocker
 
 ### Back Matter
 
@@ -64,25 +74,35 @@ withdrawn — see `out/ANALYSIS_NOTE.md` — and does not appear in any section.
 ### Appendices (planned, not yet written)
 
 - A: Full stimuli table (156 items: 72 matched pairs + 12 hard controls)
-- B: Natural Stories correlation (only if run; should target H3, not H2 —
-  see `DISCUSSION_OUTLINE.md` §6.4)
-- C: Workspace band identification — tool ready (`04_identify_band.py`),
-  band is still the pre-registered default pending a GPU run; distinct from
-  the band *sensitivity* check already done
-- D: Robustness checks — sensitivity (θ/band) done, see
-  `experiments/SENSITIVITY_REPORT.md`; logit-lens agreement tool ready
-  (`02_run_experiment.py --readout logit_lens`), pending a GPU run
-- E: Computational details (lens fitting parameters; 4B replication plan and
-  compute estimate in `experiments/README_GPU_PHASE.md` §C)
+- B: Natural Stories correlation (only if run; target H3, treat as
+  per-model given the 4B finding — `DISCUSSION_OUTLINE.md` §6.4)
+- C: Workspace band identification — **run**, all 4 model×readout
+  combinations, not adopted as a new default; full writeup and the
+  accuracy-curve caveat in `experiments/BAND_IDENTIFICATION_REPORT.md`
+- D: Robustness checks — sensitivity (θ/band, `SENSITIVITY_REPORT.md`) and
+  logit-lens agreement (`LOGIT_LENS_REPORT.md`) both **run**, both integrated
+  into Results §5.2/§5.5
+- E: Computational details (lens fitting parameters); **4B replication is
+  now Results §5.8 / Discussion §6.2.2**, not an appendix — it's too central
+  to the paper's contribution to relegate there
 
 ---
 
-## Figures & Tables (run-2 data)
+## Figures & Tables (1.7B + 4B data)
 
-Generated by `generate_figures.py` into `out/figures/`:
+Generated by `generate_figures.py` into `out/figures/` (1.7B):
 H1/H2/H3 box plots, H2 histogram, entropy collapse curves,
 oscillation-vs-commitment scatter, selected heatmaps,
 `table_hypotheses.txt`, `table_distractor_temptation.md`.
+
+Generated by `make_comparison_figure.py`: `model_comparison_1p7b_vs_4b.png`
+— the key figure for the 4B non-replication finding (six tests × four
+model/readout combinations, -log10(p) bar chart).
+
+4B's own box plots (via `generate_figures.py` pointed at `out/analysis_4b/`)
+have not been generated — the comparison figure covers the essential result;
+individual 4B box plots would be a nice-to-have for a full Appendix, not a
+blocker.
 
 ---
 
@@ -91,9 +111,14 @@ oscillation-vs-commitment scatter, selected heatmaps,
 ABSTRACT → INTRODUCTION_AND_RELATED_WORK → BACKGROUND → METHODS_DRAFT →
 RESULTS_TEMPLATE → DISCUSSION_OUTLINE → REFERENCES → Appendices.
 
-Blockers before compiling: expand Discussion writing templates into final
-prose; run the now-code-complete §4.7 items on GPU (logit-lens replication,
-per-model band identification — both ~30 min or less) or soften the text if
-skipped; decide whether to attempt the ~5-7h Qwen 4B replication before
-submission or note it as future work (stimuli are pre-verified to need no
-rework for 4B).
+**Blockers before compiling**:
+1. Expand Discussion writing templates into final prose (main blocker).
+2. Sync METHODS_DRAFT.md §4.6/§4.7 to say logit-lens/band-ID/4B actually ran
+   (currently says "implemented, not yet run" — now stale, low effort to fix).
+3. Add a cross-scale-testing line to INTRODUCTION_AND_RELATED_WORK.md's
+   contributions (§1.4) and §2.8 table — optional polish, not required since
+   Results/Discussion already carry the finding in full.
+4. Decide whether to pursue a third model size (8B/14B) before submission to
+   disambiguate smooth scale-dependence from a 1.7B-specific property, or
+   note it as future work (current default: future work, per Results §5.8
+   limitations).
