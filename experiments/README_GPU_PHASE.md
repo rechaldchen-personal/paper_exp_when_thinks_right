@@ -161,10 +161,16 @@ still holds mock-era placeholders such as "X top-1 flips" and "r ≈ ?").
 
 ---
 
-## After run 2 (2026-07-22 status: all three below are code-complete, CPU-side
-## tested, and unrun — each needs its own GPU session)
+## After run 2
 
-### A. Logit-lens robustness readout (~20-30 min GPU, no lens fit needed)
+**Status (2026-07-24): A, B, C below are all DONE** — see
+`experiments/LOGIT_LENS_REPORT.md`, `BAND_IDENTIFICATION_REPORT.md`, and
+`4B_REPLICATION_REPORT.md` for results (headline: H3 robust within
+Qwen3-1.7B across every axis in A/B, but does not replicate at 4B in C).
+Kept below as the reference procedure — **D (Qwen3-8B) is next**, planned
+2026-07-25, not yet run.
+
+### A. Logit-lens robustness readout (~20-30 min GPU, no lens fit needed) — DONE
 
 `02_run_experiment.py --readout logit_lens` is implemented (identity
 transport, no `jlens` dependency, output schema identical to the primary
@@ -182,7 +188,7 @@ Compare `out/analysis_run2_logitlens/report.json` against
 `out/analysis_real/report.json`: do the same hypotheses come out significant,
 in the same direction, especially H3 (the headline)? Report as Appendix D.
 
-### B. Per-model workspace band identification (~5-15 min GPU per readout)
+### B. Per-model workspace band identification (~5-15 min GPU per readout) — DONE
 
 `04_identify_band.py` + `band_analysis.py` are implemented and unit-tested
 (`venv/bin/python test_band_analysis.py`, CPU-only, passes). Needs a GPU pass
@@ -201,7 +207,7 @@ fields before trusting them (§ full guidance in `workspace_band_guide.md`).
 If you adopt a different band, that's a pre-registration amendment (rerun
 sensitivity + main analysis with the new default), not a silent swap.
 
-### C. Qwen3-4B replication (~5-7 h GPU total, budget accordingly)
+### C. Qwen3-4B replication (~5-7 h GPU total, budget accordingly) — DONE
 
 Verified CPU-side before spending any GPU time: **stimuli need no rework** —
 `validate_stimuli.py --model Qwen/Qwen3-4B` passes all 156 stimuli, all 7
@@ -243,6 +249,70 @@ model), not new hypothesis mining. Report whichever way it comes out — H3
 replicating on 4B is the strongest possible credibility signal this paper can
 get; H3 *not* replicating is equally important to report honestly, and would
 mean the 1.7B finding doesn't generalize past a single small model.
+
+**Result: H1/H3 do NOT replicate on 4B, under either readout** — every test
+significant on 1.7B is null on 4B (p 0.061–0.469), not underpowered (effect
+sizes ~0, sample sizes if anything larger). Explanation: 4B is more accurate
+and far less internally tempted by the false-lead framing. Full detail:
+`experiments/4B_REPLICATION_REPORT.md`.
+
+### D. Qwen3-8B replication — planned, next up (~14-15 h GPU, budget accordingly)
+
+Verified CPU-side before spending any GPU time, same as C: **stimuli need no
+rework** — `validate_stimuli.py --model Qwen/Qwen3-8B` passes all 156
+stimuli, all 7 rules (1.7B/4B/8B share the same 151,936-token vocabulary,
+confirmed via each model's `config.json`). Scripts remain model-agnostic, no
+code changes needed.
+
+**Motivation**: C establishes that H3 (robust across every within-model axis
+on 1.7B) is absent on 4B. That's one replication attempt at one step in
+scale — it can't distinguish "the effect fades smoothly with scale" from
+"1.7B has some specific property a smooth story wouldn't predict." 8B is the
+natural next data point: same family (isolates the scale variable — Qwen3
+has no 7B; the dense lineup is 0.6B/1.7B/4B/8B/14B/32B), no new code.
+
+**Compute estimate — grounded in the actual 4B run, not just config math**:
+the resumed 4B fit went from checkpoint n_done=349 to completion in ≤3h40m
+for 651 prompts, extrapolating to **~5.6h for a full 1000-prompt 4B fit**
+(matches the earlier config-based ~2× prediction from A/B/C). Scaling that
+by the same layers×hidden² method (36×4096² for 8B vs 36×2560² for 4B ≈
+**2.56×** the compute per token): **8B lens fit ≈ 5.6h × 2.56 ≈ 14h**, plus
+~30-40 min for jlens traces, ~10-15 min for band identification (both
+readouts), ~20-30 min for logit-lens traces. **Budget ~15h GPU total.**
+VRAM is not a concern — 8B is ~16GB in bf16, comfortable on an 80GB card
+(same H100 SXM class as the 1.7B/4B runs).
+
+**Given the length, run this as one resumable, backgrounded script** rather
+than issuing commands interactively — a dropped SSH session over 15h would
+otherwise kill the fit. `out/run_8b_pipeline.sh` is prepared: it runs fit →
+jlens traces → prescreen → analyze → band ID (both readouts) → logit-lens
+traces → prescreen → analyze, with every step idempotent (skips work whose
+output already exists), so it's safe to re-run after any interruption.
+
+```bash
+# On the pod, after the usual bootstrap (git pull, git lfs pull, pip installs
+# — see Step 0-2 above):
+nohup bash out/run_8b_pipeline.sh > /dev/null 2>&1 &
+disown
+# Reconnect any time; check progress with:
+tail -f out/run_8b_pipeline.log
+# Or check whether it's still running at all:
+pgrep -af run_8b_pipeline.sh
+```
+
+When `out/ALL_8B_GPU_DONE.txt` appears, everything is done. Then sync down
+(`scp`/`git lfs push` the new lens + traces + analysis + band-ID files) same
+as the 4B round, and re-run `make_comparison_figure.py` locally with an
+added 8B column.
+
+**Interpretation plan (fixed now, before seeing the data)**: if H3
+replicates on 8B, that's strong evidence for "fades somewhere past 8B, or
+doesn't fade monotonically" and meaningfully changes the scale-dependence
+story. If it's null on 8B too (matching 4B), that's a second consistent data
+point for smooth scale-dependence and strengthens the existing 4B finding
+rather than changing it. Either way, report both readouts and both
+hypotheses (H1, H3) exactly as done for 4B — no cherry-picking which test to
+lead with after seeing the result.
 
 ### Optional (lower priority, not scoped in detail here)
 

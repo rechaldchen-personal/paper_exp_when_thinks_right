@@ -55,13 +55,17 @@ session-by-session log (the old CLAUDE.md tracker was condensed on 2026-07-19).
    `experiments/4B_REPLICATION_REPORT.md` — **H1/H3 do not replicate**.
 7. ✅ Paper (Abstract/Results/Discussion/INDEX) rewritten to integrate all
    of the above, numbers verified against source JSON.
-8. **Next**: expand `paper/DISCUSSION_OUTLINE.md` writing templates into
-   final submission prose. Consider a third model size (8B/14B) to
-   distinguish smooth scale-dependence from a 1.7B-specific property — one
-   data point can't tell these apart (see Results §5.8 limitations). CoT
-   variant (`02_run_experiment_cot.py`) and Natural Stories remain optional;
-   if Natural Stories is run, correlate against H3, not H2, and treat as
-   per-model (§6.4).
+8. ✅ **Qwen3-8B replication prepped, not yet run** (2026-07-24): stimuli
+   pre-verified against the real 8B tokenizer, no rework needed. Grounded
+   compute estimate (from actual 4B fit timing, not just config math): ~14h
+   for the lens fit, ~15h total. One resumable script covers the whole
+   pipeline: `out/run_8b_pipeline.sh` — run it via `nohup ... & disown` on
+   the pod given the length. Full plan: `experiments/README_GPU_PHASE.md` §D.
+9. **Next**: run the 8B GPU session above; expand
+   `paper/DISCUSSION_OUTLINE.md` writing templates into final submission
+   prose. CoT variant (`02_run_experiment_cot.py`) and Natural Stories
+   remain optional; if Natural Stories is run, correlate against H3, not
+   H2, and treat as per-model (§6.4).
 
 ## Ground rules
 

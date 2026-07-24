@@ -67,9 +67,12 @@ logit-lens, and now 4B — a consistent null everywhere.
 **Still open**:
 1. Expand `paper/DISCUSSION_OUTLINE.md` writing templates into final
    submission prose — structurally complete, still template-shaped. Free/CPU.
-2. A third model size (e.g. 8B/14B) to distinguish "effect fades smoothly
-   with scale" from "1.7B has some specific property" — one data point
-   (1.7B→4B) can't tell these apart. Needs another GPU session.
+2. **Qwen3-8B replication — prepped, next up.** Stimuli pre-verified
+   (`validate_stimuli.py --model Qwen/Qwen3-8B` passes all 156, shared
+   vocab). Grounded estimate (from the actual 4B fit time, not just config
+   math): **~14h GPU for the lens fit**, ~15h total with traces/band-ID.
+   One resumable, backgrounded script covers the whole pipeline:
+   `out/run_8b_pipeline.sh`. Full plan: `experiments/README_GPU_PHASE.md` §D.
 3. Natural Stories external validity, retargeted at H3 (not H2, given its
    non-replication) — see Discussion §6.4.
 4. 4B's band-identification plots weren't synced before pod shutdown
